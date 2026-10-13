@@ -17,7 +17,9 @@ python3 -m venv .venv
 
 也可使用已配置的 `/workspace/.venvs/fyp-ontology/bin/python`。`--rules-dir` 指定三个工作簿的其他目录。所有默认路径相对于脚本目录，不再依赖 Windows 下载目录。
 
-`test_cases_data.json` 尚未提供。程序保留原来的 `test_cases` 数组／根数组，以及 `data.Application/Industry/party1/party2/Document/WatchList` 格式。以下为新增输入协议，不声称未提供的 JSON 已包含这些字段。旧输入仍能读取，但新增事实缺失时保持 Pending。`--builtin` 加载原来的 15 个案例，它们没有核验记录，结果会暂停；内置输入不是完整的新版验证案例。
+`test_cases_data.json` 现包含 **39 个新版合成回归案例**，不是原始客户案例。覆盖 RF-01～21、PI-01～11，以及额外的 D1–D3 场景；每项包含独立设定的 `expected` 预期结果和完整 `WorkflowEvidence`。根对象与每项均明确标记 synthetic。运行 `python kyc_poc.py` 即可加载该文件。
+
+原始客户案例文件尚未提供。程序保留原来的 `test_cases` 数组／根数组，以及 `data.Application/Industry/party1/party2/Document/WatchList` 格式。以下为新增输入协议；新版合成数据已按此格式填写。旧输入仍能读取，但新增事实缺失时保持 Pending。`--builtin` 加载原来的 15 个案例，它们没有核验记录，结果会暂停；内置输入不是完整的新版验证案例。
 
 ## 新增输入：`data.WorkflowEvidence`
 
@@ -169,4 +171,4 @@ PI 优先级：确认禁止 PI-01 → 待核验 PI-02 → 文件待处理 PI-03 
 
 ## 验证范围
 
-`tests/test_workflow.py` 使用显式标记的合成核验证据和真实上传工作簿，覆盖规则、边界、优先级、缺失证据、审批及外部 JSON 命令行。并未执行尚未提供的真实39个案例，也不生成或冒充 `test_cases_data.json`。
+`tests/test_workflow.py` 使用显式标记的合成核验证据和真实上传工作簿，覆盖规则、边界、优先级、缺失证据、审批及外部 JSON 命令行。数据集回归测试逐项对照39个合成案例的预期结果，并检查 RF-01～21 与 PI-01～11 的覆盖。真实客户案例尚未提供，未声称验证真实业务结果。

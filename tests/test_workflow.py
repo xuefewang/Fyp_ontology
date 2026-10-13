@@ -290,6 +290,33 @@ class WorkflowTests(unittest.TestCase):
                               'Within', {'status': 'Not Applicable'}, self.e, self.cat)
             self.assertEqual(final['rule_id'], 'PI-11')
 
+    def test_new_39_case_dataset_matches_independent_expectations(self):
+        path = DEFAULT_RULES.parent / 'test_cases_data.json'
+        dataset = json.loads(path.read_text(encoding='utf-8'))
+        self.assertEqual(dataset['dataset_type'], 'synthetic')
+        self.assertEqual(len(dataset['test_cases']), 39)
+        seen_ids, seen_factors, seen_final_rules = set(), set(), set()
+        for item in dataset['test_cases']:
+            with self.subTest(case=item['test_case_id']):
+                self.assertTrue(item['synthetic'])
+                self.assertNotIn(item['test_case_id'], seen_ids)
+                seen_ids.add(item['test_case_id'])
+                result = assess_workflow(case_from_json(item), self.cat)
+                expected = item['expected']
+                self.assertEqual(result['final_decision']['rule_id'], expected['final_rule_id'])
+                self.assertEqual(result['final_appetite'], expected['final_appetite'])
+                self.assertEqual(result['risk_assessment']['total_score'], expected['total_score'])
+                seen_final_rules.add(result['final_decision']['rule_id'])
+                hits = {h['factor_id'] for h in result['risk_assessment']['hits']}
+                seen_factors.update(hits)
+                if 'risk_factor_hit' in expected:
+                    self.assertIn(expected['risk_factor_hit'], hits)
+                if 'dimension_rule_hit' in expected:
+                    rid = expected['dimension_rule_hit']
+                    self.assertIn(rid, result['dimensions'][rid[:2]]['rule_ids'])
+        self.assertEqual(seen_factors, set(self.cat.rf))
+        self.assertEqual(seen_final_rules, set(self.cat.integration))
+
     def test_cli_external_json_and_audit(self):
         case = {'test_case_id': 'synthetic-case', 'company': 'Fixture', 'data': {
             'Application': {'application_id': 'fixture-1', 'submission_date': '2026-10-13'},
