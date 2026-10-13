@@ -1,4 +1,6 @@
-"""Synthetic verified evidence; never a substitute for the missing production JSON."""
+"""Validate the revised workbooks, 118 independent case oracles and priority edges."""
+import copy
+import hashlib
 import json
 import subprocess
 import sys
@@ -6,396 +8,261 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from kyc_poc import DEFAULT_RULES, builtin_cases, case_from_json, load_cases
+from build_cases import ROOT, baseline, build_dataset, complex_ownership, control, controls, graph, high_industry, hit, pending, signature
+from case_migration import migrate_dataset
+from kyc_poc import DEFAULT_RULES, case_from_json
+from ownership import analyze_ownership
 from policy_engine import (RF_CRITERIA, assess_workflow, evaluate_dimensions, evaluate_rf,
-                           integrate, load_catalogue, safeguard_candidates)
-
-
-def baseline(cat):
-    return {
-        'risk_factors': {fid: {'status': 'Clear', 'verified': True, 'evidence_refs': ['synthetic-reviewed-record']}
-                         for fid in cat.rf},
-        'D1': {'evidence_complete': True, 'evidence_refs': ['synthetic-ownership'], 'facts': {
-            'legal_entity_verified': True, 'ownership_links_verified': True, 'ubo_verified': True,
-            'control_verified': True, 'complex_ownership': False, 'nominee_or_trust': False,
-            'cross_entity_or_border_complexity': False, 'control_rights_discrepancy': False,
-            'unusual_structure': False, 'material_unresolved_contradiction': False}},
-        'D2': {'evidence_complete': True, 'evidence_refs': ['synthetic-business'], 'facts': {
-            'activity_verified': True, 'taxonomy_approved': True, 'category': 'Standard',
-            'material_discrepancy': False, 'material_high_risk_activity': False, 'regulated': False}},
-        'D3': {'evidence_complete': True, 'evidence_refs': ['synthetic-funds'], 'facts': {
-            'mandatory_evidence_authenticated': True, 'source_event_identified': True,
-            'owner_identified': True, 'amount_dates_verified': True, 'funds_sufficient': True,
-            'records_reconciled': True, 'records_verified': True, 'unresolved_discrepancy': False,
-            'own_account': True, 'complex_funding': False, 'unusual_subscription': False, 'material_anomaly': False}},
-        'policy': {'version': 'synthetic-policy-v1', 'approval_matrix_approved': True,
-                   'required_approver_roles': ['Compliance Officer']},
-        'approvals': [], 'safeguards': {}, 'signals': {},
-    }
-
-
-def approval(role='Compliance Officer', decision='Approved', name='Reviewer A'):
-    return {'decision': decision, 'authorized': True, 'role': role, 'reviewer': name,
-            'authority': 'synthetic-approved-matrix', 'timestamp': '2026-10-13T00:00:00Z',
-            'rationale': 'Synthetic documented review', 'evidence_refs': ['synthetic-signoff']}
+                           integrate, load_catalogue, rf_condition)
 
 
 class WorkflowTests(unittest.TestCase):
     @classmethod
-    def setUpClass(cls): cls.cat = load_catalogue(DEFAULT_RULES)
+    def setUpClass(cls):
+        cls.cat = load_catalogue(DEFAULT_RULES)
+        cls.dataset = json.loads((ROOT/'test_cases_data.json').read_text())
 
-    def setUp(self): self.e = baseline(self.cat)
+    def setUp(self):
+        self.e = baseline('RA-TEST-1')
 
-    def run_case(self):
-        case = builtin_cases()[0]
-        case.workflow_evidence = self.e
-        return assess_workflow(case, self.cat)
+    def result(self):
+        item=copy.deepcopy(self.dataset['test_cases'][0])
+        item['data']['Application']['application_id']='TEST-1'
+        item['data']['WorkflowEvidence']=self.e
+        return assess_workflow(case_from_json(item),self.cat)
 
-    def hit(self, fid): self.e['risk_factors'][fid]['status'] = 'Hit'
+    def test_catalogue_matches_updated_workbooks(self):
+        self.assertEqual(set(self.cat.rf),{f'RF-{i:02}' for i in range(1,22)})
+        self.assertEqual(set(self.cat.appetite),{f'FA-{i:02}' for i in range(1,8)})
+        self.assertEqual(len(self.cat.dimensions),17)
+        self.assertIn('D1-07',self.cat.dimensions)
+        self.assertEqual(set(self.cat.safeguards),{f'SG-{i:02}' for i in range(1,14)})
+        self.assertFalse(self.cat.warnings)
+        order=['PI-01','PI-03','PI-02','PI-11','PI-06','PI-04','PI-05','PI-07','PI-08','PI-09','PI-10']
+        self.assertEqual([r.rule_id for r in sorted(self.cat.integration.values(),key=lambda r:r.priority)],order)
 
-    def test_workbook_catalogues_and_user_resolution(self):
-        self.assertEqual(len(self.cat.rf), 21)
-        self.assertEqual(self.cat.rf['RF-21'].points, 3)
-        self.assertNotIn('RF-22', self.cat.rf)
-        self.assertEqual(len(self.cat.dimensions), 16)
-        self.assertEqual(set(self.cat.safeguards), {f'SG-{i:02}' for i in range(1, 14)})
-        self.assertEqual(self.cat.integration['PI-10'].priority, 10)
-        self.assertTrue(self.cat.warnings)
+    def test_all_118_independent_expected_results_and_coverage(self):
+        items=self.dataset['test_cases'];self.assertEqual(len(items),118)
+        seen,rf_coverage,pi_coverage,sg_coverage=set(),set(),set(),set()
+        for item in items:
+            with self.subTest(case=item['test_case_id'],description=item.get('description')):
+                self.assertNotIn(item['test_case_id'],seen);seen.add(item['test_case_id'])
+                e=item['data']['WorkflowEvidence'];exp=item['expected']
+                self.assertTrue(e['risk_factors'])
+                self.assertTrue(all(v.get('evidence_refs') for v in e['risk_factors'].values()))
+                r=assess_workflow(case_from_json(item),self.cat)
+                self.assertEqual(r['final_decision']['rule_id'],exp['final_rule_id'])
+                self.assertEqual(r['final_decision']['result'],exp['final_result'])
+                self.assertEqual(r['final_appetite'],exp['final_appetite'])
+                self.assertEqual(r['risk_assessment']['total_score'],exp['total_score'])
+                pi_coverage.add(r['final_decision']['rule_id'])
+                ids={h['factor_id'] for h in r['risk_assessment']['hits']};rf_coverage.update(ids)
+                sg_coverage.update(s['safeguard_id'] for s in r['safeguards']['selected'])
+                if 'risk_factor_hit' in exp:self.assertIn(exp['risk_factor_hit'],ids)
+                if 'risk_band' in exp:self.assertEqual(r['risk_assessment']['risk_band'],exp['risk_band'])
+                if 'doc_gate' in exp:self.assertEqual(r['risk_assessment']['doc_gate'],exp['doc_gate'])
+                if 'doc_gate_reason_ids' in exp:self.assertTrue(set(exp['doc_gate_reason_ids']) <= {x['rule_id'] for x in r['risk_assessment']['doc_gate_reasons']})
+                if 'appetite_rule' in exp:self.assertIn(exp['appetite_rule'],r['appetite_rule_ids'])
+                if 'absent_appetite_rule' in exp:self.assertNotIn(exp['absent_appetite_rule'],r['appetite_rule_ids'])
+                if 'intermediate_legal_entity_count' in exp:self.assertEqual(r['ownership_analysis']['intermediate_legal_entity_count'],exp['intermediate_legal_entity_count'])
+        self.assertEqual(rf_coverage,set(self.cat.rf));self.assertEqual(pi_coverage,set(self.cat.integration))
+        self.assertEqual(sg_coverage,set(self.cat.safeguards))
 
-    def test_original_inputs_do_not_become_approved(self):
-        for case in builtin_cases():
-            r = assess_workflow(case, self.cat)
-            self.assertEqual(r['final_decision']['rule_id'], 'PI-02')
-            self.assertEqual(r['final_appetite'], 'Pending')
+    def test_reproducible_builder_and_original_data_preserved(self):
+        self.assertEqual(build_dataset(),self.dataset)
+        source=ROOT/'tests/fixtures/original_test_cases.json';original=json.loads(source.read_text())
+        self.assertEqual(self.dataset['source_sha256'],hashlib.sha256(source.read_bytes()).hexdigest())
+        for old,new in zip(original['test_cases'],self.dataset['test_cases'][:28]):
+            for k,v in old.items():
+                self.assertEqual({key:value for key,value in new[k].items() if key!='WorkflowEvidence'} if k=='data' else new[k],v)
+        self.assertTrue(all(x['synthetic'] for x in self.dataset['test_cases'][28:]))
 
-    def test_all_hard_gates_override_every_signal_without_points(self):
-        for i in range(1, 9):
-            with self.subTest(factor=i):
-                self.e = baseline(self.cat)
-                self.hit(f'RF-{i:02}')
-                self.hit('RF-13')
-                r = self.run_case()
-                self.assertEqual(r['risk_assessment']['total_score'], 5)
-                self.assertEqual(r['final_decision']['result'], 'REJECT')
-                self.assertEqual(r['risk_assessment']['risk_band'], 'Pending')
+    def test_original_runtime_migration_matches_first_28_records(self):
+        original=json.loads((ROOT/'tests/fixtures/original_test_cases.json').read_text())
+        migrated=migrate_dataset(original)
+        self.assertEqual(migrate_dataset(migrated),migrated)
+        for old,new in zip(original['test_cases'],self.dataset['test_cases']):
+            self.assertEqual(case_from_json(old).workflow_evidence,case_from_json(new).workflow_evidence)
+            self.assertFalse(new['data']['WorkflowEvidence']['approvals'])
 
-    def test_unverified_hit_holds_instead_of_rejecting(self):
-        self.hit('RF-02')
-        self.e['risk_factors']['RF-02']['verified'] = False
-        self.assertEqual(self.run_case()['final_decision']['rule_id'], 'PI-02')
-        self.e['risk_factors']['RF-02']['verified'] = True
-        self.e['risk_factors']['RF-02']['evidence_refs'] = []
-        self.assertEqual(self.run_case()['final_decision']['rule_id'], 'PI-02')
-
-    def test_document_gates_do_not_score(self):
-        for fid, expected in [('RF-09', 'Awaiting Information'), ('RF-10', 'Human Review'), ('RF-11', 'Awaiting Information')]:
-            with self.subTest(factor=fid):
-                self.e = baseline(self.cat); self.hit(fid)
-                r = self.run_case()
-                self.assertEqual(r['risk_assessment']['doc_gate'], expected)
-                self.assertEqual(r['risk_assessment']['total_score'], 0)
-                self.assertEqual(r['final_decision']['rule_id'], 'PI-03')
-
-    def test_score_boundaries_and_high_does_not_reject(self):
-        combinations = [([], 0, 'Low'), (['RF-14'], 4, 'Low'), (['RF-13'], 5, 'Medium'),
-                        (['RF-13', 'RF-14'], 9, 'Medium'), (['RF-12', 'RF-16', 'RF-17'], 10, 'High')]
-        for ids, score, band in combinations:
-            with self.subTest(score=score):
-                self.e = baseline(self.cat)
-                for fid in ids: self.hit(fid)
-                r = self.run_case()
-                self.assertEqual(r['risk_assessment']['total_score'], score)
-                self.assertEqual(r['risk_assessment']['risk_band'], band)
-                self.assertEqual(r['final_appetite'], 'Within')
-                self.assertEqual(r['final_decision']['rule_id'], 'PI-11' if 'RF-13' in ids else 'PI-07')
-                self.e['approvals'] = [approval()]
-                self.assertEqual(self.run_case()['final_decision']['rule_id'], 'PI-11' if 'RF-13' in ids else 'PI-08')
-
-    def test_unknown_score_is_pending_not_low(self):
-        del self.e['risk_factors']['RF-20']
-        r = self.run_case()
-        self.assertEqual(r['risk_assessment']['risk_band'], 'Pending')
-        self.assertEqual(r['final_decision']['rule_id'], 'PI-04')
-
-    def test_each_dimension_rule(self):
-        updates = {
-            'D1-01': {},
-            'D1-02': {'complex_ownership': True, 'rationale_sufficient': True},
-            'D1-03': {'nominee_or_trust': True, 'relevant_parties_verified': True, 'legal_documents_sufficient': True, 'rationale_sufficient': True},
-            'D1-04': {'cross_entity_or_border_complexity': True, 'materiality_policy_approved': True, 'rationale_sufficient': True},
-            'D1-05': {'control_rights_discrepancy': True, 'discrepancy_explained': False},
-            'D1-06': {'unusual_structure': True, 'review_completed': True, 'rationale_sufficient': False},
-            'D2-01': {},
-            'D2-02': {'category': 'Sensitive', 'regulated': True, 'licence_verified': True},
-            'D2-03': {'category': 'HighRisk', 'activity_not_prohibited': True},
-            'D2-04': {'multiple_activities': True, 'material_high_risk_activity': True, 'materiality_policy_approved': True, 'high_risk_activity_verified': True, 'activity_not_prohibited': True},
-            'D2-05': {'material_discrepancy': True},
-            'D3-01': {},
-            'D3-02': {'complex_funding': True, 'own_account': False, 'material_parties_verified': True, 'legal_basis_verified': True, 'flows_verified': True, 'arrangement_policy_permitted': True},
-            'D3-03': {'material_anomaly': True, 'review_completed': True, 'anomaly_explained': False},
-            'D3-04': {'mandatory_evidence_authenticated': False},
-            'D3-05': {'unusual_subscription': True, 'materiality_policy_approved': True, 'exceptional_event_verified': True},
-        }
-        for rid, facts in updates.items():
-            with self.subTest(rule=rid):
-                e = baseline(self.cat); prefix = rid[:2]; e[prefix]['facts'].update(facts)
-                dimensions, _, _ = evaluate_dimensions(e, self.cat)
-                self.assertIn(rid, dimensions[prefix]['rule_ids'])
-                expected = self.cat.dimensions[rid].outcome
-                self.assertEqual(dimensions[prefix]['level'], 'Pending' if expected.startswith('Pending') else expected)
-
-    def test_pending_precedes_high_and_max_not_sum(self):
-        self.e['D1']['facts'].update(complex_ownership=True, nominee_or_trust=True, rationale_sufficient=True,
-                                    relevant_parties_verified=True, legal_documents_sufficient=True)
-        r = self.run_case()
-        self.assertEqual(r['dimensions']['D1']['level'], 'Medium')
-        self.assertEqual(r['final_appetite'], 'Conditional')
-        self.e['D1']['facts'].update(control_rights_discrepancy=True, discrepancy_explained=False)
-        self.assertEqual(self.run_case()['final_appetite'], 'Restricted')
-        self.e['D3']['evidence_complete'] = False
-        self.assertEqual(self.run_case()['final_appetite'], 'Pending')
-        del self.e['D1']['facts']['unusual_structure']
-        self.assertEqual(self.run_case()['dimensions']['D1']['level'], 'Pending')
-
-    def conditional(self):
-        self.e['D1']['facts'].update(complex_ownership=True, rationale_sufficient=True)
-
-    def complete_controls(self, ids):
-        for sid in ids:
-            self.e['safeguards'][sid] = {'applicable': True, 'policy_approved': True,
-                'evidence_refs': ['synthetic-trigger-policy'], 'status': 'Complete', 'owner': 'Control owner',
-                'completion_evidence_refs': ['synthetic-completion']}
-
-    def test_only_applicable_controls_hold_and_never_lower_appetite(self):
-        self.conditional()
-        r = self.run_case()
-        self.assertEqual(r['final_decision']['rule_id'], 'PI-05')
-        self.assertEqual(set(r['safeguards']['unresolved_applicability']), {'SG-01', 'SG-08', 'SG-11'})
-        self.complete_controls(['SG-01', 'SG-08', 'SG-11'])
-        self.e['approvals'] = [approval()]
-        r = self.run_case()
-        self.assertEqual(r['final_appetite'], 'Conditional')
-        self.assertEqual(r['final_decision']['rule_id'], 'PI-09')
-        self.assertEqual(len(r['safeguards']['selected']), 3)
-        self.assertTrue(r['edd_required'])
-        self.e['safeguards']['SG-11']['status'] = 'Incomplete'
-        self.assertEqual(self.run_case()['final_decision']['rule_id'], 'PI-05')
-
-    def test_approved_not_applicable_controls(self):
-        self.conditional()
-        for sid in ['SG-01', 'SG-08', 'SG-11']:
-            self.e['safeguards'][sid] = {'applicable': False, 'policy_approved': True, 'evidence_refs': ['synthetic-nonapplicability']}
-        self.e['approvals'] = [approval()]
-        r = self.run_case()
-        self.assertEqual(r['safeguards']['status'], 'Not Applicable')
-        self.assertEqual(r['final_decision']['rule_id'], 'PI-09')
-
-    def test_restricted_route_requires_explicit_policy_and_senior_approval(self):
-        self.e['D2']['facts'].update(category='HighRisk', activity_not_prohibited=True)
-        self.complete_controls(['SG-01', 'SG-02', 'SG-04', 'SG-08', 'SG-10'])
-        self.e['approvals'] = [approval(), approval('Senior Compliance', name='Senior Reviewer')]
-        self.assertEqual(self.run_case()['final_decision']['rule_id'], 'PI-11')
-        self.e['policy']['restricted_acceptance_permitted'] = True
-        self.assertEqual(self.run_case()['final_decision']['rule_id'], 'PI-10')
-        self.e['policy']['restricted_acceptance_permitted'] = False
-        self.assertTrue(self.run_case()['final_decision']['result'].startswith('REJECT'))
-        self.e['approvals'] = [approval()]
-        self.assertEqual(self.run_case()['final_decision']['rule_id'], 'PI-05')
-
-    def test_dual_signature_must_have_two_distinct_directors(self):
-        self.conditional(); self.hit('RF-13')
-        self.complete_controls(['SG-01', 'SG-02', 'SG-03', 'SG-04', 'SG-08', 'SG-09', 'SG-11', 'SG-13'])
-        self.e['approvals'] = [approval(), approval('Senior Compliance'), approval('Compliance Director'), approval('Risk Director')]
-        self.assertEqual(self.run_case()['final_decision']['rule_id'], 'PI-05')
-        self.e['approvals'][-1]['reviewer'] = 'Reviewer B'
-        self.assertEqual(self.run_case()['final_decision']['rule_id'], 'PI-09')
-
-    def test_officer_rejection_and_inconsistent_or_unsigned_approval(self):
-        self.e['approvals'] = [approval(decision='Rejected')]
-        self.assertEqual(self.run_case()['final_decision']['rule_id'], 'PI-06')
-        self.e['approvals'].append(approval())
-        self.assertEqual(self.run_case()['final_decision']['rule_id'], 'PI-11')
-        self.e['approvals'] = [approval()]; self.e['approvals'][0]['authorized'] = False
-        self.assertEqual(self.run_case()['final_decision']['rule_id'], 'PI-07')
-        del self.e['policy']['approval_matrix_approved']
-        self.assertEqual(self.run_case()['final_decision']['rule_id'], 'PI-11')
-
-    def test_unknown_rules_fail_loudly(self):
-        self.e['safeguards']['SG-16'] = {}
-        with self.assertRaises(ValueError): self.run_case()
-        self.e['safeguards'].clear(); self.e['risk_factors']['RF-22'] = {}
-        with self.assertRaises(ValueError): self.run_case()
-
-    def test_all_rf_predicates_from_verified_facts(self):
-        for fid, (method, keys) in RF_CRITERIA.items():
+    def test_all_rf_predicates_are_three_valued(self):
+        for fid,(method,keys) in RF_CRITERIA.items():
+            facts={k:True for k in keys}
+            if method=='failed':facts[keys[0]]='Failed'
+            if method=='layers':facts[keys[0]]=4
+            if method=='jurisdictions':facts[keys[0]]=3
+            if method=='ubo_pending':facts[keys[0]]='Pending'
             with self.subTest(rule=fid):
-                self.e = baseline(self.cat)
-                facts = {key: True for key in keys}
-                if method == 'failed': facts[keys[0]] = 'Failed'
-                if method == 'layers': facts[keys[0]] = 4
-                if method == 'jurisdictions': facts[keys[0]] = 3
-                self.e['risk_factors'][fid] = {'facts': facts, 'verified': True, 'evidence_refs': ['synthetic-rule-evidence']}
-                r = evaluate_rf(self.e, self.cat)
-                self.assertIn(fid, {h['factor_id'] for h in r['hits']})
-                self.e['risk_factors'][fid]['facts'] = {}
-                self.assertIn(fid, evaluate_rf(self.e, self.cat)['pending_rule_ids'])
+                self.assertIs(rf_condition(fid,facts),True)
+                self.assertIsNone(rf_condition(fid,{}))
+                e=baseline('RA-TEST-1');e['risk_factors'][fid]={'facts':facts,'verified':True,'evidence_refs':['synthetic-proof']}
+                self.assertIn(fid,{h['factor_id'] for h in evaluate_rf(e,self.cat)['hits']})
 
-    def test_numeric_complexity_boundaries(self):
-        for fid, cases in [('RF-15', [(3, False), (4, True)]), ('RF-21', [(2, False), (3, True)])]:
-            for value, hit in cases:
-                method, keys = RF_CRITERIA[fid]
-                facts = {keys[0]: value}
-                if fid == 'RF-21': facts[keys[1]] = False
-                self.e['risk_factors'][fid] = {'facts': facts, 'verified': True, 'evidence_refs': ['synthetic-depth']}
-                ids = {h['factor_id'] for h in evaluate_rf(self.e, self.cat)['hits']}
-                self.assertEqual(fid in ids, hit)
+    def test_final_failed_ubo_is_not_remediable_rf11(self):
+        self.assertIs(rf_condition('RF-11',{'ubo_verification_status':'Failed'}),False)
+        for status in ('Pending','AwaitingInformation'):
+            self.assertIs(rf_condition('RF-11',{'ubo_verification_status':status}),True)
+        self.assertIs(rf_condition('RF-11',{'ubo_verification_status':'Verified','ownership_evidence_insufficient':False,'remediation_outstanding':False}),False)
 
-    def test_contradictory_rf_conclusion_is_rejected(self):
-        self.e['risk_factors']['RF-02'].update(facts={'ubo_sanctions_match': True, 'screening_review_complete': True, 'false_positive_excluded': True})
-        with self.assertRaises(ValueError): self.run_case()
+    def test_hardgate_overrides_documents_and_invalid_inputs(self):
+        hit(self.e,1,9,10);self.e['policy']={}
+        r=self.result();self.assertEqual(r['final_decision']['rule_id'],'PI-01')
+        self.assertEqual(r['risk_assessment']['doc_gate'],'Human Review')
 
-    def test_integration_reads_upstream_without_recalculating(self):
-        rf = {'hard_gate': 'Clear', 'doc_gate': 'Clear', 'risk_band': 'High'}
-        self.e['approvals'] = [approval()]
-        final = integrate(rf, 'Within', {'status': 'Not Applicable'}, self.e, self.cat)
-        self.assertEqual(final['rule_id'], 'PI-08')
+    def test_documents_precede_pending_gate_and_hold_scoring(self):
+        hit(self.e,9,10,11,12);pending(self.e,2)
+        r=self.result();self.assertEqual(r['final_decision']['rule_id'],'PI-03')
+        self.assertIsNone(r['risk_assessment']['total_score'])
+        self.assertEqual(r['risk_assessment']['confirmed_score_subtotal'],3)
+        self.assertEqual({x['rule_id'] for x in r['risk_assessment']['doc_gate_reasons']},{'RF-09','RF-10','RF-11'})
 
-    def test_all_safeguard_trigger_routes(self):
-        scenarios = {
-            'SG-01': ({'D2-03'}, set(), {}),
-            'SG-02': ({'D3-03'}, set(), {}),
-            'SG-03': (set(), {'RF-13'}, {}),
-            'SG-04': (set(), {'RF-13'}, {}),
-            'SG-05': ({'D3-02'}, set(), {'third_party_or_account_mismatch': True}),
-            'SG-06': (set(), set(), {'exposure_limit_reduces_risk': True}),
-            'SG-07': (set(), set(), {'service_restriction_exposure': True}),
-            'SG-08': (set(), set(), {}),
-            'SG-09': (set(), {'RF-12'}, {}),
-            'SG-10': (set(), set(), {'high_risk_relationship': True}),
-            'SG-11': ({'D1-03'}, set(), {}),
-            'SG-12': (set(), set(), {'regulated_activity': True}),
-            'SG-13': (set(), set(), {'dual_approval_required': True}),
-        }
-        for sid, (dims, hits, signals) in scenarios.items():
-            with self.subTest(safeguard=sid):
-                candidates = safeguard_candidates({'test': {'rule_ids': list(dims)}},
-                    {'hits': [{'factor_id': fid} for fid in hits]}, 'Conditional', {'signals': signals})
-                self.assertIn(sid, candidates)
-                self.assertTrue(candidates <= set(self.cat.safeguards))
-        self.assertFalse(safeguard_candidates({}, {'hits': []}, 'Within', {}))
+    def test_authorized_rejection_precedes_assessment_and_sg(self):
+        self.e['approvals'][0]['decision']='Rejected';self.e['D3']['evidence_complete']=False
+        control(self.e,'SG-06','Incomplete')
+        self.assertEqual(self.result()['final_decision']['rule_id'],'PI-06')
+        self.e['policy']['approval_matrix_approved']=False
+        self.assertEqual(self.result()['final_decision']['rule_id'],'PI-11')
 
-    def test_invalid_upstream_status_cannot_approve(self):
-        self.e['approvals'] = [approval()]
-        for invalid in ['Unknown', '', None]:
-            final = integrate({'hard_gate': 'Clear', 'doc_gate': 'Clear', 'risk_band': invalid},
-                              'Within', {'status': 'Not Applicable'}, self.e, self.cat)
-            self.assertEqual(final['rule_id'], 'PI-11')
+    def test_pep_and_close_associate_floor(self):
+        for n in (13,14):
+            self.e=baseline('RA-TEST-1');hit(self.e,n)
+            r=self.result();self.assertEqual(r['final_appetite'],'Conditional')
+            self.assertIn('FA-06',r['appetite_rule_ids'])
+            self.e['D3']['evidence_complete']=False
+            r=self.result();self.assertEqual(r['final_appetite'],'Pending');self.assertNotIn('FA-06',r['appetite_rule_ids'])
 
-    def test_new_39_case_dataset_matches_independent_expectations(self):
-        path = DEFAULT_RULES.parent / 'tests' / 'fixtures' / 'synthetic_cases.json'
-        dataset = json.loads(path.read_text(encoding='utf-8'))
-        self.assertEqual(dataset['dataset_type'], 'synthetic')
-        self.assertEqual(len(dataset['test_cases']), 39)
-        seen_ids, seen_factors, seen_final_rules = set(), set(), set()
-        for item in dataset['test_cases']:
-            with self.subTest(case=item['test_case_id']):
-                self.assertTrue(item['synthetic'])
-                self.assertNotIn(item['test_case_id'], seen_ids)
-                seen_ids.add(item['test_case_id'])
-                result = assess_workflow(case_from_json(item), self.cat)
-                expected = item['expected']
-                self.assertEqual(result['final_decision']['rule_id'], expected['final_rule_id'])
-                self.assertEqual(result['final_appetite'], expected['final_appetite'])
-                self.assertEqual(result['risk_assessment']['total_score'], expected['total_score'])
-                seen_final_rules.add(result['final_decision']['rule_id'])
-                hits = {h['factor_id'] for h in result['risk_assessment']['hits']}
-                seen_factors.update(hits)
-                if 'risk_factor_hit' in expected:
-                    self.assertIn(expected['risk_factor_hit'], hits)
-                if 'dimension_rule_hit' in expected:
-                    rid = expected['dimension_rule_hit']
-                    self.assertIn(rid, result['dimensions'][rid[:2]]['rule_ids'])
-        self.assertEqual(seen_factors, set(self.cat.rf))
-        self.assertEqual(seen_final_rules, set(self.cat.integration))
+    def test_pep_never_downgrades_restricted(self):
+        hit(self.e,14);high_industry(self.e)
+        self.assertEqual(self.result()['final_appetite'],'Restricted')
 
-    def test_edd_is_supported_and_blocks_until_complete(self):
-        self.e['D2']['facts'].update(category='HighRisk', activity_not_prohibited=True)
-        self.complete_controls(['SG-01', 'SG-02', 'SG-04', 'SG-08', 'SG-10'])
-        self.e['approvals'] = [approval(), approval('Senior Compliance', name='Senior Reviewer')]
-        self.e['policy']['restricted_acceptance_permitted'] = True
-        self.e['safeguards']['SG-01']['status'] = 'Incomplete'
-        r = self.run_case()
-        self.assertTrue(r['edd_required'])
-        self.assertEqual(r['edd_status'], 'Incomplete')
-        self.assertEqual(r['final_decision']['rule_id'], 'PI-05')
-        self.e['safeguards']['SG-01']['status'] = 'Complete'
-        r = self.run_case()
-        self.assertEqual(r['edd_status'], 'Complete')
-        self.assertEqual(r['final_decision']['rule_id'], 'PI-10')
-        self.assertNotIn('excluded', r['safeguards'])
+    def test_appetite_max_aggregation_not_sum(self):
+        complex_ownership(self.e)
+        self.e['D1']['facts'].update(nominee_or_trust=True,relevant_parties_verified=True,legal_documents_sufficient=True)
+        r=self.result();self.assertEqual(r['dimensions']['D1']['level'],'Medium')
+        self.assertEqual(r['final_appetite'],'Conditional')
+        self.e['D1']['facts'].update(control_rights_discrepancy=True,discrepancy_explained=False)
+        self.assertEqual(self.result()['final_appetite'],'Restricted')
 
-    def test_uploaded_cases_preserved_and_missing_evidence_not_invented(self):
-        from case_migration import migrate_dataset
-        original = json.loads((DEFAULT_RULES.parent / 'tests/fixtures/original_test_cases.json').read_text())
-        updated = json.loads((DEFAULT_RULES.parent / 'test_cases_data.json').read_text())
-        self.assertEqual(len(updated['test_cases']), 28)
-        regenerated = migrate_dataset(original)
-        self.assertEqual(updated['test_cases'], regenerated['test_cases'])
-        self.assertEqual(migrate_dataset(regenerated), regenerated)
-        expected_decisions = {'case03': 'PI-01', 'case04': 'PI-01', 'case13': 'PI-02',
-            'case14': 'PI-01', 'case15': 'PI-01', 'case16': 'PI-01', 'case17': 'PI-01',
-            'case18': 'PI-01', 'case19': 'PI-02', 'case26': 'PI-02', 'case10': 'PI-03', 'case11': 'PI-03'}
-        expected_scores = {'case01': 0, 'case02': 3, 'case05': 5, 'case06': 4,
-            'case07': 4, 'case08': 3, 'case09': 4, 'case20': 4, 'case22': 4, 'case28': 3}
-        for old, new in zip(original['test_cases'], updated['test_cases']):
-            with self.subTest(case=old['test_case_id']):
-                for key, value in old.items():
-                    if key != 'data': self.assertEqual(new[key], value)
-                self.assertEqual({k:v for k,v in new['data'].items() if k != 'WorkflowEvidence'}, old['data'])
-                result = assess_workflow(case_from_json(new), self.cat)
-                self.assertEqual(case_from_json(old).workflow_evidence, new['data']['WorkflowEvidence'])
-                cid = old['test_case_id']
-                self.assertEqual(result['final_decision']['rule_id'], expected_decisions.get(cid, 'PI-04'))
-                if cid in expected_scores:
-                    self.assertEqual(result['risk_assessment']['total_score'], expected_scores[cid])
-                self.assertFalse(result['audit']['approval_records'])
-                self.assertEqual(new['data']['WorkflowEvidence']['reported_officer_decision'], old['data']['officer_decision'])
-        migrated = updated['test_cases'][23]['data']['WorkflowEvidence']['safeguards']
-        self.assertEqual(set(migrated), set(original['test_cases'][23]['data']['safeguards_completed']))
-        self.assertTrue(all(x['status'] == 'Pending' and x['reported_status'] == 'Complete' for x in migrated.values()))
+    def test_d1_evidence_gate_and_uncovered_grade_are_pending(self):
+        self.e['D1']['evidence_complete']=False
+        r=self.result();self.assertIn('D1-07',r['dimensions']['D1']['rule_ids'])
+        self.assertIn('RF-11',r['dimensions']['D1']['remediation_rf_ids'])
+        self.e=baseline('RA-TEST-1');self.e['D2']['facts']['category']='UnapprovedUnknown'
+        r=self.result();self.assertIn('FA-07',r['appetite_rule_ids']);self.assertEqual(r['final_appetite'],'Pending')
 
-    def test_original_and_migrated_json_cli_match(self):
-        root = DEFAULT_RULES.parent
-        sources = [root / 'test_cases_data.json', root / 'tests/fixtures/original_test_cases.json']
-        outputs = []
+    def test_within_controls_and_unknown_selection_block(self):
+        control(self.e,'SG-06','Incomplete')
+        self.assertEqual(self.result()['final_decision']['rule_id'],'PI-05')
+        control(self.e,'SG-06');self.assertEqual(self.result()['final_decision']['rule_id'],'PI-08')
+        self.e=baseline('RA-TEST-1');self.e['safeguards']={};self.e['safeguard_selection']['reviewed']=False
+        self.assertEqual(self.result()['final_decision']['rule_id'],'PI-05')
+
+    def test_edd_completion_does_not_lower_risk(self):
+        high_industry(self.e);control(self.e,'SG-01','Incomplete')
+        r=self.result();self.assertTrue(r['edd_required']);self.assertEqual(r['edd_status'],'Incomplete')
+        self.assertEqual(r['final_decision']['rule_id'],'PI-05')
+        control(self.e,'SG-01');r=self.result()
+        self.assertEqual(r['final_appetite'],'Restricted');self.assertEqual(r['final_decision']['rule_id'],'PI-10')
+
+    def test_ongoing_setup_complete_not_future_execution(self):
+        for sid in ('SG-08','SG-09','SG-10'):
+            self.e=baseline('RA-TEST-1');control(self.e,sid)
+            self.assertEqual(self.result()['final_decision']['rule_id'],'PI-08')
+            self.e['safeguards'][sid]['ongoing_setup'].pop('first_due_date')
+            self.assertEqual(self.result()['safeguards']['status'],'Incomplete')
+            self.e['safeguards'][sid]['ongoing_setup']['cadence_approved']=None
+            self.assertEqual(self.result()['safeguards']['status'],'Pending')
+
+    def test_all_required_current_signatures_and_veto(self):
+        self.e['policy']['required_approver_roles'].append('Risk Director')
+        self.assertEqual(self.result()['final_decision']['rule_id'],'PI-07')
+        self.e['approvals'].append(signature('RA-TEST-1','Risk Director'))
+        self.assertEqual(self.result()['final_decision']['rule_id'],'PI-08')
+        self.e['approvals'][-1]['decision']='Rejected'
+        self.assertEqual(self.result()['final_decision']['rule_id'],'PI-06')
+
+    def test_signature_context_and_authority_are_validated(self):
+        for field,value in [('assessment_id','RA-OTHER'),('policy_version','OLD'),('authorized',False)]:
+            self.e=baseline('RA-TEST-1');self.e['approvals'][0][field]=value
+            self.assertEqual(self.result()['final_decision']['rule_id'],'PI-11')
+        self.e=baseline('RA-TEST-1');self.e['approvals'][0]['evidence_refs']=[]
+        self.assertEqual(self.result()['final_decision']['rule_id'],'PI-07')
+
+    def test_dual_signoff_requires_two_distinct_reviewers(self):
+        control(self.e,'SG-13')
+        self.e['approvals'][1]['reviewer']=self.e['approvals'][2]['reviewer']='Same reviewer'
+        self.assertEqual(self.result()['final_decision']['rule_id'],'PI-05')
+        self.e['approvals'][2]['reviewer']='Different reviewer'
+        self.assertEqual(self.result()['final_decision']['rule_id'],'PI-08')
+
+    def test_high_band_not_rejection_and_restricted_acceptance(self):
+        hit(self.e,12,19,20)
+        r=self.result();self.assertEqual(r['risk_assessment']['risk_band'],'High')
+        self.assertEqual(r['final_decision']['rule_id'],'PI-08')
+        high_industry(self.e)
+        self.assertEqual(self.result()['final_decision']['rule_id'],'PI-10')
+
+    def test_four_intermediate_entities_and_maximum_branch(self):
+        for depths in ([0],[3],[4],[1,4]):
+            analysis=analyze_ownership(graph(depths))
+            self.assertEqual(analysis['intermediate_legal_entity_count'],max(depths))
+        self.assertIs(rf_condition('RF-15',{'intermediate_legal_entity_count':3}),False)
+        self.assertIs(rf_condition('RF-15',{'intermediate_legal_entity_count':4}),True)
+        self.assertIsNone(rf_condition('RF-15',{'ownership_layers':6}))
+
+    def test_ownership_cycles_and_large_graph_do_not_recurse_forever(self):
+        self.e['ownership_structure']=graph([1],cycle=True)
+        r=self.result();self.assertEqual(r['final_decision']['rule_id'],'PI-03')
+        self.assertTrue(r['ownership_analysis']['cycle_detected'])
+        self.assertEqual(analyze_ownership(graph([1200]))['intermediate_legal_entity_count'],1200)
+
+    def test_mixed_stage_versions_and_invalid_upstream_status(self):
+        self.e['upstream_contexts']={'RiskBand':{'assessment_id':'RA-TEST-1','policy_version':'OLD'}}
+        self.assertEqual(self.result()['final_decision']['rule_id'],'PI-11')
+        final=integrate({'hard_gate':'Clear','doc_gate':'Clear','risk_band':''},'Within',{'status':'Not Applicable'},self.e,self.cat)
+        self.assertEqual(final['rule_id'],'PI-11')
+
+    def test_input_errors_do_not_override_confirmed_rejection(self):
+        self.e['input_errors']=['Stale external data'];hit(self.e,1)
+        self.assertEqual(self.result()['final_decision']['rule_id'],'PI-01')
+
+    def test_cli_expectation_mismatch_returns_failure(self):
+        dataset=copy.deepcopy(self.dataset)
+        dataset['test_cases']=dataset['test_cases'][:1]
+        dataset['test_cases'][0]['expected']['final_rule_id']='PI-08'
         with tempfile.TemporaryDirectory() as tmp:
-            for i, source in enumerate(sources):
-                output = Path(tmp) / f'results-{i}.json'
-                process = subprocess.run([sys.executable, str(root/'kyc_poc.py'), '--json', str(source), '--output', str(output)], capture_output=True, text=True)
-                self.assertEqual(process.returncode, 0, process.stderr)
-                results = json.loads(output.read_text())
-                self.assertEqual(len(results), 28)
-                for result in results:
-                    result['audit'].pop('evaluated_at')
-                outputs.append(results)
-        self.assertEqual(outputs[0], outputs[1])
+            source=Path(tmp)/'wrong.json';source.write_text(json.dumps(dataset))
+            process=subprocess.run([sys.executable,str(ROOT/'kyc_poc.py'),'--json',str(source),'--check-expected'],capture_output=True,text=True)
+            self.assertEqual(process.returncode,1)
+            self.assertIn('final_rule_id',process.stderr)
 
-    def test_cli_external_json_and_audit(self):
-        case = {'test_case_id': 'synthetic-case', 'company': 'Fixture', 'data': {
-            'Application': {'application_id': 'fixture-1', 'submission_date': '2026-10-13'},
-            'Industry': {'industry_id': 'fixture-ind', 'industry_name': 'Fixture', 'industry_tier': 'I1'},
-            'party1': {'party_id': 'fixture-party'}, 'WorkflowEvidence': self.e}}
-        self.e['approvals'] = [approval()]
+    def test_malformed_factor_returns_input_hold_without_losing_gate_priority(self):
+        self.e['risk_factors']['RF-20']['status']='Invalid'
+        self.assertEqual(self.result()['final_decision']['rule_id'],'PI-11')
+        hit(self.e,1)
+        self.assertEqual(self.result()['final_decision']['rule_id'],'PI-01')
+
+    def test_selected_approval_control_rejection_is_a_required_veto(self):
+        control(self.e,'SG-04')
+        self.e['policy']['required_approver_roles']=['Compliance Officer']
+        self.e['approvals'][-1]['decision']='Rejected'
+        self.assertEqual(self.result()['final_decision']['rule_id'],'PI-06')
+
+    def test_invalid_policy_shape_produces_input_hold(self):
+        self.e['policy']='invalid'
+        self.assertEqual(self.result()['final_decision']['rule_id'],'PI-11')
+        self.e=baseline('RA-TEST-1');self.e['risk_factors']['RF-20']['status']=[]
+        self.assertEqual(self.result()['final_decision']['rule_id'],'PI-11')
+
+    def test_cli_default_dataset_and_audit(self):
         with tempfile.TemporaryDirectory() as tmp:
-            src, out = Path(tmp)/'cases.json', Path(tmp)/'result.json'
-            src.write_text(json.dumps({'test_cases': [case]}))
-            process = subprocess.run([sys.executable, 'kyc_poc.py', '--json', str(src), '--output', str(out)], capture_output=True, text=True)
-            self.assertEqual(process.returncode, 0, process.stderr)
-            r = json.loads(out.read_text())[0]
-            self.assertEqual(r['final_decision']['rule_id'], 'PI-08')
-            self.assertEqual(len(r['audit']['workbook_sha256']), 3)
-            self.assertIn('RF-21', self.cat.rf)
-            self.assertIn('PI-08', r['audit']['source_rule_ids'])
+            output=Path(tmp)/'results.json'
+            process=subprocess.run([sys.executable,str(ROOT/'kyc_poc.py'),'--check-expected','--output',str(output)],cwd=ROOT,capture_output=True,text=True)
+            self.assertEqual(process.returncode,0,process.stderr)
+            results=json.loads(output.read_text());self.assertEqual(len(results),118)
+            self.assertEqual(len(results[0]['audit']['workbook_sha256']),3)
+            self.assertIn('PI-11',results[0]['audit']['source_rule_ids'])
+            self.assertTrue(all('authorization_status' in r['final_decision'] for r in results))
 
 
-if __name__ == '__main__': unittest.main()
+if __name__=='__main__':unittest.main()

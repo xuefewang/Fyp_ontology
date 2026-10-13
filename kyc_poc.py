@@ -81,6 +81,7 @@ class Case:
     watchlists: list[WatchList] = field(default_factory=list)
     assessment_date: str = ""
     workflow_evidence: dict = field(default_factory=dict)
+    expected: dict = field(default_factory=dict)
 
     def all_parties(self) -> list[Party]:
         return [self.party1] + self.party2_chain
@@ -89,7 +90,7 @@ class Case:
         return [p for p in self.all_parties() if p.is_ubo]
 
     def ownership_layers(self) -> int:
-        """股权链层数：party1 + party2 链上各方，共 1 + len(party2_chain) 层。"""
+        """旧输入总节点数，含两端；不用于新版RF-15的中间法人计数。"""
         return 1 + len(self.party2_chain)
 
 
@@ -126,6 +127,7 @@ def case_from_json(item: dict) -> Case:
         watchlists=[WatchList(w["watchlist_id"], w["list_name"], w.get("list_version_date", ""))
                     for w in data.get("WatchList", [])],
         assessment_date=app["submission_date"],
+        expected=item.get("expected", {}),
         workflow_evidence=(data["WorkflowEvidence"] if "WorkflowEvidence" in data
                            else workflow_from_case(item) if "SourceOfFunds" in data or "ubo_verification" in data
                            else {}),
@@ -203,6 +205,7 @@ def main() -> int:
     ap.add_argument("--rules-dir", type=Path, default=DEFAULT_RULES, help="三个规则工作簿的目录")
     ap.add_argument("--builtin", action="store_true", help="读取内置15个旧格式案例；缺失核验证据保持 Pending")
     ap.add_argument("--detail", nargs="?", const="all", help="输出完整流程 JSON，可指定案例号")
+    ap.add_argument("--check-expected", action="store_true", help="核对每个案例的预期规则、最终结果、Appetite和分值；不匹配则返回非零")
     ap.add_argument("--output", type=Path, help="保存完整流程及审计 JSON")
     args = ap.parse_args()
     try:
@@ -214,6 +217,22 @@ def main() -> int:
     except (OSError, ValueError, KeyError, TypeError, ImportError) as exc:
         print(f"评估失败：{exc}", file=sys.stderr)
         return 2
+    if args.check_expected:
+        fields = {'final_rule_id': lambda r: r['final_decision']['rule_id'],
+                  'final_result': lambda r: r['final_decision']['result'],
+                  'final_appetite': lambda r: r['final_appetite'],
+                  'total_score': lambda r: r['risk_assessment']['total_score']}
+        mismatches = []
+        for case, result in zip(cases, results):
+            if not all(k in case.expected for k in fields):
+                mismatches.append(f'{case.name}: 缺少完整预期结果')
+            for key, getter in fields.items():
+                if key in case.expected and case.expected[key] != getter(result):
+                    mismatches.append(f'{case.name}: {key} expected={case.expected[key]!r}, actual={getter(result)!r}')
+        if mismatches:
+            print('\n'.join(mismatches), file=sys.stderr)
+            return 1
+        print(f'预期结果核对通过：{len(results)} / {len(results)}')
     for warning in catalogue.warnings:
         print(f"规则说明：{warning}", file=sys.stderr)
     if args.output:

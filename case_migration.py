@@ -49,7 +49,10 @@ def workflow_from_case(item):
     pep = any(p.get('pep_status') in {'Confirmed', 'PEP'} for p in ubos)
     associate = any(any(t in str(p.get('pep_status', '')).lower() for t in ('associate', 'spouse', 'partner', 'child', 'parent')) for p in ubos)
     high = ind.get('industry_tier') == 'I3'
-    depth = 1 + len(d.get('party2', []))
+    depth = d.get('intermediate_legal_entity_count')
+    if depth is None and all(p.get('is_ubo') is True for p in d.get('party2', [])):
+        depth = 0
+    complex_ownership = depth >= 4 if type(depth) is int and depth >= 0 else None
     ownership = flag(d, 'ownership_evidence_complete')
     ubo, control = d.get('ubo_verification'), d.get('control_verification')
     regulated = flag(d, 'regulated_activity')
@@ -81,8 +84,8 @@ def workflow_from_case(item):
         'RF-05': True if control == 'Failed' else False if control == 'Verified' else None,
         'RF-06': flag(d, 'illicit_activity_confirmed'), 'RF-07': flag(sf, 'illicit_source_confirmed'),
         'RF-08': flag(d, 'fraud_confirmed'), 'RF-09': missing, 'RF-10': conflict,
-        'RF-11': True if ownership is False or ubo in {'Failed', 'Pending'} else False if ownership is True and ubo == 'Verified' else None,
-        'RF-12': wl('GL'), 'RF-13': pep, 'RF-14': associate, 'RF-15': depth >= 4,
+        'RF-11': False if ubo == 'Failed' else True if ownership is False or ubo in {'Pending', 'AwaitingInformation'} else False if ownership is True and ubo == 'Verified' else None,
+        'RF-12': wl('GL'), 'RF-13': pep, 'RF-14': associate, 'RF-15': complex_ownership,
         'RF-16': nominee, 'RF-17': high,
         'RF-18': any_of(inverse(own), funding in {'Loan', 'Leveraged', 'Borrowed'} if funding is not None else None),
         'RF-19': all_of(young, no_history),
@@ -97,10 +100,10 @@ def workflow_from_case(item):
                    'source_type': 'uploaded_test_case_assertion'}
     rationale = flag(d, 'structural_explanation_adequate')
     discrepancy = flag(d, 'control_rights_discrepancy_unexplained')
-    unusual_structure = all_of(depth >= 4 or nominee, inverse(rationale))
+    unusual_structure = all_of(any_of(complex_ownership, nominee), inverse(rationale))
     d1 = {'legal_entity_verified': all_of(ownership, inverse(flag(d, 'fraud_confirmed'))),
           'ownership_links_verified': ownership, 'ubo_verified': ubo == 'Verified', 'control_verified': control == 'Verified',
-          'complex_ownership': depth >= 4, 'nominee_or_trust': nominee,
+          'intermediate_legal_entity_count': depth, 'complex_ownership': complex_ownership, 'nominee_or_trust': nominee,
           'cross_entity_or_border_complexity': flag(d, 'cross_entity_structure'),
           'control_rights_discrepancy': discrepancy, 'discrepancy_explained': inverse(discrepancy),
           'unusual_structure': unusual_structure, 'material_unresolved_contradiction': conflict,
@@ -135,7 +138,7 @@ def workflow_from_case(item):
             'D1': {'evidence_complete': ownership is True, 'evidence_refs': reference('ownership_evidence_complete','ubo_verification','control_verification'), 'facts': d1},
             'D2': {'evidence_complete': d.get('industry_data_sufficient') is True, 'evidence_refs': reference('Industry','industry_data_sufficient'), 'facts': d2},
             'D3': {'evidence_complete': source_complete is True, 'evidence_refs': reference('SourceOfFunds'), 'facts': d3},
-            'signals': {'regulated_activity': regulated, 'third_party_or_account_mismatch': inverse(own), 'high_risk_relationship': pep},
+            'signals': {'regulated_activity': regulated, 'third_party_or_account_mismatch': inverse(own), 'high_risk_relationship': pep or associate},
             'safeguards': safeguards, 'policy': copy.deepcopy(d.get('PolicyEvidence', {})),
             'approvals': copy.deepcopy(d.get('ApprovalEvidence', [])),
             'reported_officer_decision': d.get('officer_decision'),

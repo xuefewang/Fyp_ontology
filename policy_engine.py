@@ -6,10 +6,13 @@ unknown, not false. Review conclusions must identify their supporting evidence.
 from __future__ import annotations
 
 import datetime as dt
+import copy
 import hashlib
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
+
+from ownership import analyze_ownership
 
 LEVELS = {'Low': 0, 'Medium': 1, 'High': 2}
 PENDING = 'Pending'
@@ -40,7 +43,7 @@ class Catalogue:
     warnings: list[str] = field(default_factory=list)
 
 
-def load_catalogue(directory: Path, rf21_mode: str = 'include') -> Catalogue:
+def load_catalogue(directory: Path) -> Catalogue:
     import openpyxl
     names = {
         'rf': 'IS4920_Integrated_HardGate_RiskFactors_RiskBand.xlsx',
@@ -65,13 +68,6 @@ def load_catalogue(directory: Path, rf21_mode: str = 'include') -> Catalogue:
             rf[r[0]] = Rule(r[0], r[2], r[3], str(r[4]), names['rf'],
                             int(r[4]) if r[6] == 'Score' else 0, r[6])
         warnings = []
-        if 'RF-21' in rf and 'RF-22' not in rf:
-            warnings.append('Workbook conflict: notes remove RF-21 and retain RF-22, '
-                            f'but table contains RF-21 only. RF-21 mode={rf21_mode}; RF-22 not invented.')
-        if rf21_mode == 'exclude':
-            rf.pop('RF-21', None)
-        elif rf21_mode != 'include':
-            raise ValueError('rf21_mode must be exclude or include')
         dims, appetite, sg, pi = {}, {}, {}, {}
         for prefix, sheet in [('D1', 'D1_Ownership'), ('D2', 'D2_Industry'), ('D3', 'D3_Source_of_Funds')]:
             for r in rows('aml', sheet, prefix):
@@ -80,7 +76,6 @@ def load_catalogue(directory: Path, rf21_mode: str = 'include') -> Catalogue:
             appetite[r[0]] = Rule(r[0], r[1], r[2], r[5].split('\n')[0], names['aml'], evidence=r[3])
         for r in rows('aml', 'Safeguards', 'SG'):
             sg[r[0]] = Rule(r[0], r[1], r[4], r[7], names['aml'], evidence=r[6])
-        warnings.append('User scope override: include SG-01 EDD from the AML workbook despite legacy final-workbook exclusion notes; SG-14/15 have no catalogue entries.')
         for r in rows('pi', 'Policy_Integration', 'PI'):
             pi[r[0]] = Rule(r[0], r[2], r[2], r[5].split('\n')[0], names['pi'], priority=int(r[1]), evidence=r[3])
         bands = []
@@ -89,9 +84,12 @@ def load_catalogue(directory: Path, rf21_mode: str = 'include') -> Catalogue:
                 band = r[0].split(' / ')[0]
                 nums = [int(n) for n in re.findall(r'\d+', r[1])]
                 bands.append((band, nums[0], nums[1] if len(nums) == 2 else None))
-        expected = {f'RF-{i:02}' for i in range(1, 21)}
-        if not expected <= rf.keys() or len(dims) != 16 or len(appetite) != 5 or len(sg) != 13 or len(pi) != 11:
+        expected = {f'RF-{i:02}' for i in range(1, 22)}
+        if not expected <= rf.keys() or len(dims) != 17 or len(appetite) != 7 or len(sg) != 13 or len(pi) != 11:
             raise ValueError('Workbook rule set is incomplete or incompatible with this engine')
+        order = ['PI-01', 'PI-03', 'PI-02', 'PI-11', 'PI-06', 'PI-04', 'PI-05', 'PI-07', 'PI-08', 'PI-09', 'PI-10']
+        if [r.rule_id for r in sorted(pi.values(), key=lambda r: r.priority)] != order:
+            raise ValueError('Policy priorities do not match the supported final decision order')
         if bands != [('Low', 0, 4), ('Medium', 5, 9), ('High', 10, None)]:
             raise ValueError('Unexpected risk-band definitions; review engine compatibility')
         return Catalogue(rf, dims, appetite, sg, pi, bands, versions, warnings)
@@ -117,7 +115,7 @@ def dimension_hits(prefix, record):
     """Facts represent documented reviewer conclusions, not guessed thresholds."""
     f = record.get('facts', {})
     if not isinstance(f, dict) or not yes(record, 'evidence_complete') or not refs(record):
-        return [], PENDING
+        return ['D1-07'] if prefix == 'D1' else ['D2-05'] if prefix == 'D2' else ['D3-04'], PENDING
     hits = []
     if prefix == 'D1':
         indicators = ('complex_ownership', 'nominee_or_trust', 'cross_entity_or_border_complexity',
@@ -125,12 +123,15 @@ def dimension_hits(prefix, record):
         if any(type(f.get(k)) is not bool for k in indicators):
             return [], PENDING
         if not yes(f, 'legal_entity_verified', 'ownership_links_verified', 'ubo_verified', 'control_verified'):
-            return [], PENDING
+            return ['D1-07'], PENDING
         required_details = []
         if f['complex_ownership'] or f['nominee_or_trust'] or f['cross_entity_or_border_complexity'] or f['unusual_structure']:
             required_details.append('rationale_sufficient')
         if f['control_rights_discrepancy']: required_details.append('discrepancy_explained')
         if any(type(f.get(k)) is not bool for k in required_details):
+            return [], PENDING
+        depth = f.get('intermediate_legal_entity_count')
+        if type(depth) is not int or depth < 0 or f['complex_ownership'] != (depth >= 4):
             return [], PENDING
         if yes(f, 'complex_ownership', 'rationale_sufficient') and no(f, 'material_unresolved_contradiction'):
             hits.append('D1-02')
@@ -175,20 +176,29 @@ def dimension_hits(prefix, record):
     return hits, None if hits else PENDING
 
 
-def evaluate_dimensions(evidence, cat):
+def evaluate_dimensions(evidence, cat, rf=None):
     results = {}
     for prefix in ('D1', 'D2', 'D3'):
         record = evidence.get(prefix, {})
         hits, status = dimension_hits(prefix, record)
         level = PENDING if status == PENDING else max((cat.dimensions[x].outcome for x in hits), key=LEVELS.__getitem__)
-        results[prefix] = {'level': level, 'rule_ids': hits, 'evidence_refs': record.get('evidence_refs', [])}
+        results[prefix] = {'level': level, 'rule_ids': hits, 'evidence_refs': record.get('evidence_refs', []),
+                           'remediation_rf_ids': ['RF-11'] if 'D1-07' in hits else ['RF-09', 'RF-10'] if 'D2-05' in hits else ['RF-09'] if 'D3-04' in hits else []}
     levels = [d['level'] for d in results.values()]
     if PENDING in levels:
         appetite, fid = PENDING, 'FA-04'
     else:
         highest = max(levels, key=LEVELS.__getitem__)
         appetite, fid = {'Low': ('Within', 'FA-01'), 'Medium': ('Conditional', 'FA-02'), 'High': ('Restricted', 'FA-03')}[highest]
-    return results, appetite, [fid, 'FA-05']
+    rules = [fid, 'FA-05']
+    if (any(d['level'] == PENDING and not d['rule_ids'] for d in results.values())
+            or (results['D2']['level'] == PENDING and evidence.get('D2', {}).get('facts', {}).get('taxonomy_approved') is not True)):
+        rules.append('FA-07')
+    pep_hits = {h['factor_id'] for h in (rf or {}).get('hits', [])} & {'RF-13', 'RF-14'}
+    if appetite != PENDING and pep_hits:
+        appetite = 'Conditional' if appetite == 'Within' else appetite
+        rules.append('FA-06')
+    return results, appetite, rules
 
 
 RF_CRITERIA = {
@@ -202,11 +212,11 @@ RF_CRITERIA = {
     'RF-08': ('all', ('fraudulent_identity_or_key_documents', 'independent_evidence_verified', 'approved_prohibition_met')),
     'RF-09': ('all', ('mandatory_document_missing',)),
     'RF-10': ('all', ('articles_shareholder_register_shareholding_conflict',)),
-    'RF-11': ('all', ('ubo_unidentified_or_ownership_evidence_insufficient', 'reasonable_measures_completed')),
+    'RF-11': ('ubo_pending', ('ubo_verification_status', 'ownership_evidence_insufficient', 'remediation_outstanding')),
     'RF-12': ('all', ('registration_or_ubo_nationality_greylisted',)),
     'RF-13': ('all', ('ubo_confirmed_pep',)),
     'RF-14': ('all', ('ubo_pep_family_or_close_associate',)),
-    'RF-15': ('layers', ('ownership_layers',)),
+    'RF-15': ('layers', ('intermediate_legal_entity_count',)),
     'RF-16': ('all', ('nominee_or_trust_indirect_shareholding',)),
     'RF-17': ('all', ('principal_business_in_approved_high_risk_category',)),
     'RF-18': ('any', ('third_party_funding', 'non_own_name_account', 'borrowed_or_leveraged_funding')),
@@ -222,9 +232,13 @@ def rf_condition(fid, facts):
     values = [facts.get(k) for k in keys]
     if method == 'failed':
         return True if values[0] == 'Failed' else False if values[0] == 'Verified' else None
+    if method == 'ubo_pending':
+        if values[0] == 'Failed': return False
+        if values[0] in {'Pending', 'AwaitingInformation'} or any(v is True for v in values[1:]): return True
+        return False if values[0] == 'Verified' and all(v is False for v in values[1:]) else None
     if method == 'layers':
         depth = values[0]
-        return depth >= 4 if type(depth) is int and depth >= 1 else None
+        return depth >= 4 if type(depth) is int and depth >= 0 else None
     if method == 'jurisdictions':
         count, complex_structure = values
         if (type(count) is int and count >= 3) or complex_structure is True:
@@ -240,22 +254,26 @@ def rf_condition(fid, facts):
 def evaluate_rf(evidence, cat):
     records = evidence.get('risk_factors', {})
     unknown = set(records) - set(cat.rf)
-    if unknown:
-        raise ValueError(f'Unknown or excluded risk factor IDs: {sorted(unknown)}')
+    input_errors = [f'Unknown risk factor IDs: {sorted(unknown)}'] if unknown else []
     hits, pending, assessments = [], [], []
     hard_pending, doc_pending = [], []
     for fid, rule in cat.rf.items():
         record = records.get(fid, {})
+        if not isinstance(record, dict):
+            input_errors.append(f'{fid}: invalid assessment record'); record = {}
         if 'facts' in record:
-            condition = rf_condition(fid, record['facts'])
+            condition = rf_condition(fid, record['facts']) if isinstance(record['facts'], dict) else None
+            if not isinstance(record['facts'], dict): input_errors.append(f'{fid}: invalid fact record')
             status = 'Hit' if condition is True else 'Clear' if condition is False else PENDING
             supplied = record.get('status')
             if supplied is not None and supplied != status:
-                raise ValueError(f'{fid}: declared status contradicts predicate facts')
+                input_errors.append(f'{fid}: declared status contradicts predicate facts')
+                status = PENDING
         else:
             status = record.get('status', PENDING)
-        if status not in {'Hit', 'Clear', PENDING}:
-            raise ValueError(f'{fid}: status must be Hit, Clear or Pending')
+        if not isinstance(status, str) or status not in {'Hit', 'Clear', PENDING}:
+            input_errors.append(f'{fid}: status must be Hit, Clear or Pending')
+            status = PENDING
         if status != PENDING and (not refs(record) or record.get('verified') is not True):
             status = PENDING
         assessments.append({'rule_id': fid, 'status': status, 'evidence_refs': record.get('evidence_refs', [])})
@@ -268,13 +286,19 @@ def evaluate_rf(evidence, cat):
                          'action_type': rule.outcome, 'evidence_refs': record['evidence_refs']})
     hard = 'Confirmed Hit' if any(h['factor_type'] == 'HardGate' for h in hits) else PENDING if hard_pending else 'Clear'
     doc_hits = {h['factor_id'] for h in hits if h['factor_type'] == 'DocGate'}
-    doc = 'Human Review' if 'RF-10' in doc_hits else 'Awaiting Information' if doc_hits else PENDING if doc_pending else 'Clear'
-    score = sum(h['points_applied'] for h in hits)
-    band = next(b for b, low, high in cat.bands if score >= low and (high is None or score <= high))
+    doc = 'Human Review' if 'RF-10' in doc_hits or evidence.get('ownership_review_required') is True else 'Awaiting Information' if doc_hits else PENDING if doc_pending else 'Clear'
+    subtotal = sum(h['points_applied'] for h in hits)
+    score = subtotal if doc == 'Clear' else None
+    band = next(b for b, low, high in cat.bands if subtotal >= low and (high is None or subtotal <= high)) if score is not None else PENDING
     # A confirmed prohibition is reported separately, never converted to High.
     final_band = PENDING if hard != 'Clear' or doc != 'Clear' or pending else band
     return {'hard_gate': hard, 'doc_gate': doc, 'total_score': score, 'score_band': band,
-            'risk_band': final_band, 'hits': hits, 'pending_rule_ids': pending, 'rule_assessments': assessments}
+            'risk_band': final_band, 'confirmed_score_subtotal': subtotal,
+            'scoring_status': 'Completed' if doc == 'Clear' else 'Held — RF document remediation',
+            'doc_gate_reasons': ([a for a in assessments if a['rule_id'] in {'RF-09', 'RF-10', 'RF-11'} and a['status'] != 'Clear']
+                                 + ([{'rule_id': 'RF-15', 'status': 'Human Review', 'reason': 'Ownership cycle'}]
+                                    if evidence.get('ownership_review_required') is True else [])),
+            'hits': hits, 'pending_rule_ids': pending, 'rule_assessments': assessments, 'input_errors': input_errors}
 
 
 def valid_approval(record, roles=None):
@@ -290,36 +314,35 @@ def safeguard_candidates(dimensions, rf, appetite, evidence):
     dims = {r for d in dimensions.values() for r in d['rule_ids']}
     signals = evidence.get('signals', {})
     result = set()
-    if appetite not in {'Conditional', 'Restricted'}:
-        return result
     if (appetite == 'Restricted' or dims & {'D1-02', 'D1-05', 'D1-06', 'D2-03', 'D2-04', 'D3-03'}
             or len([h for h in rf['hits'] if h.get('factor_type') == 'Score']) >= 2
             or yes(signals, 'edd_required')):
         result.add('SG-01')
-    if dims & {'D3-02', 'D3-03', 'D3-05', 'D2-03', 'D2-04'} or hits & {'RF-13', 'RF-17'}: result.add('SG-02')
-    if 'RF-13' in hits or yes(signals, 'high_risk_relationship'): result.add('SG-03')
-    if appetite == 'Restricted' or 'RF-13' in hits or yes(signals, 'high_risk_relationship'): result.add('SG-04')
+    if dims & {'D3-02', 'D3-03', 'D3-05', 'D2-03', 'D2-04'} or hits & {'RF-13', 'RF-14', 'RF-17'}: result.add('SG-02')
+    if bool(hits & {'RF-13', 'RF-14'}) or yes(signals, 'high_risk_relationship'): result.add('SG-03')
+    if appetite == 'Restricted' or bool(hits & {'RF-13', 'RF-14'}) or yes(signals, 'high_risk_relationship'): result.add('SG-04')
     if dims & {'D3-02', 'D3-03'} and yes(signals, 'third_party_or_account_mismatch'): result.add('SG-05')
     if yes(signals, 'exposure_limit_reduces_risk'): result.add('SG-06')
     if yes(signals, 'service_restriction_exposure'): result.add('SG-07')
-    result.add('SG-08')
-    if 'RF-13' in hits or 'RF-12' in hits or yes(signals, 'rescreening_exposure'): result.add('SG-09')
+    if appetite in {'Conditional', 'Restricted'}: result.add('SG-08')
+    if bool(hits & {'RF-13', 'RF-14'}) or 'RF-12' in hits or yes(signals, 'rescreening_exposure'): result.add('SG-09')
     if appetite == 'Restricted' or yes(signals, 'high_risk_relationship'): result.add('SG-10')
     if dims & {'D1-02', 'D1-03', 'D1-04'} or hits & {'RF-15', 'RF-16'}: result.add('SG-11')
     if yes(signals, 'regulated_activity') or yes(evidence.get('D2', {}).get('facts', {}), 'regulated'): result.add('SG-12')
-    if 'RF-13' in hits or yes(signals, 'dual_approval_required'): result.add('SG-13')
+    if bool(hits & {'RF-13', 'RF-14'}) or yes(signals, 'dual_approval_required'): result.add('SG-13')
     return result
 
 
 def evaluate_safeguards(dimensions, rf, appetite, evidence, cat):
     records = evidence.get('safeguards', {})
     unknown = set(records) - set(cat.safeguards)
-    if unknown:
-        raise ValueError(f'Unknown safeguard IDs: {sorted(unknown)}')
+    input_errors = [f'Unknown safeguard IDs: {sorted(unknown)}'] if unknown else []
     candidates = safeguard_candidates(dimensions, rf, appetite, evidence)
     selected, unresolved = [], []
-    for sid in sorted(candidates | set(records)):
+    for sid in sorted((candidates | set(records)) & set(cat.safeguards)):
         record = records.get(sid, {})
+        if not isinstance(record, dict):
+            input_errors.append(f'{sid}: invalid safeguard record'); record = {}
         # Applicability requires an approved policy and a documented trigger review.
         if type(record.get('applicable')) is not bool or record.get('policy_approved') is not True or not refs(record):
             unresolved.append(sid)
@@ -327,11 +350,16 @@ def evaluate_safeguards(dimensions, rf, appetite, evidence, cat):
         if not record['applicable']:
             continue
         status = record.get('status', PENDING)
-        if status not in {'Complete', 'Incomplete', PENDING}:
-            raise ValueError(f'{sid}: invalid safeguard completion status')
-        if status == 'Complete' and (not isinstance(record.get('owner'), str) or not record['owner'].strip() or not refs({'evidence_refs': record.get('completion_evidence_refs')})):
+        if not isinstance(status, str) or status not in {'Complete', 'Incomplete', PENDING}:
+            input_errors.append(f'{sid}: invalid safeguard completion status')
             status = PENDING
-        approvals = evidence.get('approvals', [])
+        if status == 'Complete' and (not isinstance(record.get('owner'), str) or not record['owner'].strip() or not refs({'evidence_refs': record.get('completion_evidence_refs')})
+                                     or not yes(record, 'completion_verified')
+                                     or not all(isinstance(record.get(k), str) and record[k].strip() for k in ('verifier', 'verified_at'))):
+            status = PENDING
+        approvals = [a for a in evidence.get('approvals', []) if isinstance(a, dict)
+                     and a.get('assessment_id') == evidence.get('assessment_id')
+                     and a.get('policy_version') == evidence.get('policy', {}).get('version')]
         if sid == 'SG-04' and status == 'Complete' and not any(valid_approval(a, {'Senior Compliance'}) and a['decision'] == 'Approved' for a in approvals):
             status = PENDING
         if sid == 'SG-13' and status == 'Complete':
@@ -339,69 +367,133 @@ def evaluate_safeguards(dimensions, rf, appetite, evidence, cat):
                          if valid_approval(a, {'Compliance Director', 'Risk Director'}) and a['decision'] == 'Approved'}
             if len(directors) != 2 or len(set(directors.values())) != 2:
                 status = PENDING
+        if sid in {'SG-08', 'SG-09', 'SG-10'} and record.get('status') == 'Complete':
+            schedule = record.get('ongoing_setup', {})
+            valid_schedule = (isinstance(schedule, dict) and yes(schedule, 'cadence_approved', 'setup_verified', 'signed_off')
+                              and all(isinstance(schedule.get(k), str) and schedule[k].strip()
+                                      for k in ('cadence', 'first_due_date', 'executable_plan', 'verifier', 'verified_at'))
+                              and refs(schedule))
+            if not isinstance(schedule, dict) or schedule.get('cadence_approved') is not True:
+                status = PENDING
+            elif not valid_schedule or not record.get('owner'):
+                status = 'Incomplete'
         selected.append({'safeguard_id': sid, 'status': status, 'owner': record.get('owner'),
                          'evidence_refs': record['evidence_refs'],
-                         'completion_evidence_refs': record.get('completion_evidence_refs', [])})
-    if unresolved or any(x['status'] == PENDING for x in selected):
+                         'completion_evidence_refs': record.get('completion_evidence_refs', []),
+                         'ongoing_setup': record.get('ongoing_setup') if sid in {'SG-08', 'SG-09', 'SG-10'} else None})
+    if not yes(evidence.get('safeguard_selection', {}), 'reviewed') or not refs(evidence.get('safeguard_selection', {})):
+        status = PENDING
+    elif unresolved or any(x['status'] == PENDING for x in selected):
         status = PENDING
     elif any(x['status'] == 'Incomplete' for x in selected):
         status = 'Incomplete'
     elif selected:
         status = 'Complete'
-    elif appetite == PENDING:
+    elif appetite == PENDING or not (evidence.get('safeguard_selection', {}).get('reviewed') is True
+                                     and refs(evidence.get('safeguard_selection', {}))):
         status = PENDING
     else:
         status = 'Not Applicable'
     return {'status': status, 'selected': selected, 'unresolved_applicability': unresolved,
-            'supported_rule_ids': sorted(cat.safeguards)}
+            'supported_rule_ids': sorted(cat.safeguards), 'input_errors': input_errors}
 
 
 def integrate(rf, appetite, sg, evidence, cat):
-    """Final step consumes upstream statuses only; no recalculation."""
+    """Consume upstream outcomes in the exact workbook priority order."""
     policy = evidence.get('policy', {})
-    approvals = evidence.get('approvals', [])
     required = policy.get('required_approver_roles')
-    policy_defined = (yes(policy, 'approval_matrix_approved') and bool(policy.get('version'))
+    if isinstance(required, list) and all(isinstance(r, str) for r in required):
+        required = list(required)
+        for item in sg.get('selected', []):
+            roles = {'SG-04': ['Senior Compliance'], 'SG-13': ['Compliance Director', 'Risk Director']}.get(item['safeguard_id'], [])
+            required.extend(r for r in roles if r not in required)
+    assessment_id = evidence.get('assessment_id')
+    version = policy.get('version')
+    policy_defined = (yes(policy, 'approval_matrix_approved') and isinstance(version, str) and bool(version.strip())
                       and isinstance(required, list) and bool(required)
-                      and all(isinstance(r, str) and r for r in required))
-    valid = [a for a in approvals if valid_approval(a)]
-    relevant = [a for a in valid if isinstance(required, list) and a.get('role') in required]
-    rejected = any(a['decision'] == 'Rejected' for a in relevant)
-    approved = policy_defined and all(any(a.get('role') == role and a['decision'] == 'Approved' for a in relevant) for role in required)
-    # Conflicting approvals need policy-owner resolution; do not pick the last record.
-    inconsistent = any({a['decision'] for a in relevant if a.get('role') == role} == {'Approved', 'Rejected'} for role in (required or []))
-    invalid_inputs = (rf.get('hard_gate') not in {'Confirmed Hit', 'Clear', PENDING}
-                      or rf.get('doc_gate') not in {'Clear', 'Awaiting Information', 'Human Review', PENDING}
-                      or rf.get('risk_band') not in {*LEVELS, PENDING}
-                      or appetite not in {'Within', 'Conditional', 'Restricted', PENDING}
-                      or sg.get('status') not in {'Not Applicable', 'Complete', 'Incomplete', PENDING})
-    if rf.get('hard_gate') == 'Confirmed Hit': fid = 'PI-01'
-    elif invalid_inputs: fid = 'PI-11'
-    elif rf['hard_gate'] == PENDING: fid = 'PI-02'
-    elif rf['doc_gate'] != 'Clear': fid = 'PI-03'
-    elif rf['risk_band'] == PENDING or appetite == PENDING: fid = 'PI-04'
-    elif appetite in {'Conditional', 'Restricted'} and sg['status'] in {'Incomplete', PENDING}: fid = 'PI-05'
-    elif not policy_defined or inconsistent: fid = 'PI-11'
-    elif appetite == 'Within' and (sg.get('selected') or any(h['factor_id'] == 'RF-13' for h in rf.get('hits', []))): fid = 'PI-11'
-    elif rejected: fid = 'PI-06'
-    elif sg['status'] not in {'Complete', 'Not Applicable'}: fid = 'PI-11'
-    elif appetite == 'Restricted' and policy.get('restricted_acceptance_permitted') not in (True, False): fid = 'PI-11'
-    elif appetite == 'Restricted' and policy.get('restricted_acceptance_permitted') is False:
-        return {'rule_id': 'PI-10', 'result': 'REJECT — Policy Disallows Restricted Acceptance',
-                'next_action': 'Record the applicable prohibition and policy basis.'}
-    elif not approved: fid = 'PI-07'
-    elif appetite == 'Within': fid = 'PI-08'
-    elif appetite == 'Conditional': fid = 'PI-09'
-    elif appetite == 'Restricted': fid = 'PI-10'
-    else: fid = 'PI-11'
-    rule = cat.integration[fid]
-    return {'rule_id': fid, 'result': rule.outcome, 'rationale': rule.condition}
+                      and all(isinstance(r, str) and r.strip() for r in required)
+                      and len(set(required)) == len(required) and bool(assessment_id))
+    errors = list(evidence.get('input_errors', [])) + rf.get('input_errors', []) + sg.get('input_errors', [])
+    statuses_valid = (rf.get('hard_gate') in {'Confirmed Hit', 'Clear', PENDING}
+        and rf.get('doc_gate') in {'Clear', 'Awaiting Information', 'Human Review', PENDING}
+        and rf.get('risk_band') in {*LEVELS, PENDING}
+        and appetite in {'Within', 'Conditional', 'Restricted', PENDING}
+        and sg.get('status') in {'Not Applicable', 'Complete', 'Incomplete', PENDING})
+    if not statuses_valid: errors.append('Missing or invalid required upstream status')
+    if not policy_defined: errors.append('Undefined approved authority matrix, policy version or assessment identity')
+    for name, context in evidence.get('upstream_contexts', {}).items():
+        if not isinstance(context, dict) or context.get('assessment_id') != assessment_id or context.get('policy_version') != version:
+            errors.append(f'{name}: mismatched assessment or policy version')
+    valid = []
+    for record in evidence.get('approvals', []):
+        if not isinstance(record, dict): errors.append('Invalid approval record'); continue
+        if record.get('role') not in (required or []): continue
+        if record.get('assessment_id') != assessment_id or record.get('policy_version') != version:
+            errors.append('Required approval belongs to a different assessment/policy version'); continue
+        if record.get('authorized') is not True:
+            errors.append('Required approver authority is unknown or invalid'); continue
+        if valid_approval(record): valid.append(record)
+    rejected = any(a['decision'] == 'Rejected' for a in valid)
+    approved = policy_defined and all(any(a['role'] == r and a['decision'] == 'Approved' for a in valid) for r in required)
+    authorization = 'Rejected' if rejected else 'Approved' if approved else PENDING
+    conditions = {
+        'PI-01': rf.get('hard_gate') == 'Confirmed Hit',
+        'PI-03': rf.get('doc_gate') in {'Awaiting Information', 'Human Review', PENDING},
+        'PI-02': rf.get('hard_gate') == PENDING,
+        'PI-11': bool(errors),
+        'PI-06': rejected,
+        'PI-04': rf.get('risk_band') == PENDING or appetite == PENDING,
+        'PI-05': sg.get('status') in {'Incomplete', PENDING},
+        'PI-07': authorization == PENDING,
+        'PI-08': appetite == 'Within',
+        'PI-09': appetite == 'Conditional',
+        'PI-10': appetite == 'Restricted',
+    }
+    # Shared acceptance guard; Restricted is expressly permitted in this version.
+    guard = (rf.get('hard_gate') == 'Clear' and rf.get('doc_gate') == 'Clear'
+             and rf.get('risk_band') in LEVELS and appetite in {'Within', 'Conditional', 'Restricted'}
+             and sg.get('status') in {'Complete', 'Not Applicable'} and authorization == 'Approved' and not errors)
+    for rule in sorted(cat.integration.values(), key=lambda r: r.priority):
+        if conditions[rule.rule_id] and (rule.rule_id not in {'PI-08', 'PI-09', 'PI-10'} or guard):
+            return {'rule_id': rule.rule_id, 'result': rule.outcome, 'rationale': rule.condition,
+                    'authorization_status': authorization, 'required_approver_roles': required, 'input_errors': errors}
+    return {'rule_id': 'PI-11', 'result': cat.integration['PI-11'].outcome,
+            'rationale': 'No final rule matched the shared acceptance guard',
+            'authorization_status': authorization, 'required_approver_roles': required, 'input_errors': errors}
 
 
 def assess_workflow(case, cat):
-    evidence = case.workflow_evidence
+    evidence = copy.deepcopy(case.workflow_evidence)
+    if not isinstance(evidence, dict):
+        evidence = {'input_errors': ['WorkflowEvidence must be an object']}
+    for key in ('policy', 'risk_factors', 'safeguards', 'signals', 'D1', 'D2', 'D3', 'upstream_contexts', 'safeguard_selection'):
+        if key in evidence and not isinstance(evidence[key], dict):
+            evidence.setdefault('input_errors', []).append(f'{key} must be an object')
+            evidence[key] = {}
+    if 'approvals' in evidence and not isinstance(evidence['approvals'], list):
+        evidence.setdefault('input_errors', []).append('approvals must be an array')
+        evidence['approvals'] = []
+    aid = 'RA-' + case.application.application_id
+    if evidence.get('assessment_id') not in (None, aid):
+        evidence.setdefault('input_errors', []).append('Input assessment_id does not match current case')
+    evidence.setdefault('assessment_id', aid)
+    ownership = None
+    if 'ownership_structure' in evidence:
+        ownership = analyze_ownership(evidence['ownership_structure'])
+        fact = evidence.setdefault('risk_factors', {}).setdefault('RF-15', {})
+        declared = fact.pop('status', None)
+        count = ownership['intermediate_legal_entity_count']
+        inferred = PENDING if count is None else 'Hit' if count >= 4 else 'Clear'
+        if declared is not None and declared != inferred:
+            evidence.setdefault('input_errors', []).append('RF-15 conclusion contradicts ownership graph')
+        fact['facts'] = {'intermediate_legal_entity_count': count}
+        evidence.setdefault('D1', {}).setdefault('facts', {})['intermediate_legal_entity_count'] = ownership['intermediate_legal_entity_count']
+        if type(ownership['intermediate_legal_entity_count']) is int:
+            evidence['D1']['facts']['complex_ownership'] = ownership['intermediate_legal_entity_count'] >= 4
+        if ownership['cycle_detected']:
+            evidence['ownership_review_required'] = True
     rf = evaluate_rf(evidence, cat)
-    dimensions, appetite, appetite_rules = evaluate_dimensions(evidence, cat)
+    dimensions, appetite, appetite_rules = evaluate_dimensions(evidence, cat, rf)
     sg = evaluate_safeguards(dimensions, rf, appetite, evidence, cat)
     final = integrate(rf, appetite, sg, evidence, cat)
     ids = [h['factor_id'] for h in rf['hits']] + rf['pending_rule_ids']
@@ -409,6 +501,7 @@ def assess_workflow(case, cat):
     ids += [s['safeguard_id'] for s in sg['selected']] + sg['unresolved_applicability'] + [final['rule_id']]
     return {'case': case.name, 'assessment_id': 'RA-' + case.application.application_id,
             'assessment_date': case.assessment_date or case.application.submission_date,
+            'ownership_analysis': ownership,
             'risk_assessment': rf, 'dimensions': dimensions, 'final_appetite': appetite,
             'appetite_rule_ids': appetite_rules, 'safeguards': sg, 'final_decision': final,
             'edd_required': (True if any(x['safeguard_id'] == 'SG-01' for x in sg['selected'])
