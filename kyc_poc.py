@@ -4,7 +4,7 @@
 
 The three bundled workbooks supply rule IDs, points, bands and policy outcomes.
 External JSON preserves the original entity layout and adds data.WorkflowEvidence.
-Legacy or builtin inputs without verification facts remain Pending. All workbook safeguards SG-01..SG-13 supported, including EDD.
+Inputs without verification facts remain Pending. All workbook safeguards SG-01..SG-13 supported, including EDD.
 """
 from __future__ import annotations
 
@@ -140,77 +140,17 @@ def load_cases(path: Path) -> list[Case]:
     return [case_from_json(it) for it in items]
 
 
-# ======================================================================================
-# 7. 内置案例（不依赖 json，用于快速自测）
-# ======================================================================================
-
-ASOF = "2026-10-06"
-
-
-def builtin_cases() -> list[Case]:
-    def mk(cid, name, industry, tier="I1", nat="GB", pep="None", san=False,
-           chain=0, nominee=False, trust=False, lists=(), docs=None, missing=False, conflict=False):
-        p1 = Party(f"{cid}-P1", f"{cid}-PER", f"{name}", is_ubo=False, nationality=nat,
-                   registration_jurisdiction=nat, shareholding_percentage=100.0)
-        chain_parties = [Party(f"{cid}-P2-{i}", f"{cid}-PER2-{i}", is_ubo=(i == chain),
-                               pep_status=pep, sanctions_flag=san, is_nominee=nominee,
-                               is_trust=trust, nationality=nat, registration_jurisdiction=nat)
-                         for i in range(1, chain + 1)] or [
-            Party(f"{cid}-P2-1", f"{cid}-PER2-1", is_ubo=True, pep_status=pep,
-                  sanctions_flag=san, is_nominee=nominee, is_trust=trust,
-                  nationality=nat, registration_jurisdiction=nat)]
-        if docs is None:
-            docs = [Document(f"{cid}-D1", "DirectorDeclaration",
-                             "Missing" if missing else "Provided", "director_identity", True),
-                    Document(f"{cid}-D2", "ShareholderRegister",
-                             "Conflicting" if conflict else "Provided", "shareholding_pct", True)]
-        return Case(
-            name=f"{cid} {name}",
-            application=Application(cid, ASOF),
-            industry=Industry(f"{cid}-IND", industry, tier),
-            party1=p1,
-            party2_chain=chain_parties,
-            documents=docs,
-            watchlists=[WatchList(i, n, ASOF) for i, n in lists],
-            assessment_date=ASOF,
-        )
-
-    BL = ("WL-FATF-BL-202602", "FATF High-Risk Jurisdictions List (Blacklist)")
-    GL = ("WL-FATF-GL-202606", "FATF Increased Monitoring List (Grey List)")
-    UNL = ("WL-UN-CONSOLIDATED", "UN Security Council Consolidated List")
-    return [
-        mk("001", "干净客户", "Standard Risk Industries"),
-        mk("002", "灰名单", "Standard Risk Industries", nat="VN", lists=[GL]),
-        mk("003", "黑名单硬停", "Standard Risk Industries", nat="IR", lists=[BL]),
-        mk("004", "制裁硬停", "Standard Risk Industries", san=True, lists=[UNL]),
-        mk("005", "PEP", "Standard Risk Industries", pep="Confirmed"),
-        mk("006", "股权链 4 层", "Standard Risk Industries", chain=3),
-        mk("007", "代持安排", "Standard Risk Industries", chain=2, nominee=True),
-        mk("008", "高风险行业", "High-Risk / Restricted Industries", tier="I3"),
-        mk("009", "必备文件缺失", "Standard Risk Industries", missing=True),
-        mk("010", "文件冲突", "Standard Risk Industries", conflict=True),
-        mk("011", "组合 3+3=6", "Standard Risk Industries", nat="VN", chain=2,
-           nominee=True, lists=[GL]),
-        mk("012", "组合 5+4=9", "High-Risk / Restricted Industries", tier="I3", pep="Confirmed"),
-        mk("013", "组合 3+3+4=10", "High-Risk / Restricted Industries", tier="I3",
-           nat="VN", chain=2, nominee=True, lists=[GL]),
-        mk("014", "硬停与高分并存", "Standard Risk Industries", nat="IR", pep="Confirmed", lists=[BL]),
-        mk("015", "PEP 关联人", "Standard Risk Industries", pep="CloseAssociate"),
-    ]
-
-
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--json", type=Path, default=DEFAULT_JSON, help="外部案例 JSON（默认仓库目录）")
     ap.add_argument("--rules-dir", type=Path, default=DEFAULT_RULES, help="三个规则工作簿的目录")
-    ap.add_argument("--builtin", action="store_true", help="读取内置15个旧格式案例；缺失核验证据保持 Pending")
     ap.add_argument("--detail", nargs="?", const="all", help="输出完整流程 JSON，可指定案例号")
     ap.add_argument("--check-expected", action="store_true", help="核对每个案例的预期规则、最终结果、Appetite和分值；不匹配则返回非零")
     ap.add_argument("--output", type=Path, help="保存完整流程及审计 JSON")
     args = ap.parse_args()
     try:
         catalogue = load_catalogue(args.rules_dir)
-        cases = builtin_cases() if args.builtin else load_cases(args.json)
+        cases = load_cases(args.json)
         if not cases:
             raise ValueError("没有输入案例，不能视为已完成验证")
         results = [assess_workflow(case, catalogue) for case in cases]

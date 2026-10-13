@@ -17,18 +17,17 @@ python3 -m venv .venv
 
 也可使用已配置的 `/workspace/.venvs/fyp-ontology/bin/python`。`--rules-dir` 指定三个工作簿的其他目录。所有默认路径相对于脚本目录，不再依赖 Windows 下载目录。
 
-`test_cases_data.json` 包含 **118 个案例**：28 个上传原始案例（全部原字段保留）+ 90 个明确标为合成数据的扩展场景。覆盖全部 RF-01～21、PI-01～11、SG-01～13，另有计分边界、优先级竞争、PEP下限、跨评估／政策版本、股权分支／循环及持续控制配置案例。每项都有 `WorkflowEvidence` 和预先独立填写的 `expected`，包括最终规则、最终结果、Appetite及分值。合成核验材料与批准政策仅为测试断言，不是实际客户核验。
+`test_cases_data.json` 包含 **174 个案例**：28 个上传原始案例（全部原字段保留）+ 146 个明确标为合成数据的扩展场景。覆盖全部 RF-01～21、PI-01～11、SG-01～13，另有计分边界、优先级竞争、PEP下限、跨评估／政策版本、股权分支／循环及持续控制配置案例。每项都有 `WorkflowEvidence` 和预先独立填写的 `expected`，包括最终规则、最终结果、Appetite及分值。合成核验材料与批准政策仅为测试断言，不是实际客户核验。
 
-原始文件逐字节保存在 `tests/fixtures/original_test_cases.json`，新版根对象记录其 SHA-256。`tests/build_cases.py` 可重复生成新版案例，不调用评估引擎计算预期值。
+所有测试输入仅保存在 `test_cases_data.json`，不需要案例生成脚本。原始28个案例的输入快照保存在同一文件的 `original_source`，并记录内容SHA-256；实际运行只读取 `test_cases` 数组。修改或增加场景时直接编辑JSON中的输入及独立预期结果。
 
 ```bash
 python kyc_poc.py --check-expected
 python kyc_poc.py --detail new001 --output /tmp/kyc-results.json
-python tests/build_cases.py
 python -m unittest discover -s tests -v
 ```
 
-`--check-expected` 核对全部案例的规则、最终结果、Appetite与分值；失败或缺失预期字段返回非零。程序可直接读取原始文件并在运行时迁移；显式 `WorkflowEvidence` 优先。`--builtin` 的15个旧实体案例缺少核验记录，不能视为已完成新版验证。
+`--check-expected` 核对全部案例的规则、最终结果、Appetite与分值；失败或缺失预期字段返回非零。程序可直接读取原始文件并在运行时迁移；显式 `WorkflowEvidence` 优先。旧版Python内置案例已移除，所有场景统一从JSON读取。
 
 ## 最终判断顺序（新版工作簿）
 
@@ -189,4 +188,4 @@ FA-01：全 Low → Within。FA-02：至少一项 Medium、无 High → Conditio
 
 三个更新工作簿原样保存在`rules/`。旧RF-21备注矛盾和PEP下限歧义已在新版消除，不再输出旧警告。运行结果记录工作簿SHA-256、规则编号、评估及政策版本、签署、证据和控制就绪信息。原始上传案例缺失的政策／授权材料仍保持未知。
 
-测试逐项核对118个独立预期结果，检查RF-01～21、PI-01～11、SG-01～13覆盖，并验证原28个案例保留、最终顺序、计分边界、PEP下限、版本隔离、全部必要签署、Within控制、持续配置以及1200层图不会递归溢出。合成扩展和预期结果生成器均明确标记为测试材料。
+测试逐项核对174个独立预期结果，检查RF-01～21、PI-01～11、SG-01～13覆盖，并验证原28个案例保留、最终顺序、计分边界、PEP下限、版本隔离、全部必要签署、Within控制、持续配置以及1200层图不会递归溢出。合成扩展明确标记为测试材料；测试代码仅读取静态JSON并验证输出，不生成案例。
