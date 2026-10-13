@@ -13,7 +13,6 @@ from pathlib import Path
 
 LEVELS = {'Low': 0, 'Medium': 1, 'High': 2}
 PENDING = 'Pending'
-EXCLUDED_SG = {'SG-01', 'SG-14', 'SG-15'}
 
 
 @dataclass
@@ -80,8 +79,8 @@ def load_catalogue(directory: Path, rf21_mode: str = 'include') -> Catalogue:
         for r in rows('aml', 'Final_Appetite', 'FA'):
             appetite[r[0]] = Rule(r[0], r[1], r[2], r[5].split('\n')[0], names['aml'], evidence=r[3])
         for r in rows('aml', 'Safeguards', 'SG'):
-            if r[0] not in EXCLUDED_SG:
-                sg[r[0]] = Rule(r[0], r[1], r[4], r[7], names['aml'], evidence=r[6])
+            sg[r[0]] = Rule(r[0], r[1], r[4], r[7], names['aml'], evidence=r[6])
+        warnings.append('User scope override: include SG-01 EDD from the AML workbook despite legacy final-workbook exclusion notes; SG-14/15 have no catalogue entries.')
         for r in rows('pi', 'Policy_Integration', 'PI'):
             pi[r[0]] = Rule(r[0], r[2], r[2], r[5].split('\n')[0], names['pi'], priority=int(r[1]), evidence=r[3])
         bands = []
@@ -91,7 +90,7 @@ def load_catalogue(directory: Path, rf21_mode: str = 'include') -> Catalogue:
                 nums = [int(n) for n in re.findall(r'\d+', r[1])]
                 bands.append((band, nums[0], nums[1] if len(nums) == 2 else None))
         expected = {f'RF-{i:02}' for i in range(1, 21)}
-        if not expected <= rf.keys() or len(dims) != 16 or len(appetite) != 5 or len(sg) != 12 or len(pi) != 11:
+        if not expected <= rf.keys() or len(dims) != 16 or len(appetite) != 5 or len(sg) != 13 or len(pi) != 11:
             raise ValueError('Workbook rule set is incomplete or incompatible with this engine')
         if bands != [('Low', 0, 4), ('Medium', 5, 9), ('High', 10, None)]:
             raise ValueError('Unexpected risk-band definitions; review engine compatibility')
@@ -266,8 +265,7 @@ def evaluate_rf(evidence, cat):
             if rule.kind == 'DocGate': doc_pending.append(fid)
         elif status == 'Hit':
             hits.append({'factor_id': fid, 'factor_type': rule.kind, 'points_applied': rule.points,
-                         'action_type': rule.outcome, 'evidence_refs': record['evidence_refs'],
-                         'edd_triggered': False})
+                         'action_type': rule.outcome, 'evidence_refs': record['evidence_refs']})
     hard = 'Confirmed Hit' if any(h['factor_type'] == 'HardGate' for h in hits) else PENDING if hard_pending else 'Clear'
     doc_hits = {h['factor_id'] for h in hits if h['factor_type'] == 'DocGate'}
     doc = 'Human Review' if 'RF-10' in doc_hits else 'Awaiting Information' if doc_hits else PENDING if doc_pending else 'Clear'
@@ -294,6 +292,10 @@ def safeguard_candidates(dimensions, rf, appetite, evidence):
     result = set()
     if appetite not in {'Conditional', 'Restricted'}:
         return result
+    if (appetite == 'Restricted' or dims & {'D1-02', 'D1-05', 'D1-06', 'D2-03', 'D2-04', 'D3-03'}
+            or len([h for h in rf['hits'] if h.get('factor_type') == 'Score']) >= 2
+            or yes(signals, 'edd_required')):
+        result.add('SG-01')
     if dims & {'D3-02', 'D3-03', 'D3-05', 'D2-03', 'D2-04'} or hits & {'RF-13', 'RF-17'}: result.add('SG-02')
     if 'RF-13' in hits or yes(signals, 'high_risk_relationship'): result.add('SG-03')
     if appetite == 'Restricted' or 'RF-13' in hits or yes(signals, 'high_risk_relationship'): result.add('SG-04')
@@ -313,7 +315,7 @@ def evaluate_safeguards(dimensions, rf, appetite, evidence, cat):
     records = evidence.get('safeguards', {})
     unknown = set(records) - set(cat.safeguards)
     if unknown:
-        raise ValueError(f'Unsupported safeguards (EDD/SG-14/15 excluded): {sorted(unknown)}')
+        raise ValueError(f'Unknown safeguard IDs: {sorted(unknown)}')
     candidates = safeguard_candidates(dimensions, rf, appetite, evidence)
     selected, unresolved = [], []
     for sid in sorted(candidates | set(records)):
@@ -351,7 +353,7 @@ def evaluate_safeguards(dimensions, rf, appetite, evidence, cat):
     else:
         status = 'Not Applicable'
     return {'status': status, 'selected': selected, 'unresolved_applicability': unresolved,
-            'excluded': sorted(EXCLUDED_SG)}
+            'supported_rule_ids': sorted(cat.safeguards)}
 
 
 def integrate(rf, appetite, sg, evidence, cat):
@@ -409,7 +411,10 @@ def assess_workflow(case, cat):
             'assessment_date': case.assessment_date or case.application.submission_date,
             'risk_assessment': rf, 'dimensions': dimensions, 'final_appetite': appetite,
             'appetite_rule_ids': appetite_rules, 'safeguards': sg, 'final_decision': final,
-            'edd_required': False,
+            'edd_required': (True if any(x['safeguard_id'] == 'SG-01' for x in sg['selected'])
+                             else None if 'SG-01' in sg['unresolved_applicability'] or appetite == PENDING else False),
+            'edd_status': next((x['status'] for x in sg['selected'] if x['safeguard_id'] == 'SG-01'),
+                               PENDING if 'SG-01' in sg['unresolved_applicability'] or appetite == PENDING else 'Not Applicable'),
             'audit': {'source_rule_ids': list(dict.fromkeys(ids)), 'workbook_sha256': cat.versions,
                       'policy_version': evidence.get('policy', {}).get('version'),
                       'evaluated_at': dt.datetime.now(dt.timezone.utc).isoformat(),

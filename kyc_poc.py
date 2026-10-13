@@ -4,7 +4,7 @@
 
 The three bundled workbooks supply rule IDs, points, bands and policy outcomes.
 External JSON preserves the original entity layout and adds data.WorkflowEvidence.
-Legacy or builtin inputs without verification facts remain Pending. No EDD.
+Legacy or builtin inputs without verification facts remain Pending. All workbook safeguards SG-01..SG-13 supported, including EDD.
 """
 from __future__ import annotations
 
@@ -15,6 +15,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from policy_engine import assess_workflow, load_catalogue
+from case_migration import workflow_from_case
 
 ROOT = Path(__file__).resolve().parent
 DEFAULT_JSON = ROOT / "test_cases_data.json"
@@ -125,7 +126,9 @@ def case_from_json(item: dict) -> Case:
         watchlists=[WatchList(w["watchlist_id"], w["list_name"], w.get("list_version_date", ""))
                     for w in data.get("WatchList", [])],
         assessment_date=app["submission_date"],
-        workflow_evidence=data.get("WorkflowEvidence", {}),
+        workflow_evidence=(data["WorkflowEvidence"] if "WorkflowEvidence" in data
+                           else workflow_from_case(item) if "SourceOfFunds" in data or "ubo_verification" in data
+                           else {}),
     )
 
 
@@ -228,7 +231,7 @@ def main() -> int:
                   f'score={rf["total_score"]}; RiskBand={rf["risk_band"]}; '
                   f'Appetite={r["final_appetite"]}; Safeguards={r["safeguards"]["status"]}; '
                   f'{r["final_decision"]["rule_id"]} {r["final_decision"]["result"]}')
-    print(f"合计 {len(results)} 个案例；EDD 不适用。")
+    print(f"合计 {len(results)} 个案例；保障措施支持 SG-01～SG-13。")
     return 0
 
 

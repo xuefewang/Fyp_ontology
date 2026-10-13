@@ -17,40 +17,33 @@ python3 -m venv .venv
 
 也可使用已配置的 `/workspace/.venvs/fyp-ontology/bin/python`。`--rules-dir` 指定三个工作簿的其他目录。所有默认路径相对于脚本目录，不再依赖 Windows 下载目录。
 
-`test_cases_data.json` 现包含 **39 个新版合成回归案例**，不是原始客户案例。覆盖 RF-01～21、PI-01～11，以及额外的 D1–D3 场景；每项包含独立设定的 `expected` 预期结果和完整 `WorkflowEvidence`。根对象与每项均明确标记 synthetic。运行 `python kyc_poc.py` 即可加载该文件。
+`test_cases_data.json` 已改为基于用户上传的 **28 个原始案例** 的新版输入，保留所有公司、案例编号、实体、文档、核验状态、资金来源及原有字段，仅增加 `data.WorkflowEvidence`。原始文件逐字节保存在 `tests/fixtures/original_test_cases.json`，新版根对象记录其 SHA-256。旧39个合成案例保存在 `tests/fixtures/synthetic_cases.json`，仅用于回归测试，不再作为默认输入。
 
-原始客户案例文件尚未提供。程序保留原来的 `test_cases` 数组／根数组，以及 `data.Application/Industry/party1/party2/Document/WatchList` 格式。以下为新增输入协议；新版合成数据已按此格式填写。旧输入仍能读取，但新增事实缺失时保持 Pending。`--builtin` 加载原来的 15 个案例，它们没有核验记录，结果会暂停；内置输入不是完整的新版验证案例。
-
-## 新增输入：`data.WorkflowEvidence`
-
-以下各类输入都是有证据支撑的核验结论。程序不连接监管机构验证真实性，`verified: true` 不能代替实际核验。缺失、未知或缺少证据编号的结论不推定为 Clear / Low / Within。
-
-```json
-{
-  "risk_factors": {
-    "RF-02": {
-      "verified": true,
-      "evidence_refs": ["screening-2026-001", "false-positive-review-001"],
-      "facts": {
-        "ubo_sanctions_match": true,
-        "screening_review_complete": true,
-        "false_positive_excluded": true
-      }
-    }
-  },
-  "D1": {"evidence_complete": false, "evidence_refs": [], "facts": {}},
-  "D2": {"evidence_complete": false, "evidence_refs": [], "facts": {}},
-  "D3": {"evidence_complete": false, "evidence_refs": [], "facts": {}},
-  "signals": {},
-  "safeguards": {},
-  "policy": {
-    "version": "approved-policy-version",
-    "approval_matrix_approved": true,
-    "required_approver_roles": ["Compliance Officer"]
-  },
-  "approvals": []
-}
+```bash
+python kyc_poc.py
+python kyc_poc.py --detail case24 --output /tmp/kyc-results.json
+python case_migration.py tests/fixtures/original_test_cases.json /tmp/migrated-cases.json
 ```
+
+程序也支持直接读取未迁移的原始文件：有 `SourceOfFunds`／`ubo_verification` 字段且没有 `WorkflowEvidence` 时，使用同一迁移逻辑。显式提供的 `WorkflowEvidence` 优先，迁移不会覆盖已有内容。`--builtin` 的15个旧实体案例仍缺少新版核验记录，结果保持 Pending。
+
+## 原始字段的迁移
+
+迁移将原文件中明确给出的测试断言转换为规则输入，引用形如 `original-test-case:case01#/data/ubo_verification` 的 JSON 字段。引用表示测试输入来源，不代表真实监管材料或独立核验。`hardgate_pending` true 时不确认未解决的 HardGate；已有 Failed／confirmed 等测试结论按原值保留。
+
+- WatchList／司法管辖区、制裁及 PEP 标记、牌照／UBO／控制核验、非法活动／资金／欺诈声明映射到 RF-01～08、12～14。
+- Document 映射文件缺失／持股比例冲突，股权链和代持映射复杂结构规则。
+- `SourceOfFunds` 映射付款账户、资金结构、对账、异常及材料充分性。涉及款项日期、法律依据、第三方许可及重大性政策时，原文件未给出的事实保持 null。
+- 新设公司按申请日与成立日期比较一周年；不会仅凭“成立不到一年”补造“无经营历史／无经审计报表”的结论。
+- 杠杆、现金流、净资产、跨境结构按原有字段保留为测试断言。
+- `safeguards_completed` 只表示原案例声称完成：迁移保留 `reported_status: Complete`，不凭此补造措施负责人、批准政策、完成证据或高级签署；正式状态仍为 Pending。
+- `officer_decision` 原值保存在 `reported_officer_decision`，不会凭一个 Approved／Rejected 字符串伪造授权签署记录。
+
+当前28个案例中缺少批准行业目录、部分资金核验事实、权限矩阵及有签署证据的审批记录，因此部分案例进入 HOLD。这是资料／政策缺口，不是已批准的客户判断。补齐 `WorkflowEvidence` 或原始数据中的 `PolicyEvidence`、`ApprovalEvidence`、`SafeguardEvidence` 后可继续。
+
+### 新增输入：`data.WorkflowEvidence`
+
+结构包括 `risk_factors`、`D1`、`D2`、`D3`、`signals`、`safeguards`、`policy`、`approvals`。各维度有 `evidence_complete`、`evidence_refs` 和 `facts`；缺失事实不推定为 false。正式核验记录仍需完整事实与证据。
 
 ### 风险因子
 
@@ -118,7 +111,9 @@ FA-01：全 Low → Within。FA-02：至少一项 Medium、无 High → Conditio
 
 ### Safeguards
 
-SG-01 EDD、SG-14、SG-15 被最终工作簿明确排除，输入这些编号会报错。
+采纳新版 AML 工作簿实际列出的全部 SG-01～SG-13，包含 SG-01 EDD；不再维护排除名单。用户后续明确不需要 SG-14／SG-15，这两个编号在新版目录中没有条目，不添加不存在的规则。未知编号统一按输入错误处理。
+
+SG-01 的适用性候选包括 Restricted、复杂或异常所有权、高风险业务、重大资金异常及多个确认的评分因子；最终是否需要 EDD 仍取决于批准政策和个案适用性记录。EDD 未完成会阻止最终批准，完成后也不会降低 Appetite。输出 `edd_required`（适用为 true，不适用为 false，尚未明确为 null）和 `edd_status`，不再将 EDD 永久设为 false。
 
 仅为实际风险生成适用性审核候选：SG-02（PEP／资金异常／高风险业务）、SG-03（PEP／高风险关系）、SG-04（Restricted／PEP／高风险关系）、SG-05（复杂或异常资金及第三方／账户不匹配）、SG-06（限额确能减轻敞口）、SG-07（服务限制风险）、SG-08（Conditional／Restricted）、SG-09（PEP／灰名单／重筛暴露）、SG-10（Restricted／高风险关系）、SG-11（复杂股权／代持／信托）、SG-12（受监管业务）、SG-13（PEP／双签要求）。
 
@@ -166,9 +161,9 @@ PI 优先级：确认禁止 PI-01 → 待核验 PI-02 → 文件待处理 PI-03 
 
 - 用户已明确要求按实际表格保留 RF-21（3分）。工作簿标题／备注仍说删除 RF-21、保留 RF-22；程序记录警告，不创造没有表格定义的 RF-22。
 - AML 表中的 RF-06／RF-08 是旧编号引用，维度判定使用其实际语义（股权复杂度／高风险行业），新版对应 RF-15／RF-17。
-- D 表仍有 EDD 动作描述，但最终工作簿明确排除 EDD；本版不执行 SG-01，`edd_required` 恒为 false。
+- 最终步骤工作簿仍有旧版“排除 EDD”的文字。按用户最新范围要求，以 AML 新版保障措施目录为主纳入 SG-01；保留原始 Excel 文件，在审计警告中记录范围覆盖。
 - FA 全 Low 对应 Within，但 SG 旧目录备注提到 PEP 的 Conditional 下限。PEP 命中且 FA 为 Within 时转 PI-11，保留原 FA 输出，等待政策确认，不能通过普通批准绕过这项歧义。
 
 ## 验证范围
 
-`tests/test_workflow.py` 使用显式标记的合成核验证据和真实上传工作簿，覆盖规则、边界、优先级、缺失证据、审批及外部 JSON 命令行。数据集回归测试逐项对照39个合成案例的预期结果，并检查 RF-01～21 与 PI-01～11 的覆盖。真实客户案例尚未提供，未声称验证真实业务结果。
+测试验证28个上传案例及全部原始数据的保留、确定的计分／闸口结果、未知政策／资金事实及签署记录不会被补造、迁移重复执行的稳定性，以及 SG-01 适用、未完成暂停、完成后恢复审批。另保留39个明确标记为合成数据的回归场景和独立预期结果；它们显式说明合成政策下 EDD 不适用，真实 SG-01 路由另有专项测试。测试使用输入断言，不建立真实客户准入结论。

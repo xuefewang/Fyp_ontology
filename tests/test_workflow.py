@@ -6,7 +6,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from kyc_poc import DEFAULT_RULES, builtin_cases, case_from_json
+from kyc_poc import DEFAULT_RULES, builtin_cases, case_from_json, load_cases
 from policy_engine import (RF_CRITERIA, assess_workflow, evaluate_dimensions, evaluate_rf,
                            integrate, load_catalogue, safeguard_candidates)
 
@@ -58,7 +58,7 @@ class WorkflowTests(unittest.TestCase):
         self.assertEqual(self.cat.rf['RF-21'].points, 3)
         self.assertNotIn('RF-22', self.cat.rf)
         self.assertEqual(len(self.cat.dimensions), 16)
-        self.assertEqual(set(self.cat.safeguards), {f'SG-{i:02}' for i in range(2, 14)})
+        self.assertEqual(set(self.cat.safeguards), {f'SG-{i:02}' for i in range(1, 14)})
         self.assertEqual(self.cat.integration['PI-10'].priority, 10)
         self.assertTrue(self.cat.warnings)
 
@@ -170,20 +170,20 @@ class WorkflowTests(unittest.TestCase):
         self.conditional()
         r = self.run_case()
         self.assertEqual(r['final_decision']['rule_id'], 'PI-05')
-        self.assertEqual(set(r['safeguards']['unresolved_applicability']), {'SG-08', 'SG-11'})
-        self.complete_controls(['SG-08', 'SG-11'])
+        self.assertEqual(set(r['safeguards']['unresolved_applicability']), {'SG-01', 'SG-08', 'SG-11'})
+        self.complete_controls(['SG-01', 'SG-08', 'SG-11'])
         self.e['approvals'] = [approval()]
         r = self.run_case()
         self.assertEqual(r['final_appetite'], 'Conditional')
         self.assertEqual(r['final_decision']['rule_id'], 'PI-09')
-        self.assertEqual(len(r['safeguards']['selected']), 2)
-        self.assertFalse(r['edd_required'])
+        self.assertEqual(len(r['safeguards']['selected']), 3)
+        self.assertTrue(r['edd_required'])
         self.e['safeguards']['SG-11']['status'] = 'Incomplete'
         self.assertEqual(self.run_case()['final_decision']['rule_id'], 'PI-05')
 
     def test_approved_not_applicable_controls(self):
         self.conditional()
-        for sid in ['SG-08', 'SG-11']:
+        for sid in ['SG-01', 'SG-08', 'SG-11']:
             self.e['safeguards'][sid] = {'applicable': False, 'policy_approved': True, 'evidence_refs': ['synthetic-nonapplicability']}
         self.e['approvals'] = [approval()]
         r = self.run_case()
@@ -192,7 +192,7 @@ class WorkflowTests(unittest.TestCase):
 
     def test_restricted_route_requires_explicit_policy_and_senior_approval(self):
         self.e['D2']['facts'].update(category='HighRisk', activity_not_prohibited=True)
-        self.complete_controls(['SG-02', 'SG-04', 'SG-08', 'SG-10'])
+        self.complete_controls(['SG-01', 'SG-02', 'SG-04', 'SG-08', 'SG-10'])
         self.e['approvals'] = [approval(), approval('Senior Compliance', name='Senior Reviewer')]
         self.assertEqual(self.run_case()['final_decision']['rule_id'], 'PI-11')
         self.e['policy']['restricted_acceptance_permitted'] = True
@@ -204,7 +204,7 @@ class WorkflowTests(unittest.TestCase):
 
     def test_dual_signature_must_have_two_distinct_directors(self):
         self.conditional(); self.hit('RF-13')
-        self.complete_controls(['SG-02', 'SG-03', 'SG-04', 'SG-08', 'SG-09', 'SG-11', 'SG-13'])
+        self.complete_controls(['SG-01', 'SG-02', 'SG-03', 'SG-04', 'SG-08', 'SG-09', 'SG-11', 'SG-13'])
         self.e['approvals'] = [approval(), approval('Senior Compliance'), approval('Compliance Director'), approval('Risk Director')]
         self.assertEqual(self.run_case()['final_decision']['rule_id'], 'PI-05')
         self.e['approvals'][-1]['reviewer'] = 'Reviewer B'
@@ -220,8 +220,8 @@ class WorkflowTests(unittest.TestCase):
         del self.e['policy']['approval_matrix_approved']
         self.assertEqual(self.run_case()['final_decision']['rule_id'], 'PI-11')
 
-    def test_excluded_edd_and_unknown_rule_fail_loudly(self):
-        self.e['safeguards']['SG-01'] = {}
+    def test_unknown_rules_fail_loudly(self):
+        self.e['safeguards']['SG-16'] = {}
         with self.assertRaises(ValueError): self.run_case()
         self.e['safeguards'].clear(); self.e['risk_factors']['RF-22'] = {}
         with self.assertRaises(ValueError): self.run_case()
@@ -262,6 +262,7 @@ class WorkflowTests(unittest.TestCase):
 
     def test_all_safeguard_trigger_routes(self):
         scenarios = {
+            'SG-01': ({'D2-03'}, set(), {}),
             'SG-02': ({'D3-03'}, set(), {}),
             'SG-03': (set(), {'RF-13'}, {}),
             'SG-04': (set(), {'RF-13'}, {}),
@@ -280,7 +281,7 @@ class WorkflowTests(unittest.TestCase):
                 candidates = safeguard_candidates({'test': {'rule_ids': list(dims)}},
                     {'hits': [{'factor_id': fid} for fid in hits]}, 'Conditional', {'signals': signals})
                 self.assertIn(sid, candidates)
-                self.assertFalse({'SG-01', 'SG-14', 'SG-15'} & candidates)
+                self.assertTrue(candidates <= set(self.cat.safeguards))
         self.assertFalse(safeguard_candidates({}, {'hits': []}, 'Within', {}))
 
     def test_invalid_upstream_status_cannot_approve(self):
@@ -291,7 +292,7 @@ class WorkflowTests(unittest.TestCase):
             self.assertEqual(final['rule_id'], 'PI-11')
 
     def test_new_39_case_dataset_matches_independent_expectations(self):
-        path = DEFAULT_RULES.parent / 'test_cases_data.json'
+        path = DEFAULT_RULES.parent / 'tests' / 'fixtures' / 'synthetic_cases.json'
         dataset = json.loads(path.read_text(encoding='utf-8'))
         self.assertEqual(dataset['dataset_type'], 'synthetic')
         self.assertEqual(len(dataset['test_cases']), 39)
@@ -316,6 +317,68 @@ class WorkflowTests(unittest.TestCase):
                     self.assertIn(rid, result['dimensions'][rid[:2]]['rule_ids'])
         self.assertEqual(seen_factors, set(self.cat.rf))
         self.assertEqual(seen_final_rules, set(self.cat.integration))
+
+    def test_edd_is_supported_and_blocks_until_complete(self):
+        self.e['D2']['facts'].update(category='HighRisk', activity_not_prohibited=True)
+        self.complete_controls(['SG-01', 'SG-02', 'SG-04', 'SG-08', 'SG-10'])
+        self.e['approvals'] = [approval(), approval('Senior Compliance', name='Senior Reviewer')]
+        self.e['policy']['restricted_acceptance_permitted'] = True
+        self.e['safeguards']['SG-01']['status'] = 'Incomplete'
+        r = self.run_case()
+        self.assertTrue(r['edd_required'])
+        self.assertEqual(r['edd_status'], 'Incomplete')
+        self.assertEqual(r['final_decision']['rule_id'], 'PI-05')
+        self.e['safeguards']['SG-01']['status'] = 'Complete'
+        r = self.run_case()
+        self.assertEqual(r['edd_status'], 'Complete')
+        self.assertEqual(r['final_decision']['rule_id'], 'PI-10')
+        self.assertNotIn('excluded', r['safeguards'])
+
+    def test_uploaded_cases_preserved_and_missing_evidence_not_invented(self):
+        from case_migration import migrate_dataset
+        original = json.loads((DEFAULT_RULES.parent / 'tests/fixtures/original_test_cases.json').read_text())
+        updated = json.loads((DEFAULT_RULES.parent / 'test_cases_data.json').read_text())
+        self.assertEqual(len(updated['test_cases']), 28)
+        regenerated = migrate_dataset(original)
+        self.assertEqual(updated['test_cases'], regenerated['test_cases'])
+        self.assertEqual(migrate_dataset(regenerated), regenerated)
+        expected_decisions = {'case03': 'PI-01', 'case04': 'PI-01', 'case13': 'PI-02',
+            'case14': 'PI-01', 'case15': 'PI-01', 'case16': 'PI-01', 'case17': 'PI-01',
+            'case18': 'PI-01', 'case19': 'PI-02', 'case26': 'PI-02', 'case10': 'PI-03', 'case11': 'PI-03'}
+        expected_scores = {'case01': 0, 'case02': 3, 'case05': 5, 'case06': 4,
+            'case07': 4, 'case08': 3, 'case09': 4, 'case20': 4, 'case22': 4, 'case28': 3}
+        for old, new in zip(original['test_cases'], updated['test_cases']):
+            with self.subTest(case=old['test_case_id']):
+                for key, value in old.items():
+                    if key != 'data': self.assertEqual(new[key], value)
+                self.assertEqual({k:v for k,v in new['data'].items() if k != 'WorkflowEvidence'}, old['data'])
+                result = assess_workflow(case_from_json(new), self.cat)
+                self.assertEqual(case_from_json(old).workflow_evidence, new['data']['WorkflowEvidence'])
+                cid = old['test_case_id']
+                self.assertEqual(result['final_decision']['rule_id'], expected_decisions.get(cid, 'PI-04'))
+                if cid in expected_scores:
+                    self.assertEqual(result['risk_assessment']['total_score'], expected_scores[cid])
+                self.assertFalse(result['audit']['approval_records'])
+                self.assertEqual(new['data']['WorkflowEvidence']['reported_officer_decision'], old['data']['officer_decision'])
+        migrated = updated['test_cases'][23]['data']['WorkflowEvidence']['safeguards']
+        self.assertEqual(set(migrated), set(original['test_cases'][23]['data']['safeguards_completed']))
+        self.assertTrue(all(x['status'] == 'Pending' and x['reported_status'] == 'Complete' for x in migrated.values()))
+
+    def test_original_and_migrated_json_cli_match(self):
+        root = DEFAULT_RULES.parent
+        sources = [root / 'test_cases_data.json', root / 'tests/fixtures/original_test_cases.json']
+        outputs = []
+        with tempfile.TemporaryDirectory() as tmp:
+            for i, source in enumerate(sources):
+                output = Path(tmp) / f'results-{i}.json'
+                process = subprocess.run([sys.executable, str(root/'kyc_poc.py'), '--json', str(source), '--output', str(output)], capture_output=True, text=True)
+                self.assertEqual(process.returncode, 0, process.stderr)
+                results = json.loads(output.read_text())
+                self.assertEqual(len(results), 28)
+                for result in results:
+                    result['audit'].pop('evaluated_at')
+                outputs.append(results)
+        self.assertEqual(outputs[0], outputs[1])
 
     def test_cli_external_json_and_audit(self):
         case = {'test_case_id': 'synthetic-case', 'company': 'Fixture', 'data': {
