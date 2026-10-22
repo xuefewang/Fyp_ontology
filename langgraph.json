@@ -1,0 +1,9 @@
+{
+  "dependencies": [
+    "."
+  ],
+  "graphs": {
+    "appetite": "./appetite.py:graph",
+    "aml_workflow": "./workflow_graph.py:graph"
+  }
+}

@@ -462,7 +462,8 @@ def integrate(rf, appetite, sg, evidence, cat):
             'authorization_status': authorization, 'required_approver_roles': required, 'input_errors': errors}
 
 
-def assess_workflow(case, cat):
+def prepare_workflow_evidence(case):
+    """Normalize a private evidence copy shared by batch and graph runners."""
     evidence = copy.deepcopy(case.workflow_evidence)
     if not isinstance(evidence, dict):
         evidence = {'input_errors': ['WorkflowEvidence must be an object']}
@@ -492,10 +493,20 @@ def assess_workflow(case, cat):
             evidence['D1']['facts']['complex_ownership'] = ownership['intermediate_legal_entity_count'] >= 4
         if ownership['cycle_detected']:
             evidence['ownership_review_required'] = True
+    return evidence, ownership
+
+
+def assess_workflow(case, cat):
+    evidence, ownership = prepare_workflow_evidence(case)
     rf = evaluate_rf(evidence, cat)
     dimensions, appetite, appetite_rules = evaluate_dimensions(evidence, cat, rf)
     sg = evaluate_safeguards(dimensions, rf, appetite, evidence, cat)
     final = integrate(rf, appetite, sg, evidence, cat)
+    return format_workflow_result(case, cat, evidence, ownership, rf, dimensions, appetite, appetite_rules, sg, final)
+
+
+def format_workflow_result(case, cat, evidence, ownership, rf, dimensions, appetite, appetite_rules, sg, final):
+    """Assemble the same public audit contract for batch and graph execution."""
     ids = [h['factor_id'] for h in rf['hits']] + rf['pending_rule_ids']
     ids += [r for d in dimensions.values() for r in d['rule_ids']] + appetite_rules
     ids += [s['safeguard_id'] for s in sg['selected']] + sg['unresolved_applicability'] + [final['rule_id']]
