@@ -192,7 +192,7 @@ FA-01：全 Low → Within。FA-02：至少一项 Medium、无 High → Conditio
 
 ## LangGraph 完整评估流程
 
-完整图与独立 Appetite 模块的架构、节点连接、输入输出、运行和验证说明统一见 [langgraph.md](langgraph.md)。
+项目各评估环节的职责、节点连接、输入输出、运行和验证说明统一见 [langgraph.md](langgraph.md)。
 
 ```bash
 python -m pip install -r requirements-langgraph.txt
@@ -200,4 +200,4 @@ python workflow_graph.py --case case01 --trace --output case01-result.json
 python workflow_graph.py --check-expected --output workflow-results.json
 ```
 
-`langgraph.json` 注册完整图 `aml_workflow` 和独立模块 `appetite`。
+`langgraph.json` 统一注册完整项目图 `aml_workflow`。
