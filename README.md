@@ -190,13 +190,9 @@ FA-01：全 Low → Within。FA-02：至少一项 Medium、无 High → Conditio
 
 测试逐项核对174个独立预期结果，检查RF-01～21、PI-01～11、SG-01～13覆盖，并验证原28个案例保留、最终顺序、计分边界、PEP下限、版本隔离、全部必要签署、Within控制、持续配置以及1200层图不会递归溢出。合成扩展明确标记为测试材料；测试代码仅读取静态JSON并验证输出，不生成案例。
 
-## Appetite 的 LangGraph 入口
+## LangGraph 完整评估流程
 
-已提供 `appetite.py` 子图与 `langgraph.json`。安装、调用方式和范围见 [APPETITE_LANGGRAPH.md](APPETITE_LANGGRAPH.md)。
-
-## 完整 AML LangGraph 工作流
-
-`workflow_graph.py` 将证据准备、RF闸口与评分、Appetite、Safeguards、Policy Integration 和审计报告连接为总图。运行方式：
+完整图与独立 Appetite 模块的架构、节点连接、输入输出、运行和验证说明统一见 [langgraph.md](langgraph.md)。
 
 ```bash
 python -m pip install -r requirements-langgraph.txt
@@ -204,4 +200,4 @@ python workflow_graph.py --case case01 --trace --output case01-result.json
 python workflow_graph.py --check-expected --output workflow-results.json
 ```
 
-节点连接、共享状态与验证范围见 [WORKFLOW_LANGGRAPH.md](WORKFLOW_LANGGRAPH.md)。`langgraph.json` 中完整图名为 `aml_workflow`。
+`langgraph.json` 注册完整图 `aml_workflow` 和独立模块 `appetite`。

@@ -1,4 +1,10 @@
-# 第二步：完整 AML LangGraph 工作流
+# LangGraph：完整 AML 评估流程
+
+## 架构与职责
+
+本应用使用 Python 3.11+。policy_engine.py 执行业务规则，LangGraph 组织节点顺序并传递状态。当前运行不依赖 LLM 或模型 API Key。LangChain 可在后续用于文档提取和解释生成。
+
+主入口为 workflow_graph.py；appetite.py 保留独立 Appetite 调用能力。优先使用完整图进行端到端评估。
 
 ## 如何连接
 
@@ -83,6 +89,33 @@ for event in workflow.stream({'case': case}, stream_mode='updates'):
 ```
 
 invoke 的输入为 {"case": 单个现有案例对象}，输出为 {"result": 完整结果}。result 与原 assess_workflow 的输出一致，评估时间按每次运行生成。
+
+## 独立运行 Appetite 模块
+
+仅需评估 Appetite 时，可以运行：
+
+```bash
+python appetite.py --case case01
+python appetite.py --output appetite-results.json
+```
+
+该子图连接：准备证据 → RF评估 → Appetite计算 → 分流出口。它使用同一份证据计算 RF，保留三维度 MAX、Pending 优先和 PEP 最低 Conditional 的规则。缺失事实保持未知。
+
+```python
+from appetite import build_appetite_graph
+
+appetite = build_appetite_graph()
+result = appetite.invoke({'case': case})
+print(result['final_appetite'], result['next_step'])
+```
+
+这里的 case 与完整图使用同一个案例格式；证据位于 case.data.WorkflowEvidence。独立子图直接返回 dimensions、final_appetite、appetite_rule_ids、risk_assessment、ownership_analysis、assessment_id 和 audit，不使用完整图的 result 外层包装。
+
+next_step 为 safeguards 或 review_required。后者涵盖确认禁止、待核实闸口、补件及输入错误，具体原因见 risk_assessment 和 audit。它只是处理出口，尚无人工暂停或恢复。Within、Conditional、Restricted 是 Appetite 等级，后续仍需 Safeguards 和最终政策判断。
+
+## 状态与持久化
+
+每次运行提交完整案例。默认不配置持久化，也不需要外部数据库。两个 build 函数都接受 checkpointer 参数，可供后续接入；实际数据库存储、thread_id 生命周期和人工 interrupt 尚未实现。
 
 ## LangGraph 开发服务（可选）
 
