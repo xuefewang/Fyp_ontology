@@ -1,0 +1,32 @@
+test_all_cases_and_input_isolation (test_appetite.AppetiteGraphTests.test_all_cases_and_input_isolation) ... ok
+test_reuse_does_not_retain_previous_case (test_appetite.AppetiteGraphTests.test_reuse_does_not_retain_previous_case) ... ok
+test_all_second_sheet_rows_mapped_exactly_once (test_report_contract.ReportContractTests.test_all_second_sheet_rows_mapped_exactly_once) ... ok
+test_gross_fx_and_third_party_cannot_be_auto_passed (test_report_contract.ReportContractTests.test_gross_fx_and_third_party_cannot_be_auto_passed) ... ok
+test_inputs_unchanged_and_engine_output_exactly_preserved (test_report_contract.ReportContractTests.test_inputs_unchanged_and_engine_output_exactly_preserved) ... ok
+test_missing_inputs_are_explicit_not_fabricated (test_report_contract.ReportContractTests.test_missing_inputs_are_explicit_not_fabricated) ... ok
+test_missing_rows_remain_in_summary_and_sql (test_report_contract.ReportContractTests.test_missing_rows_remain_in_summary_and_sql) ... ok
+test_new_canonical_input_is_preserved_and_exported (test_report_contract.ReportContractTests.test_new_canonical_input_is_preserved_and_exported) ... ok
+test_no_duplicate_application_customer_identity (test_report_contract.ReportContractTests.test_no_duplicate_application_customer_identity) ... ok
+test_projection_is_independent_from_original_rule_result (test_report_contract.ReportContractTests.test_projection_is_independent_from_original_rule_result) ... ok
+test_projection_supports_all_174_existing_cases (test_report_contract.ReportContractTests.test_projection_supports_all_174_existing_cases) ... ok
+test_screening_is_not_inferred_from_watchlist_flag (test_report_contract.ReportContractTests.test_screening_is_not_inferred_from_watchlist_flag) ... ok
+test_single_currency_decimal_reconciliation (test_report_contract.ReportContractTests.test_single_currency_decimal_reconciliation) ... ok
+test_sql_reader_returns_exact_persisted_run (test_report_contract.ReportContractTests.test_sql_reader_returns_exact_persisted_run) ... ok
+test_sql_rejects_incomplete_or_wrong_contract_fields (test_report_contract.ReportContractTests.test_sql_rejects_incomplete_or_wrong_contract_fields) ... ok
+test_sql_save_read_idempotency_and_reject_changed_run (test_report_contract.ReportContractTests.test_sql_save_read_idempotency_and_reject_changed_run) ... ok
+test_unique_run_for_each_export (test_report_contract.ReportContractTests.test_unique_run_for_each_export) ... ok
+test_all_static_cases_match_independent_expectations (test_workflow.WorkflowTests.test_all_static_cases_match_independent_expectations) ... ok
+test_case_ids_evidence_and_rule_coverage (test_workflow.WorkflowTests.test_case_ids_evidence_and_rule_coverage) ... ok
+test_catalogue_and_priority (test_workflow.WorkflowTests.test_catalogue_and_priority) ... ok
+test_cli_runs_all_cases_and_exports_results (test_workflow.WorkflowTests.test_cli_runs_all_cases_and_exports_results) ... ok
+test_original_snapshot_and_migration (test_workflow.WorkflowTests.test_original_snapshot_and_migration) ... ok
+test_wrong_expectation_fails_cli (test_workflow.WorkflowTests.test_wrong_expectation_fails_cli) ... ok
+test_all_174_cases_match_oracles_and_entire_batch_result (test_workflow_graph.FullGraphTests.test_all_174_cases_match_oracles_and_entire_batch_result) ... ok
+test_cli_rejects_wrong_expectations (test_workflow_graph.FullGraphTests.test_cli_rejects_wrong_expectations) ... ok
+test_cli_trace_and_all_expected (test_workflow_graph.FullGraphTests.test_cli_trace_and_all_expected) ... ok
+test_node_order_and_repeated_case_isolation (test_workflow_graph.FullGraphTests.test_node_order_and_repeated_case_isolation) ... ok
+
+----------------------------------------------------------------------
+Ran 27 tests in 7.575s
+
+OK

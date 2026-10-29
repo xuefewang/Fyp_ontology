@@ -201,3 +201,11 @@ python workflow_graph.py --check-expected --output workflow-results.json
 ```
 
 `langgraph.json` 统一注册完整项目图 `aml_workflow`。
+
+## 2026-10-30 Report 原型输出和SQL
+
+仅按新Excel第二张完整内容清单增加输出适配器，保留party1／party2和原评分、Safeguards。289项逐项责任／复用对照及SQL读写见 [report_contract/README.md](report_contract/README.md)。
+
+```bash
+python -m report_contract.export --case case01 --db work/report.sqlite3 --output work/case01-report.json
+```

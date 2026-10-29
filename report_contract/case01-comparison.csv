@@ -1,0 +1,290 @@
+﻿requirement_id,field_name,priority,owner,canonical_path,actual_status,value_preview
+1.1.1,受理機構名稱,P2,Ontology,/data/ReportInput/context/organization_name,Missing,null
+1.1.2,服務法律實體,P2,Ontology,/data/ReportInput/context/service_legal_entity,Missing,null
+1.1.3,客戶編號（customer_id）,P2,Ontology,/data/party1/party_id,Provided,"""case01-P1"""
+1.1.4,申請編號（application_id）,P2,Ontology,/data/Application/application_id,Provided,"""APP-2026-0001"""
+1.1.5,案件編號（case_id）,P0,Ontology,/derived/case_id,Provided,"""APP-2026-0001"""
+1.1.6,評估編號（assessment_id）,P1,Ontology,/engine/assessment_id,Provided,"""RA-APP-2026-0001"""
+1.1.7,關係／帳戶範圍,P1,Ontology,/data/ReportInput/context/account_scope,Missing,null
+1.1.8,產品／服務範圍,P0,Ontology,/data/ReportInput/context/service_scope,Missing,null
+1.1.9,認購／交易範圍,P0,Ontology,/data/ReportInput/context/transaction_scope,Missing,null
+1.1.10,司法管轄區,P0,Ontology,/derived/jurisdictions,Provided,"{""party1_registration"": ""GB"", ""party2"": [{""party_id"": ""case01-P2-1"", ""nationality"": ""GB"", ""registration_jurisdiction"": ""GB""}]}"
+1.1.11,資料截點,P0,Ontology,/data/ReportInput/context/as_of,Missing,null
+1.1.12,適用政策包,P0,Ontology,/derived/policy_pack,Provided,"{""version"": null, ""workbook_sha256"": {""IS4920_Integrated_HardGate_RiskFactors_RiskBand.xlsx"": ""a24e5f8beb6fc1b714f09c0a2824be932f8cddc33f42846ef97d31ddce172670"", ""IS4920_AML_Appetite_Safeguards.xlsx"":"
+1.1.13,評估排除範圍,P0,Ontology,/data/ReportInput/context/exclusions,Missing,null
+1.2.1,公司法定名稱,P0,Ontology,/data/party1/full_name,Provided,"""Baseline Software Ltd"""
+1.2.2,英文名稱與名稱變體,P1,Ontology,/data/ReportInput/company/aliases,Missing,null
+1.2.3,註冊編號與登記機關,P0,Ontology,/data/ReportInput/company/registration,Missing,null
+1.2.4,法律形式,P1,Ontology,/data/ReportInput/company/legal_form,Missing,null
+1.2.5,成立日期,P1,Ontology,/data/incorporation_date,Provided,"""2015-06-01"""
+1.2.6,存續狀態,P1,Ontology,/data/ReportInput/company/legal_status,Missing,null
+1.2.7,註冊地址,P1,Ontology,/data/ReportInput/company/registered_address,Missing,null
+1.2.8,實際營業地址,P1,Ontology,/data/ReportInput/company/operating_address,Missing,null
+1.3.1,公司簡介,P1,Ontology,/data/ReportInput/business/summary,Missing,null
+1.3.2,實際業務模式,P0,Ontology,/data/ReportInput/business/business_model,Missing,null
+1.3.3,主要產品與服務,P2,Ontology,/data/ReportInput/business/products_services,Missing,null
+1.3.4,主要營運地與市場,P2,Ontology,/data/ReportInput/business/operating_markets,Missing,null
+1.3.5,行業分類,P2,Ontology,/data/Industry,Provided,"{""industry_id"": ""case01-IND"", ""industry_name"": ""Standard Risk Industries"", ""industry_tier"": ""I1""}"
+1.3.6,牌照適用性與範圍,P2,Ontology,/data/ReportInput/business/licence,Missing,null
+1.3.7,公司背景補充圖表,P3,Ontology,/data/ReportInput/business/background_chart,Missing,null
+1.4.1,公司身份核實狀態,P1,Ontology,/data/WorkflowEvidence/D1/facts/legal_entity_verified,Provided,true
+1.4.2,UBO／控制核實狀態,P1,Ontology,/derived/ubo_verification,Provided,"{""identified_party_ids"": [""case01-P2-1""], ""verification_status"": ""Verified"", ""control_status"": ""Verified"", ""source"": ""Supplied input; not inferred from layer count""}"
+1.4.3,代表權核實狀態,P1,Ontology,/data/ReportInput/kyc/representation,Missing,null
+1.4.4,篩查完成狀態,P1,Ontology,/data/ReportInput/kyc/screening,Missing,null
+1.4.5,資金核實狀態,P1,Ontology,/engine/dimensions/D3,Provided,"{""level"": ""Pending"", ""rule_ids"": [], ""evidence_refs"": [""original-test-case:case01#/data/SourceOfFunds""], ""remediation_rf_ids"": []}"
+1.4.6,產品／認購流程狀態,P1,Ontology,/data/ReportInput/kyc/product_workflow,Missing,null
+1.4.7,重大阻擋總覽,P0,Ontology,/derived/outstanding_items,Provided,"[{""type"": ""DimensionEvidence"", ""reason"": ""Dimension assessment pending"", ""related_id"": ""D2"", ""owner"": null, ""due_at"": null}, {""type"": ""DimensionEvidence"", ""reason"": ""Dimension assessment pending"", ""re"
+1.5.1,建立關係的目的,P1,Ontology,/data/ReportInput/relationship/purpose,Missing,null
+1.5.2,投資經濟目的,P2,Ontology,/data/ReportInput/relationship/economic_purpose,Missing,null
+1.5.3,擬議資金用途,P2,Ontology,/data/ReportInput/relationship/funding_purpose,Missing,null
+1.5.4,關係背景與介紹渠道,P2,Ontology,/data/ReportInput/relationship/introduction,Missing,null
+1.5.5,目的待澄清事項,P2,Ontology,/data/ReportInput/relationship/unresolved_purpose,Missing,null
+1.6.1,預期投資金額與幣別,P2,Ontology,/data/ReportInput/expected_activity/amount_currency,Missing,null
+1.6.2,預期交易頻率,P2,Ontology,/data/ReportInput/expected_activity/frequency,Missing,null
+1.6.3,預期對手與地域,P2,Ontology,/data/ReportInput/expected_activity/counterparties_jurisdictions,Missing,null
+1.6.4,投資期限與贖回需要,P2,Ontology,/data/ReportInput/expected_activity/horizon_liquidity,Missing,null
+1.6.5,預期與實際活動差異,P2,Ontology,/data/ReportInput/expected_activity/differences,Missing,null
+1.6.6,大型客戶／集中度影響,P2,Ontology,/data/ReportInput/expected_activity/concentration,Missing,null
+1.7.1,投資目標與委託範圍,P3,OutOfScope,/data/ReportInput/investment/mandate,OutOfPrototypeScope,null
+1.7.2,投資知識與經驗,P3,OutOfScope,/data/ReportInput/investment/experience,OutOfPrototypeScope,null
+1.7.3,財務狀況與損失承受能力,P3,OutOfScope,/data/ReportInput/investment/loss_capacity,OutOfPrototypeScope,null
+1.7.4,流動性與風險承受需要,P3,OutOfScope,/data/ReportInput/investment/liquidity,OutOfPrototypeScope,null
+1.7.5,投資限制,P3,OutOfScope,/data/ReportInput/investment/restrictions,OutOfPrototypeScope,null
+1.7.6,資料覆核狀態,P3,OutOfScope,/data/ReportInput/investment/review,OutOfPrototypeScope,null
+1.8.1,投資者分類,P3,OutOfScope,/data/ReportInput/eligibility/investor_classification,OutOfPrototypeScope,null
+1.8.2,產品資格結論,P3,OutOfScope,/data/ReportInput/eligibility/product_eligibility,OutOfPrototypeScope,null
+1.8.3,銷售／服務方式,P3,OutOfScope,/data/ReportInput/eligibility/service_type,OutOfPrototypeScope,null
+1.8.4,適合性適用性與結果,P3,OutOfScope,/data/ReportInput/eligibility/suitability,OutOfPrototypeScope,null
+1.8.5,產品司法管轄區限制,P3,OutOfScope,/data/ReportInput/eligibility/product_jurisdictions,OutOfPrototypeScope,null
+1.8.6,外部結論與責任人,P3,OutOfScope,/data/ReportInput/eligibility/authority,OutOfPrototypeScope,null
+1.9.1,FATCA／CRS 狀態,P3,OutOfScope,/data/ReportInput/tax_account/fatca_crs,OutOfPrototypeScope,null
+1.9.2,稅務居民與 TIN 缺口,P3,OutOfScope,/data/ReportInput/tax_account/tax_residency_tin,OutOfPrototypeScope,null
+1.9.3,適用控權人士資料,P3,OutOfScope,/data/ReportInput/tax_account/controlling_persons,OutOfPrototypeScope,null
+1.9.4,帳戶／認購文件狀態,P3,OutOfScope,/data/ReportInput/tax_account/documents,OutOfPrototypeScope,null
+1.9.5,費用同意與披露確認,P3,OutOfScope,/data/ReportInput/tax_account/disclosures,OutOfPrototypeScope,null
+2.1.1,公司與自然人節點,P0,Ontology,/derived/parties,Provided,"[{""party_id"": ""case01-P1"", ""person_id"": ""case01-P1-PER"", ""full_name"": ""Baseline Software Ltd"", ""is_ubo"": false, ""is_nominee"": false, ""is_trust"": false, ""sanctions_flag"": false, ""shareholding_percentag"
+2.1.2,直接持股關係,P0,Ontology,/derived/ownership_edges,Missing,null
+2.1.3,表決權與其他權利,P2,Ontology,/data/ReportInput/ownership/voting_rights,Missing,null
+2.1.4,節點地域與有效日期,P1,Ontology,/data/ReportInput/ownership/jurisdictions_dates,Missing,null
+2.1.5,關係證據與未知分支,P1,Ontology,/data/ReportInput/ownership/relationship_evidence,Missing,null
+2.1.6,所有權結構圖,P2,Ontology,/derived/organization_chart,Provided,"{""nodes"": [{""party_id"": ""case01-P1"", ""person_id"": ""case01-P1-PER"", ""full_name"": ""Baseline Software Ltd"", ""is_ubo"": false, ""is_nominee"": false, ""is_trust"": false, ""sanctions_flag"": false, ""shareholding"
+2.2.1,直接與間接比例,P2,Ontology,/data/ReportInput/ownership/indirect_interests,Missing,null
+2.2.2,計算路徑與公式,P2,Ontology,/data/ReportInput/ownership/calculation_paths,Missing,null
+2.2.3,重複／循環處理,P2,Ontology,/engine/ownership_analysis,Missing,null
+2.2.4,中間法人數與分支,P2,Ontology,/engine/ownership_analysis/intermediate_legal_entity_count,Missing,null
+2.2.5,未能計算部分,P2,Ontology,/engine/ownership_analysis/errors,Missing,null
+2.3.1,適用識別門檻,P1,Ontology,/data/ReportInput/ubo/threshold,Missing,null
+2.3.2,UBO 自然人資料,P0,Ontology,/derived/ubos,Provided,"[{""party_id"": ""case01-P2-1"", ""person_id"": ""case01-PER-1"", ""full_name"": ""Baseline Software Ltd Shareholder 1"", ""is_ubo"": true, ""is_nominee"": false, ""is_trust"": false, ""sanctions_flag"": false, ""sharehol"
+2.3.3,UBO 判定依據,P0,Ontology,/data/ReportInput/ubo/determination_basis,Missing,null
+2.3.4,非股權控制依據,P2,Ontology,/data/ReportInput/ubo/control_basis,Missing,null
+2.3.5,識別與核實狀態,P1,Ontology,/derived/ubo_verification,Provided,"{""identified_party_ids"": [""case01-P2-1""], ""verification_status"": ""Verified"", ""control_status"": ""Verified"", ""source"": ""Supplied input; not inferred from layer count""}"
+2.3.6,無人達門檻與後續處理,P2,Ontology,/data/ReportInput/ubo/no_threshold_case,Missing,null
+2.4.1,安排類型與商業理由,P3,OutOfScope,/data/ReportInput/special_structure/type,OutOfPrototypeScope,null
+2.4.2,政策要求的相關方,P3,OutOfScope,/data/ReportInput/special_structure/parties,OutOfPrototypeScope,null
+2.4.3,契約與控制條款,P3,OutOfScope,/data/ReportInput/special_structure/contracts,OutOfPrototypeScope,null
+2.4.4,登記與實益權益差異,P3,OutOfScope,/data/ReportInput/special_structure/ownership_differences,OutOfPrototypeScope,null
+2.5.1,董事與授權代表,P2,Ontology,/data/ReportInput/representation/parties,Missing,null
+2.5.2,代表身份核實,P2,Ontology,/data/ReportInput/representation/identity_verification,Missing,null
+2.5.3,授權文件,P2,Ontology,/data/ReportInput/representation/documents,Missing,null
+2.5.4,單簽／聯簽安排,P2,Ontology,/data/ReportInput/representation/signing_arrangement,Missing,null
+2.5.5,金額／產品權限,P2,Ontology,/data/ReportInput/representation/authority_scope,Missing,null
+2.5.6,授權有效期與限制,P2,Ontology,/data/ReportInput/representation/validity,Missing,null
+3.1.1,要求識別與證明事項,P1,Ontology,/data/ReportInput/document_requirements/requirements,Missing,null
+3.1.2,適用性與必需性,P1,Ontology,/derived/document_applicability,Provided,"[{""document_id"": ""case01-DOC-01"", ""is_mandatory"": true}, {""document_id"": ""case01-DOC-02"", ""is_mandatory"": true}, {""document_id"": ""case01-DOC-03"", ""is_mandatory"": true}, {""document_id"": ""case01-DOC-04"""
+3.1.3,所需文件與已收文件,P0,Ontology,/data/Document,Provided,"[{""document_id"": ""case01-DOC-01"", ""document_type"": ""Certificate of Incorporation"", ""status"": ""Provided"", ""fact_verified"": ""legal_existence"", ""is_mandatory"": true}, {""document_id"": ""case01-DOC-02"", ""do"
+3.1.4,事實核實狀態,P0,Ontology,/derived/document_verification,Provided,"[{""document_id"": ""case01-DOC-01"", ""status"": ""Provided"", ""fact_verified"": ""legal_existence"", ""note"": ""fact_verified identifies the fact; it is not an independent verification result""}, {""document_id"": "
+3.1.5,對應證據及責任人,P1,Ontology,/data/ReportInput/document_requirements/assignments,Missing,null
+3.2.1,來源與文件版本,P2,Ontology,/data/ReportInput/documents/sources_versions,Missing,null
+3.2.2,文件日期與有效期,P2,Ontology,/data/ReportInput/documents/dates,Missing,null
+3.2.3,核對方法與結果,P2,Ontology,/data/ReportInput/documents/methods,Missing,null
+3.2.4,真偽與事實核實區分,P2,Ontology,/data/ReportInput/documents/authenticity_vs_facts,Missing,null
+3.2.5,核實人與時間,P2,Ontology,/data/ReportInput/documents/reviewers,Missing,null
+3.3.1,客戶申報值,P1,Ontology,/data/ReportInput/fact_checks/declared_values,Missing,null
+3.3.2,獨立佐證值與定位,P1,Ontology,/data/ReportInput/fact_checks/corroborated_values,Missing,null
+3.3.3,差異與重大性,P0,Ontology,/data/ReportInput/fact_checks/differences,Missing,null
+3.3.4,解釋與處置結果,P1,Ontology,/data/ReportInput/fact_checks/resolution,Missing,null
+3.3.5,未解矛盾與限制,P0,Ontology,/data/ReportInput/fact_checks/unresolved_conflicts,Missing,null
+3.4.1,缺失／過期／未核實清單,P0,Ontology,/derived/outstanding_items,Provided,"[{""type"": ""DimensionEvidence"", ""reason"": ""Dimension assessment pending"", ""related_id"": ""D2"", ""owner"": null, ""due_at"": null}, {""type"": ""DimensionEvidence"", ""reason"": ""Dimension assessment pending"", ""re"
+3.4.2,受影響決策範圍,P1,Ontology,/derived/outstanding_items,Provided,"[{""type"": ""DimensionEvidence"", ""reason"": ""Dimension assessment pending"", ""related_id"": ""D2"", ""owner"": null, ""due_at"": null}, {""type"": ""DimensionEvidence"", ""reason"": ""Dimension assessment pending"", ""re"
+3.4.3,補件及覆核動作,P0,Ontology,/derived/outstanding_items,Provided,"[{""type"": ""DimensionEvidence"", ""reason"": ""Dimension assessment pending"", ""related_id"": ""D2"", ""owner"": null, ""due_at"": null}, {""type"": ""DimensionEvidence"", ""reason"": ""Dimension assessment pending"", ""re"
+3.4.4,完成期限與責任人,P1,Ontology,/data/ReportInput/gaps/assignments,Missing,null
+4.1.1,應篩主體清單,P0,Ontology,/data/ReportInput/screening/requirements,Missing,null
+4.1.2,篩查類型與來源,P1,Ontology,/data/ReportInput/screening/types_sources,Missing,null
+4.1.3,查詢條件與執行時間,P1,Ontology,/data/ReportInput/screening/queries,Missing,null
+4.1.4,名單版本與同步狀態,P1,Ontology,/data/ReportInput/screening/list_versions,Missing,null
+4.1.5,逐主體執行結果,P0,Ontology,/data/ReportInput/screening/execution,Missing,null
+4.1.6,覆蓋缺口,P1,Ontology,/derived/screening_gaps,Missing,null
+4.2.1,候選編號與主體,P1,Ontology,/data/ReportInput/screening/candidates,Missing,null
+4.2.2,身份匹配支持與反證,P1,Ontology,/data/ReportInput/screening/identity_evidence,Missing,null
+4.2.3,匹配分數及含義,P3,OutOfScope,/data/ReportInput/screening/scores,OutOfPrototypeScope,null
+4.2.4,人工處置結論,P0,Ontology,/data/ReportInput/screening/dispositions,Missing,null
+4.2.5,處置人、時間與證據,P1,Ontology,/data/ReportInput/screening/disposition_records,Missing,null
+4.2.6,未決候選與限制,P1,Ontology,/derived/screening_gaps,Missing,null
+4.3.1,適用制裁制度,P3,Ontology,/data/ReportInput/sanctions/regimes,Missing,null
+4.3.2,連結因素與適用行為,P3,Ontology,/data/ReportInput/sanctions/nexus,Missing,null
+4.3.3,制裁所有權／控制規則,P3,OutOfScope,/data/ReportInput/sanctions/ownership_rules,OutOfPrototypeScope,null
+4.3.4,禁止與公司拒絕政策,P3,Ontology,/data/ReportInput/sanctions/prohibitions,Missing,null
+4.3.5,例外／許可與專責決定,P3,OutOfScope,/data/ReportInput/sanctions/exceptions,OutOfPrototypeScope,null
+4.4.1,PEP 類別、職位與期間,P2,Ontology,/derived/pep_parties,Provided,[]
+4.4.2,家屬／緊密關聯關係,P2,Ontology,/data/ReportInput/pep/relationships,Missing,null
+4.4.3,PEP 判定來源與處置,P2,Ontology,/data/ReportInput/pep/disposition,Missing,null
+4.4.4,EDD／SoW 適用與結果,P2,Ontology,/derived/edd_sow,Provided,"{""edd_required"": null, ""edd_status"": ""Pending"", ""sow"": null}"
+4.4.5,高層／雙重審批要求,P3,OutOfScope,/data/ReportInput/pep/approvals,OutOfPrototypeScope,null
+4.5.1,媒體檢索範圍與狀態,P2,Ontology,/data/ReportInput/external_risk/media_search,Missing,null
+4.5.2,相關事件與可信度,P2,Ontology,/data/ReportInput/external_risk/events,Missing,null
+4.5.3,相關性與處置,P2,Ontology,/data/ReportInput/external_risk/relevance,Missing,null
+4.5.4,地域連結與風險依據,P1,Ontology,/derived/jurisdictions,Provided,"{""party1_registration"": ""GB"", ""party2"": [{""party_id"": ""case01-P2-1"", ""nationality"": ""GB"", ""registration_jurisdiction"": ""GB""}]}"
+4.5.5,名單狀態與政策影響,P2,Ontology,/data/WatchList,Provided,[]
+4.5.6,檢索限制與待查事項,P2,Ontology,/data/ReportInput/external_risk/search_gaps,Missing,null
+5.1.1,資金金額與幣別,P0,Ontology,/derived/funding_amount_currency,Provided,"{""source_amount"": 5000000, ""subscription_amount"": 1000000, ""currency"": null}"
+5.1.2,來源人／資金擁有人,P0,Ontology,/data/SourceOfFunds/source_owner,Provided,"""Shareholders"""
+5.1.3,資金產生活動,P0,Ontology,/data/SourceOfFunds/source_event,Provided,"""Operating profits"""
+5.1.4,來源期間與日期,P1,Ontology,/data/ReportInput/funding/dates,Missing,null
+5.1.5,來源事件佐證,P1,Ontology,/data/ReportInput/funding/evidence,Missing,null
+5.2.1,合約／事件總額,P1,Ontology,/data/SourceOfFunds/source_amount,Provided,5000000
+5.2.2,實收與可用淨額,P0,Ontology,/derived/net_funding_amounts,Missing,null
+5.2.3,擬投入金額與配置,P0,Ontology,/data/SourceOfFunds/subscription_amount,Provided,1000000
+5.2.4,匯率與換算日期,P3,OutOfScope,/data/ReportInput/funding/fx,OutOfPrototypeScope,null
+5.2.5,來源對認購對帳算式,P0,Ontology,/derived/funding_reconciliation,Provided,"{""status"": ""Missing"", ""reason"": ""Explicit source and target currency required""}"
+5.2.6,日期銜接與重複使用,P2,Ontology,/data/ReportInput/funding/timing_duplicates,Missing,null
+5.3.1,付款人與帳戶持有人,P0,Ontology,/data/ReportInput/payment/payer_account_holder,Missing,null
+5.3.2,付款銀行與地域,P2,Ontology,/data/ReportInput/payment/bank_jurisdiction,Missing,null
+5.3.3,帳戶識別與同名核對,P1,Ontology,/data/SourceOfFunds/payer_is_investor,Provided,true
+5.3.4,資金流轉與收款對象,P2,Ontology,/data/ReportInput/payment/flow,Missing,null
+5.3.5,擬付款／到帳狀態,P1,Ontology,/data/ReportInput/payment/status,Missing,null
+5.3.6,付款路徑圖,P3,Ontology,/data/ReportInput/payment/chart,Missing,null
+5.4.1,第三方身份與關係,P3,OutOfScope,/data/ReportInput/complex_funding/parties,OutOfPrototypeScope,null
+5.4.2,安排商業理由與法律依據,P3,OutOfScope,/data/ReportInput/complex_funding/rationale,OutOfPrototypeScope,null
+5.4.3,多來源逐項追蹤,P3,OutOfScope,/data/ReportInput/complex_funding/tracking,OutOfPrototypeScope,null
+5.4.4,政策許可／例外批准,P3,OutOfScope,/data/ReportInput/complex_funding/exceptions,OutOfPrototypeScope,null
+5.4.5,差異、未解異常與限制,P3,OutOfScope,/data/ReportInput/complex_funding/gaps,OutOfPrototypeScope,null
+5.5.1,SoW 適用性與理由,P1,Ontology,/data/ReportInput/sow/applicability,Missing,null
+5.5.2,財富累積背景,P2,Ontology,/data/ReportInput/sow/background,Missing,null
+5.5.3,財富來源佐證,P2,Ontology,/data/ReportInput/sow/evidence,Missing,null
+5.5.4,合理性與未支持部分,P2,Ontology,/data/ReportInput/sow/unsupported_parts,Missing,null
+5.6.1,已支持的來源與金額,P1,Ontology,/data/ReportInput/funding/supported_amount,Missing,null
+5.6.2,未支持部分與替代解釋,P1,Ontology,/data/ReportInput/funding/unsupported_parts,Missing,null
+5.6.3,資金核實結論,P0,Ontology,/engine/dimensions/D3,Provided,"{""level"": ""Pending"", ""rule_ids"": [], ""evidence_refs"": [""original-test-case:case01#/data/SourceOfFunds""], ""remediation_rf_ids"": []}"
+5.6.4,收款／認購限制與下一步,P1,Ontology,/data/ReportInput/funding/restrictions_next_steps,Missing,null
+6.1.1,適用風險因子,P0,Ontology,/engine/risk_assessment/rule_assessments,Provided,"[{""rule_id"": ""RF-09"", ""status"": ""Clear"", ""evidence_refs"": [""original-test-case:case01#/data/Application"", ""original-test-case:case01#/data/party1"", ""original-test-case:case01#/data/party2"", ""original-"
+6.1.2,觸發事實與證據,P1,Ontology,/derived/rule_explanations,Provided,"[{""rule_id"": ""RF-09"", ""origin"": ""DeterministicRule"", ""status"": ""Clear"", ""facts"": null, ""evidence_refs"": [""original-test-case:case01#/data/Application"", ""original-test-case:case01#/data/party1"", ""origi"
+6.1.3,因子分數或非計分動作,P0,Ontology,/engine/risk_assessment/hits,Provided,[]
+6.1.4,總分與計算方法,P1,Ontology,/derived/score_calculation,Provided,"{""total_score"": 0, ""confirmed_score_subtotal"": 0, ""terms"": [], ""scoring_status"": ""Completed""}"
+6.1.5,風險帶與方法版本,P1,Ontology,/engine/risk_assessment/risk_band,Provided,"""Low"""
+6.1.6,未知與未評估因子,P1,Ontology,/engine/risk_assessment/pending_rule_ids,Provided,[]
+6.2.1,各維度與固有風險,P2,Ontology,/engine/dimensions,Provided,"{""D1"": {""level"": ""Low"", ""rule_ids"": [""D1-01""], ""evidence_refs"": [""original-test-case:case01#/data/ownership_evidence_complete"", ""original-test-case:case01#/data/ubo_verification"", ""original-test-case:"
+6.2.2,偏好評估狀態,P1,Ontology,/derived/appetite_status,Provided,"""Pending"""
+6.2.3,風險偏好結論,P1,Ontology,/engine/final_appetite,Provided,"""Pending"""
+6.2.4,已驗證措施與有效性,P2,Ontology,/engine/safeguards,Provided,"{""status"": ""Pending"", ""selected"": [], ""unresolved_applicability"": [], ""supported_rule_ids"": [""SG-01"", ""SG-02"", ""SG-03"", ""SG-04"", ""SG-05"", ""SG-06"", ""SG-07"", ""SG-08"", ""SG-09"", ""SG-10"", ""SG-11"", ""SG-12"","
+6.2.5,剩餘風險與接受人,P3,Ontology,/data/ReportInput/appetite/residual_risk,Missing,null
+6.3.1,法定禁止,P2,Ontology,/data/ReportInput/restrictions/legal_prohibition,Missing,null
+6.3.2,機構拒絕政策,P2,Ontology,/data/ReportInput/restrictions/institutional_policy,Missing,null
+6.3.3,程序性阻擋,P2,Ontology,/derived/outstanding_items,Provided,"[{""type"": ""DimensionEvidence"", ""reason"": ""Dimension assessment pending"", ""related_id"": ""D2"", ""owner"": null, ""due_at"": null}, {""type"": ""DimensionEvidence"", ""reason"": ""Dimension assessment pending"", ""re"
+6.3.4,例外理由與可豁免性,P3,OutOfScope,/data/ReportInput/restrictions/exception_basis,OutOfPrototypeScope,null
+6.3.5,例外授權、條件與期限,P3,OutOfScope,/data/ReportInput/restrictions/exception_approval,OutOfPrototypeScope,null
+6.4.1,規則結果,P0,Ontology,/engine/final_decision,Provided,"{""rule_id"": ""PI-11"", ""result"": ""HOLD — Policy / Input Clarification"", ""rationale"": ""Required inputs missing/invalid/inconsistent; results belong to different assessment/policy versions; authority or a"
+6.4.2,AI 建議,P1,External,/data/ReportInput/decision/ai_recommendation,ExternalPending,null
+6.4.3,授權人決定,P0,External,/data/ReportInput/decision/manual_review,ExternalPending,null
+6.4.4,決定理由與主要風險,P0,Ontology,/derived/rule_explanations,Provided,"[{""rule_id"": ""RF-09"", ""origin"": ""DeterministicRule"", ""status"": ""Clear"", ""facts"": null, ""evidence_refs"": [""original-test-case:case01#/data/Application"", ""original-test-case:case01#/data/party1"", ""origi"
+6.4.5,重大未解事項,P1,Ontology,/derived/outstanding_items,Provided,"[{""type"": ""DimensionEvidence"", ""reason"": ""Dimension assessment pending"", ""related_id"": ""D2"", ""owner"": null, ""due_at"": null}, {""type"": ""DimensionEvidence"", ""reason"": ""Dimension assessment pending"", ""re"
+6.5.1,關係建立／帳戶啟用,P3,OutOfScope,/data/ReportInput/permissions/relationship_account,OutOfPrototypeScope,null
+6.5.2,接受資金權限,P3,OutOfScope,/data/ReportInput/permissions/funding,OutOfPrototypeScope,null
+6.5.3,產品／認購權限,P3,OutOfScope,/data/ReportInput/permissions/product_subscription,OutOfPrototypeScope,null
+6.5.4,交收與其他作業權限,P3,OutOfScope,/data/ReportInput/permissions/settlement,OutOfPrototypeScope,null
+6.5.5,權限有效期與失效條件,P3,OutOfScope,/data/ReportInput/permissions/validity,OutOfPrototypeScope,null
+7.1.1,條件識別與適用理由,P1,Ontology,/engine/safeguards,Provided,"{""status"": ""Pending"", ""selected"": [], ""unresolved_applicability"": [], ""supported_rule_ids"": [""SG-01"", ""SG-02"", ""SG-03"", ""SG-04"", ""SG-05"", ""SG-06"", ""SG-07"", ""SG-08"", ""SG-09"", ""SG-10"", ""SG-11"", ""SG-12"","
+7.1.2,前置／持續／後續條件,P1,Shared,/data/ReportInput/conditions/timing,Missing,null
+7.1.3,具體動作與限制參數,P1,Shared,/data/ReportInput/conditions/parameters,Missing,null
+7.1.4,負責人與截止時間,P1,Shared,/data/ReportInput/conditions/assignments,Missing,null
+7.1.5,完成證據與驗證人,P1,Ontology,/engine/safeguards,Provided,"{""status"": ""Pending"", ""selected"": [], ""unresolved_applicability"": [], ""supported_rule_ids"": [""SG-01"", ""SG-02"", ""SG-03"", ""SG-04"", ""SG-05"", ""SG-06"", ""SG-07"", ""SG-08"", ""SG-09"", ""SG-10"", ""SG-11"", ""SG-12"","
+7.1.6,失敗後果與豁免,P2,Shared,/data/ReportInput/conditions/failure_waiver,Missing,null
+7.2.1,製表、覆核與批准人,P1,External,/data/ReportInput/manual_review/reviewers,ExternalPending,null
+7.2.2,授權矩陣與委任,P3,OutOfScope,/data/ReportInput/manual_review/authority_matrix,OutOfPrototypeScope,null
+7.2.3,高層／雙簽要求與結果,P3,OutOfScope,/data/ReportInput/manual_review/dual_approval,OutOfPrototypeScope,null
+7.2.4,批准範圍與理由,P3,OutOfScope,/data/ReportInput/manual_review/scope,OutOfPrototypeScope,null
+7.2.5,批准時間與有效期,P3,OutOfScope,/data/ReportInput/manual_review/validity,OutOfPrototypeScope,null
+7.3.1,AI 原建議與原文,P1,External,/data/ReportInput/report_review/ai_original,ExternalPending,null
+7.3.2,修改前後內容,P2,External,/data/ReportInput/report_review/revisions,ExternalPending,null
+7.3.3,修改類型與理由,P2,External,/data/ReportInput/report_review/reasons,ExternalPending,null
+7.3.4,修改證據與人員,P2,External,/data/ReportInput/report_review/reviewers_evidence,ExternalPending,null
+7.4.1,報告識別、版本與狀態,P0,External,/data/ReportInput/report/identity,ExternalPending,null
+7.4.2,產生及簽署時間,P1,External,/data/ReportInput/report/timestamps,ExternalPending,null
+7.4.3,快照與版本綁定,P1,Shared,/derived/snapshot_binding,Provided,"{""input_hash"": ""1cbe5251e8840ba357e2ae3dce5f848901f41f962aae20483b6c6deb3bd0ef9d"", ""engine_result_hash"": ""b7d2712227df77b8164d30937125d6efd10e6702abe5256f6f89febafdbf7374"", ""contract_hash"": ""ef1d6898e"
+7.4.4,修訂與取代鏈,P3,External,/data/ReportInput/report/supersedes,ExternalPending,null
+7.4.5,簽署與放行區分,P0,Shared,/derived/release_disclaimer,Provided,"""Prototype only — no account, fund acceptance, product or settlement permission granted"""
+8.1.1,可提供的服務與產品,P1,Shared,/data/ReportInput/handoff/service_scope,Missing,null
+8.1.2,補件與可對客說明,P2,Shared,/data/ReportInput/handoff/customer_notes,Missing,null
+8.1.3,案件擁有人與下一步,P0,Ontology,/derived/outstanding_items,Provided,"[{""type"": ""DimensionEvidence"", ""reason"": ""Dimension assessment pending"", ""related_id"": ""D2"", ""owner"": null, ""due_at"": null}, {""type"": ""DimensionEvidence"", ""reason"": ""Dimension assessment pending"", ""re"
+8.1.4,期限、優先次序與升級,P1,Shared,/data/ReportInput/handoff/assignments,Missing,null
+8.1.5,客戶查詢／覆核渠道,P3,OutOfScope,/data/ReportInput/handoff/inquiry_channel,OutOfPrototypeScope,null
+8.2.1,基金／股份類別與指示,P3,OutOfScope,/data/ReportInput/operations/instructions,OutOfPrototypeScope,null
+8.2.2,最低額、幣別與截止時點,P3,OutOfScope,/data/ReportInput/operations/minimum_currency_deadline,OutOfPrototypeScope,null
+8.2.3,收款與接納狀態,P3,OutOfScope,/data/ReportInput/operations/receipts,OutOfPrototypeScope,null
+8.2.4,實際限制與目標系統,P3,OutOfScope,/data/ReportInput/operations/restrictions,OutOfPrototypeScope,null
+8.2.5,執行指令與回覆,P3,OutOfScope,/data/ReportInput/operations/execution,OutOfPrototypeScope,null
+8.2.6,尚未落地的作業影響,P3,OutOfScope,/data/ReportInput/operations/failures,OutOfPrototypeScope,null
+8.3.1,監控基線與觸發,P3,OutOfScope,/data/ReportInput/monitoring/baseline,OutOfPrototypeScope,null
+8.3.2,監控／重篩頻率,P3,OutOfScope,/data/ReportInput/monitoring/cadence,OutOfPrototypeScope,null
+8.3.3,下一次覆核日期,P2,External,/data/ReportInput/monitoring/next_review,ExternalPending,null
+8.3.4,任務負責與接收確認,P3,OutOfScope,/data/ReportInput/monitoring/assignments,OutOfPrototypeScope,null
+8.3.5,逾期、失敗與升級,P3,OutOfScope,/data/ReportInput/monitoring/failures,OutOfPrototypeScope,null
+8.4.1,重要資料變更,P2,External,/data/ReportInput/reassessment/data_changes,ExternalPending,null
+8.4.2,名單／政策變更,P2,External,/data/ReportInput/reassessment/policy_changes,ExternalPending,null
+8.4.3,新舊結論差異,P2,External,/data/ReportInput/reassessment/differences,ExternalPending,null
+8.4.4,舊權限處理,P2,External,/data/ReportInput/reassessment/old_permissions,ExternalPending,null
+8.4.5,重評責任與新版本,P2,External,/data/ReportInput/reassessment/assignments,ExternalPending,null
+8.4.6,變更摘要圖表,P3,External,/data/ReportInput/reassessment/chart,ExternalPending,null
+9.1.1,AI 實際用途與生成區域,P0,External,/data/ReportInput/ai/usage,ExternalPending,null
+9.1.2,AI、規則與人工標籤,P0,External,/data/ReportInput/ai/content_origin,ExternalPending,null
+9.1.3,AI 使用限制聲明,P1,External,/data/ReportInput/ai/limitations,ExternalPending,null
+9.1.4,人工覆核範圍與狀態,P1,External,/data/ReportInput/ai/human_review,ExternalPending,null
+9.1.5,本次適用的驗證狀態,P1,External,/data/ReportInput/ai/validation,ExternalPending,null
+9.2.1,已納入文件與資料清單,P2,Ontology,/derived/included_material,Provided,"{""documents"": [{""document_id"": ""case01-DOC-01"", ""document_type"": ""Certificate of Incorporation"", ""status"": ""Provided"", ""fact_verified"": ""legal_existence"", ""is_mandatory"": true}, {""document_id"": ""case0"
+9.2.2,排除／未讀材料,P2,Shared,/data/ReportInput/coverage/excluded,Missing,null
+9.2.3,工具執行結果,P2,Shared,/data/ReportInput/coverage/tool_runs,Missing,null
+9.2.4,完成率與核實率,P3,Shared,/data/ReportInput/coverage/rates,Missing,null
+9.2.5,失敗與未執行清單,P0,Ontology,/derived/outstanding_items,Provided,"[{""type"": ""DimensionEvidence"", ""reason"": ""Dimension assessment pending"", ""related_id"": ""D2"", ""owner"": null, ""due_at"": null}, {""type"": ""DimensionEvidence"", ""reason"": ""Dimension assessment pending"", ""re"
+9.3.1,主張識別與內容,P1,Ontology,/derived/rule_explanations,Provided,"[{""rule_id"": ""RF-09"", ""origin"": ""DeterministicRule"", ""status"": ""Clear"", ""facts"": null, ""evidence_refs"": [""original-test-case:case01#/data/Application"", ""original-test-case:case01#/data/party1"", ""origi"
+9.3.2,主張類型,P1,Ontology,/derived/content_origin,Provided,"""DeterministicRule / ImportedInput; no LLM executed by ontology exporter"""
+9.3.3,來源與版本定位,P0,Shared,/data/ReportInput/evidence/records,Missing,null
+9.3.4,來源取得與獨立性,P1,Shared,/data/ReportInput/claims/source_independence,Missing,null
+9.3.5,引用存在與語義支持,P0,Shared,/data/ReportInput/claims/support_review,Missing,null
+9.3.6,核實人與狀態,P1,Shared,/data/ReportInput/claims/verification,Missing,null
+9.4.1,結論與決策影響,P2,Shared,/data/ReportInput/explanation/decision_impact,Missing,null
+9.4.2,採用事實與證據,P0,Ontology,/derived/rule_explanations,Provided,"[{""rule_id"": ""RF-09"", ""origin"": ""DeterministicRule"", ""status"": ""Clear"", ""facts"": null, ""evidence_refs"": [""original-test-case:case01#/data/Application"", ""original-test-case:case01#/data/party1"", ""origi"
+9.4.3,適用規則與方法,P0,Ontology,/derived/rule_explanations,Provided,"[{""rule_id"": ""RF-09"", ""origin"": ""DeterministicRule"", ""status"": ""Clear"", ""facts"": null, ""evidence_refs"": [""original-test-case:case01#/data/Application"", ""original-test-case:case01#/data/party1"", ""origi"
+9.4.4,可核對推導摘要,P0,Ontology,/derived/rule_explanations,Provided,"[{""rule_id"": ""RF-09"", ""origin"": ""DeterministicRule"", ""status"": ""Clear"", ""facts"": null, ""evidence_refs"": [""original-test-case:case01#/data/Application"", ""original-test-case:case01#/data/party1"", ""origi"
+9.4.5,重大反證與替代解釋,P0,Shared,/data/ReportInput/explanation/counter_evidence,Missing,null
+9.4.6,缺口、下一步與責任,P2,Ontology,/derived/outstanding_items,Provided,"[{""type"": ""DimensionEvidence"", ""reason"": ""Dimension assessment pending"", ""related_id"": ""D2"", ""owner"": null, ""due_at"": null}, {""type"": ""DimensionEvidence"", ""reason"": ""Dimension assessment pending"", ""re"
+9.5.1,證據充分性,P2,Shared,/data/ReportInput/quality/evidence_sufficiency,Missing,null
+9.5.2,資料品質與來源限制,P2,Shared,/data/ReportInput/quality/limitations,Missing,null
+9.5.3,匹配／信心分數定義,P3,OutOfScope,/data/ReportInput/quality/confidence,OutOfPrototypeScope,null
+9.5.4,未檢查事項與結論限制,P2,Shared,/data/ReportInput/quality/unassessed,Missing,null
+9.6.1,執行編號與時間,P1,Ontology,/derived/run,Provided,"{""run_id"": ""fe655fba-4988-4ebb-b356-e3e7694980a3"", ""evaluated_at"": ""2026-10-29T17:00:50.988296+00:00""}"
+9.6.2,模型／供應商版本,P1,External,/data/ReportInput/execution/models,ExternalPending,null
+9.6.3,提示詞／工作流版本,P2,External,/data/ReportInput/execution/workflow_versions,ExternalPending,null
+9.6.4,本體／規則／政策版本,P2,Ontology,/derived/policy_pack,Provided,"{""version"": null, ""workbook_sha256"": {""IS4920_Integrated_HardGate_RiskFactors_RiskBand.xlsx"": ""a24e5f8beb6fc1b714f09c0a2824be932f8cddc33f42846ef97d31ddce172670"", ""IS4920_AML_Appetite_Safeguards.xlsx"":"
+9.6.5,輸入快照與原輸出,P1,Ontology,/derived/snapshot_binding,Provided,"{""input_hash"": ""1cbe5251e8840ba357e2ae3dce5f848901f41f962aae20483b6c6deb3bd0ef9d"", ""engine_result_hash"": ""b7d2712227df77b8164d30937125d6efd10e6702abe5256f6f89febafdbf7374"", ""contract_hash"": ""ef1d6898e"
+9.6.6,失敗、重試與降級,P0,External,/data/ReportInput/execution/failures,ExternalPending,null
+9.6.7,重現能力與限制,P2,Ontology,/derived/reproducibility,Provided,"""Original input and rule result saved; a rerun is a separate run, not a historical overwrite"""
+9.7.1,人工修改與審閱事件索引,P3,External,/data/ReportInput/governance/revisions,ExternalPending,null
+9.7.2,獲批模型與部署地,P3,OutOfScope,/data/ReportInput/governance/models,OutOfPrototypeScope,null
+9.7.3,資料類別與遮罩,P1,External,/data/ReportInput/governance/classification,ExternalPending,null
+9.7.4,保留／刪除／訓練使用設定,P3,OutOfScope,/data/ReportInput/governance/retention,OutOfPrototypeScope,null
+9.7.5,惡意指令／工具事件,P3,OutOfScope,/data/ReportInput/governance/incidents,OutOfPrototypeScope,null
+10.1.1,證據索引與支持範圍,P1,Shared,/data/ReportInput/evidence/records,Missing,null
+10.1.2,原件／快照與完整性,P1,Ontology,/derived/snapshot_binding,Provided,"{""input_hash"": ""1cbe5251e8840ba357e2ae3dce5f848901f41f962aae20483b6c6deb3bd0ef9d"", ""engine_result_hash"": ""b7d2712227df77b8164d30937125d6efd10e6702abe5256f6f89febafdbf7374"", ""contract_hash"": ""ef1d6898e"
+10.1.3,資料分類與允許讀者,P2,Shared,/data/ReportInput/evidence/classification,Missing,null
+10.1.4,保留政策與起算事件,P3,OutOfScope,/data/ReportInput/evidence/retention,OutOfPrototypeScope,null
+10.2.1,法律／監管／內規來源,P3,Shared,/data/ReportInput/policy/sources,Missing,null
+10.2.2,機構與案件適用性,P2,Shared,/data/ReportInput/policy/applicability,Missing,null
+10.2.3,生效、批准與擁有人,P2,Shared,/data/ReportInput/policy/ownership,Missing,null
+10.2.4,計算、門檻與優先序,P2,Ontology,/derived/policy_pack,Provided,"{""version"": null, ""workbook_sha256"": {""IS4920_Integrated_HardGate_RiskFactors_RiskBand.xlsx"": ""a24e5f8beb6fc1b714f09c0a2824be932f8cddc33f42846ef97d31ddce172670"", ""IS4920_AML_Appetite_Safeguards.xlsx"":"
+10.3.1,審核事件與修訂鏈,P2,External,/data/ReportInput/audit/revisions,ExternalPending,null
+10.3.2,簽署與權限紀錄,P3,OutOfScope,/data/ReportInput/audit/signatures,OutOfPrototypeScope,null
+10.3.3,任務／限制／系統回覆,P3,OutOfScope,/data/ReportInput/audit/execution,OutOfPrototypeScope,null
+10.3.4,存取與匯出紀錄,P3,OutOfScope,/data/ReportInput/audit/access,OutOfPrototypeScope,null
+10.4.1,具體疑點與查詢,P3,OutOfScope,/data/ReportInput/mlro/suspicions,OutOfPrototypeScope,null
+10.4.2,內部轉介與專責責任,P3,OutOfScope,/data/ReportInput/mlro/referrals,OutOfPrototypeScope,null
+10.4.3,懷疑／申報決定,P3,OutOfScope,/data/ReportInput/mlro/decisions,OutOfPrototypeScope,null
+10.4.4,獨立權限與披露限制,P3,OutOfScope,/data/ReportInput/mlro/permissions,OutOfPrototypeScope,null

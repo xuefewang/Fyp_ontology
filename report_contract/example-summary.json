@@ -1,0 +1,31 @@
+{
+  "case": "case01",
+  "actual_sql_row_count": 289,
+  "sql_round_trip_equal": true,
+  "summary": {
+    "total_requirements": 289,
+    "statuses": {
+      "Missing": 128,
+      "Provided": 68,
+      "OutOfPrototypeScope": 65,
+      "ExternalPending": 28
+    },
+    "ontology_field_statuses": {
+      "Missing": 128,
+      "Provided": 68
+    },
+    "ready_for_report": false,
+    "note": "Provided means present, not verified; missing facts are never fabricated"
+  },
+  "actual_sql_rule_result": {
+    "rule_id": "PI-11",
+    "result": "HOLD — Policy / Input Clarification",
+    "rationale": "Required inputs missing/invalid/inconsistent; results belong to different assessment/policy versions; authority or applicable policy undefined.\n必要输入缺失/无效/矛盾；结果不属于同次评估/政策版本；权限或适用政策未定义。",
+    "authorization_status": "Pending",
+    "required_approver_roles": null,
+    "input_errors": [
+      "Undefined approved authority matrix, policy version or assessment identity"
+    ]
+  },
+  "scope_note": "Synthetic public test case. SQLite was executed locally, not an external server."
+}

@@ -1,0 +1,239 @@
+{
+  "notice": "Field slots only. null means missing. Fill from actual supplied evidence or manual records, never fabricate. Merge ReportInput into existing case.data; this file alone is not a runnable case.",
+  "ReportInput": {
+    "context": {
+      "organization_name": null,
+      "service_legal_entity": null,
+      "account_scope": null,
+      "service_scope": null,
+      "transaction_scope": null,
+      "as_of": null,
+      "exclusions": null
+    },
+    "company": {
+      "aliases": null,
+      "registration": null,
+      "legal_form": null,
+      "legal_status": null,
+      "registered_address": null,
+      "operating_address": null
+    },
+    "business": {
+      "summary": null,
+      "business_model": null,
+      "products_services": null,
+      "operating_markets": null,
+      "licence": null,
+      "background_chart": null
+    },
+    "kyc": {
+      "representation": null,
+      "screening": null,
+      "product_workflow": null
+    },
+    "relationship": {
+      "purpose": null,
+      "economic_purpose": null,
+      "funding_purpose": null,
+      "introduction": null,
+      "unresolved_purpose": null
+    },
+    "expected_activity": {
+      "amount_currency": null,
+      "frequency": null,
+      "counterparties_jurisdictions": null,
+      "horizon_liquidity": null,
+      "differences": null,
+      "concentration": null
+    },
+    "ownership": {
+      "voting_rights": null,
+      "jurisdictions_dates": null,
+      "relationship_evidence": null,
+      "indirect_interests": null,
+      "calculation_paths": null
+    },
+    "ubo": {
+      "threshold": null,
+      "determination_basis": null,
+      "control_basis": null,
+      "no_threshold_case": null
+    },
+    "representation": {
+      "parties": null,
+      "identity_verification": null,
+      "documents": null,
+      "signing_arrangement": null,
+      "authority_scope": null,
+      "validity": null
+    },
+    "document_requirements": {
+      "requirements": null,
+      "assignments": null
+    },
+    "documents": {
+      "sources_versions": null,
+      "dates": null,
+      "methods": null,
+      "authenticity_vs_facts": null,
+      "reviewers": null
+    },
+    "fact_checks": {
+      "declared_values": null,
+      "corroborated_values": null,
+      "differences": null,
+      "resolution": null,
+      "unresolved_conflicts": null
+    },
+    "gaps": {
+      "assignments": null
+    },
+    "screening": {
+      "requirements": null,
+      "types_sources": null,
+      "queries": null,
+      "list_versions": null,
+      "execution": null,
+      "candidates": null,
+      "identity_evidence": null,
+      "dispositions": null,
+      "disposition_records": null
+    },
+    "sanctions": {
+      "regimes": null,
+      "nexus": null,
+      "prohibitions": null
+    },
+    "pep": {
+      "relationships": null,
+      "disposition": null
+    },
+    "external_risk": {
+      "media_search": null,
+      "events": null,
+      "relevance": null,
+      "search_gaps": null
+    },
+    "funding": {
+      "dates": null,
+      "evidence": null,
+      "timing_duplicates": null,
+      "supported_amount": null,
+      "unsupported_parts": null,
+      "restrictions_next_steps": null
+    },
+    "payment": {
+      "payer_account_holder": null,
+      "bank_jurisdiction": null,
+      "flow": null,
+      "status": null,
+      "chart": null
+    },
+    "sow": {
+      "applicability": null,
+      "background": null,
+      "evidence": null,
+      "unsupported_parts": null
+    },
+    "appetite": {
+      "residual_risk": null
+    },
+    "restrictions": {
+      "legal_prohibition": null,
+      "institutional_policy": null
+    },
+    "decision": {
+      "ai_recommendation": null,
+      "manual_review": null
+    },
+    "conditions": {
+      "timing": null,
+      "parameters": null,
+      "assignments": null,
+      "failure_waiver": null
+    },
+    "manual_review": {
+      "reviewers": null
+    },
+    "report_review": {
+      "ai_original": null,
+      "revisions": null,
+      "reasons": null,
+      "reviewers_evidence": null
+    },
+    "report": {
+      "identity": null,
+      "timestamps": null,
+      "supersedes": null
+    },
+    "handoff": {
+      "service_scope": null,
+      "customer_notes": null,
+      "assignments": null
+    },
+    "monitoring": {
+      "next_review": null
+    },
+    "reassessment": {
+      "data_changes": null,
+      "policy_changes": null,
+      "differences": null,
+      "old_permissions": null,
+      "assignments": null,
+      "chart": null
+    },
+    "ai": {
+      "usage": null,
+      "content_origin": null,
+      "limitations": null,
+      "human_review": null,
+      "validation": null
+    },
+    "coverage": {
+      "excluded": null,
+      "tool_runs": null,
+      "rates": null
+    },
+    "evidence": {
+      "records": null,
+      "classification": null
+    },
+    "claims": {
+      "source_independence": null,
+      "support_review": null,
+      "verification": null
+    },
+    "explanation": {
+      "decision_impact": null,
+      "counter_evidence": null
+    },
+    "quality": {
+      "evidence_sufficiency": null,
+      "limitations": null,
+      "unassessed": null
+    },
+    "execution": {
+      "models": null,
+      "workflow_versions": null,
+      "failures": null
+    },
+    "governance": {
+      "revisions": null,
+      "classification": null
+    },
+    "policy": {
+      "sources": null,
+      "applicability": null,
+      "ownership": null
+    },
+    "audit": {
+      "revisions": null
+    }
+  },
+  "SourceOfFunds_additional_fields": {
+    "currency": null,
+    "net_available_amount": null,
+    "received_amount": null,
+    "subscription_currency": null
+  }
+}
