@@ -201,13 +201,3 @@ python workflow_graph.py --check-expected --output workflow-results.json
 ```
 
 `langgraph.json` 统一注册完整项目图 `aml_workflow`。
-
-## 客户评估与Report输出
-
-保持party1／party2及原Safeguards逻辑，结果新增`report_payload`供数据库和Report团队使用。输入／输出schema、SQL／graph导出、合成示例及本轮边界见 [数据库交接](docs/database-handoff.md) 和 [R01–R32改动](docs/R01-R32-changes.md)。
-
-```bash
-python customer_export.py --json examples/customer-input.json --output-dir work/customer-export
-```
-
-本地格式／引用登记校验不等于可信证据或身份认证，实际数据库和外部服务由对应团队接入。旧案例明确标为Legacy / NeedsReview。

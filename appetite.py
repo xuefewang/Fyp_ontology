@@ -44,7 +44,7 @@ def build_appetite_graph(rules_dir: Path = DEFAULT_RULES, *, checkpointer=None):
 
     def prepare(state):
         case = case_from_json(state['case'])
-        evidence, ownership = prepare_workflow_evidence(case, catalogue.versions)
+        evidence, ownership = prepare_workflow_evidence(case)
         return {'evidence': evidence, 'ownership_analysis': ownership,
                 'assessment_id': 'RA-' + case.application.application_id}
 

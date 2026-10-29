@@ -9,7 +9,6 @@ Inputs without verification facts remain Pending. All workbook safeguards SG-01.
 from __future__ import annotations
 
 import argparse
-import copy
 import json
 import sys
 from dataclasses import dataclass, field
@@ -83,7 +82,6 @@ class Case:
     assessment_date: str = ""
     workflow_evidence: dict = field(default_factory=dict)
     expected: dict = field(default_factory=dict)
-    source_data: dict = field(default_factory=dict)  # Preserve raw party1/party2 and report inputs.
 
     def all_parties(self) -> list[Party]:
         return [self.party1] + self.party2_chain
@@ -130,7 +128,6 @@ def case_from_json(item: dict) -> Case:
                     for w in data.get("WatchList", [])],
         assessment_date=app["submission_date"],
         expected=item.get("expected", {}),
-        source_data=copy.deepcopy(data),
         workflow_evidence=(data["WorkflowEvidence"] if "WorkflowEvidence" in data
                            else workflow_from_case(item) if "SourceOfFunds" in data or "ubo_verification" in data
                            else {}),

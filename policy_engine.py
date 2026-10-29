@@ -12,7 +12,6 @@ import re
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from customer_ontology import inspect_customer, approval_binding_issues, build_report_payload, digest, supported_rule_pack
 from ownership import analyze_ownership
 
 LEVELS = {'Low': 0, 'Medium': 1, 'High': 2}
@@ -463,7 +462,7 @@ def integrate(rf, appetite, sg, evidence, cat):
             'authorization_status': authorization, 'required_approver_roles': required, 'input_errors': errors}
 
 
-def prepare_workflow_evidence(case, cat_versions=None):
+def prepare_workflow_evidence(case):
     """Normalize a private evidence copy shared by batch and graph runners."""
     evidence = copy.deepcopy(case.workflow_evidence)
     if not isinstance(evidence, dict):
@@ -472,11 +471,6 @@ def prepare_workflow_evidence(case, cat_versions=None):
         if key in evidence and not isinstance(evidence[key], dict):
             evidence.setdefault('input_errors', []).append(f'{key} must be an object')
             evidence[key] = {}
-    for prefix in ('D1', 'D2', 'D3'):
-        record = evidence.get(prefix, {})
-        if 'facts' in record and not isinstance(record['facts'], dict):
-            evidence.setdefault('input_errors', []).append(f'{prefix}.facts must be an object')
-            record['facts'] = {}
     if 'approvals' in evidence and not isinstance(evidence['approvals'], list):
         evidence.setdefault('input_errors', []).append('approvals must be an array')
         evidence['approvals'] = []
@@ -484,26 +478,12 @@ def prepare_workflow_evidence(case, cat_versions=None):
     if evidence.get('assessment_id') not in (None, aid):
         evidence.setdefault('input_errors', []).append('Input assessment_id does not match current case')
     evidence.setdefault('assessment_id', aid)
-    inspection = inspect_customer(case, evidence)
-    if inspection['mode'] == 'Customer' and not inspection['issues']:
-        relationships = inspection['customer']['party_relationships']
-        disclosed = {'investor_id': case.party1.party_id,
-                     'nodes': [{'id': p['party_id'], 'entity_type': p['entity_type']} for p in inspection['parties']],
-                     'edges': [{'entity_id': r['to_party_id'], 'owner_id': r['from_party_id']}
-                               for r in relationships if r['relationship_type'] == 'ownership']}
-        if 'ownership_structure' in evidence and evidence['ownership_structure'] != disclosed:
-            evidence.setdefault('input_errors', []).append('Ownership relationship graph conflicts with supplied ownership_structure')
-        evidence['ownership_structure'] = disclosed
     ownership = None
     if 'ownership_structure' in evidence:
         ownership = analyze_ownership(evidence['ownership_structure'])
         fact = evidence.setdefault('risk_factors', {}).setdefault('RF-15', {})
         declared = fact.pop('status', None)
         count = ownership['intermediate_legal_entity_count']
-        if inspection['mode'] == 'Customer':
-            d1 = evidence.get('D1', {}).get('facts', {})
-            if d1.get('intermediate_legal_entity_count') not in (None, count):
-                evidence.setdefault('input_errors', []).append('D1 depth contradicts relationship graph')
         inferred = PENDING if count is None else 'Hit' if count >= 4 else 'Clear'
         if declared is not None and declared != inferred:
             evidence.setdefault('input_errors', []).append('RF-15 conclusion contradicts ownership graph')
@@ -513,20 +493,11 @@ def prepare_workflow_evidence(case, cat_versions=None):
             evidence['D1']['facts']['complex_ownership'] = ownership['intermediate_legal_entity_count'] >= 4
         if ownership['cycle_detected']:
             evidence['ownership_review_required'] = True
-    if inspection['mode'] == 'Customer':
-        if cat_versions is None or cat_versions != supported_rule_pack():
-            inspection['issues'].append({'code': 'RULE_PACK_COMPATIBILITY', 'path': '$.policy',
-                                         'message': 'Rule workbook hashes require explicit engine compatibility review'})
-        inspection['issues'].extend(approval_binding_issues(case, evidence, digest(cat_versions))
-                                    if cat_versions is not None else [])
-        evidence.setdefault('input_errors', []).extend(
-            f"{issue['code']}: {issue['message']}" for issue in inspection['issues'])
-    evidence['_customer_inspection'] = inspection
     return evidence, ownership
 
 
 def assess_workflow(case, cat):
-    evidence, ownership = prepare_workflow_evidence(case, cat.versions)
+    evidence, ownership = prepare_workflow_evidence(case)
     rf = evaluate_rf(evidence, cat)
     dimensions, appetite, appetite_rules = evaluate_dimensions(evidence, cat, rf)
     sg = evaluate_safeguards(dimensions, rf, appetite, evidence, cat)
@@ -539,7 +510,7 @@ def format_workflow_result(case, cat, evidence, ownership, rf, dimensions, appet
     ids = [h['factor_id'] for h in rf['hits']] + rf['pending_rule_ids']
     ids += [r for d in dimensions.values() for r in d['rule_ids']] + appetite_rules
     ids += [s['safeguard_id'] for s in sg['selected']] + sg['unresolved_applicability'] + [final['rule_id']]
-    result = {'case': case.name, 'assessment_id': 'RA-' + case.application.application_id,
+    return {'case': case.name, 'assessment_id': 'RA-' + case.application.application_id,
             'assessment_date': case.assessment_date or case.application.submission_date,
             'ownership_analysis': ownership,
             'risk_assessment': rf, 'dimensions': dimensions, 'final_appetite': appetite,
@@ -553,6 +524,3 @@ def format_workflow_result(case, cat, evidence, ownership, rf, dimensions, appet
                       'evaluated_at': dt.datetime.now(dt.timezone.utc).isoformat(),
                       'input_evidence': evidence,
                       'approval_records': evidence.get('approvals', []), 'warnings': cat.warnings}}
-
-    result['report_payload'] = build_report_payload(case, cat, evidence, result)
-    return result
