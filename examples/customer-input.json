@@ -1,0 +1,563 @@
+{
+  "notice": "ALL DATA AND VERIFICATION ARE SYNTHETIC. No external service was used.",
+  "test_cases": [
+    {
+      "test_case_id": "customer-demo",
+      "case_no": 40,
+      "company": "Synthetic Customer Example",
+      "data": {
+        "Application": {
+          "application_id": "SYNTHETIC-new012",
+          "submission_date": "2026-10-06",
+          "application_status": "UnderReview"
+        },
+        "party1": {
+          "party_id": "new012-investor",
+          "person_id": "case01-P1-PER",
+          "full_name": "SYNTHETIC RF-12 confirmed factor",
+          "is_ubo": false,
+          "is_nominee": false,
+          "is_trust": false,
+          "sanctions_flag": false,
+          "shareholding_percentage": 100.0,
+          "pep_status": "None",
+          "nationality": "GB",
+          "registration_jurisdiction": "GB"
+        },
+        "party2": [
+          {
+            "party_id": "DEMO-OWNER",
+            "person_id": "DEMO-PERSON",
+            "full_name": "Synthetic Owner",
+            "entity_type": "NaturalPerson",
+            "is_ubo": true,
+            "shareholding_percentage": 100
+          }
+        ],
+        "Industry": {
+          "industry_id": "case01-IND",
+          "industry_name": "Standard Risk Industries",
+          "industry_tier": "I1"
+        },
+        "WatchList": [],
+        "Document": [
+          {
+            "document_id": "case01-DOC-01",
+            "document_type": "Certificate of Incorporation",
+            "status": "Provided",
+            "fact_verified": "legal_existence",
+            "is_mandatory": true
+          },
+          {
+            "document_id": "case01-DOC-02",
+            "document_type": "Shareholder Register",
+            "status": "Provided",
+            "fact_verified": "shareholding_pct",
+            "is_mandatory": true
+          },
+          {
+            "document_id": "case01-DOC-03",
+            "document_type": "Director Declaration",
+            "status": "Provided",
+            "fact_verified": "director_identity",
+            "is_mandatory": true
+          },
+          {
+            "document_id": "case01-DOC-04",
+            "document_type": "Audited Financial Statements",
+            "status": "Provided",
+            "fact_verified": "financial_position",
+            "is_mandatory": false
+          }
+        ],
+        "regulated_activity": false,
+        "licence_status": "NotApplicable",
+        "ubo_verification": "Verified",
+        "control_verification": "Verified",
+        "illicit_activity_confirmed": false,
+        "fraud_confirmed": false,
+        "hardgate_pending": false,
+        "ownership_evidence_complete": true,
+        "industry_data_sufficient": true,
+        "cross_entity_structure": false,
+        "control_rights_discrepancy_unexplained": false,
+        "structural_explanation_adequate": true,
+        "multiple_high_risk_activities": false,
+        "incorporation_date": "2015-06-01",
+        "high_leverage": false,
+        "negative_cash_flow": false,
+        "net_assets_sufficient": true,
+        "officer_decision": "Approved",
+        "safeguards_completed": [],
+        "WorkflowEvidence": {
+          "assessment_id": "RA-SYNTHETIC-new012",
+          "risk_factors": {
+            "RF-01": {
+              "status": "Clear",
+              "verified": true,
+              "evidence_refs": [
+                "demo-evidence"
+              ]
+            },
+            "RF-02": {
+              "status": "Clear",
+              "verified": true,
+              "evidence_refs": [
+                "demo-evidence"
+              ]
+            },
+            "RF-03": {
+              "status": "Clear",
+              "verified": true,
+              "evidence_refs": [
+                "demo-evidence"
+              ]
+            },
+            "RF-04": {
+              "status": "Clear",
+              "verified": true,
+              "evidence_refs": [
+                "demo-evidence"
+              ]
+            },
+            "RF-05": {
+              "status": "Clear",
+              "verified": true,
+              "evidence_refs": [
+                "demo-evidence"
+              ]
+            },
+            "RF-06": {
+              "status": "Clear",
+              "verified": true,
+              "evidence_refs": [
+                "demo-evidence"
+              ]
+            },
+            "RF-07": {
+              "status": "Clear",
+              "verified": true,
+              "evidence_refs": [
+                "demo-evidence"
+              ]
+            },
+            "RF-08": {
+              "status": "Clear",
+              "verified": true,
+              "evidence_refs": [
+                "demo-evidence"
+              ]
+            },
+            "RF-09": {
+              "status": "Clear",
+              "verified": true,
+              "evidence_refs": [
+                "demo-evidence"
+              ]
+            },
+            "RF-10": {
+              "status": "Clear",
+              "verified": true,
+              "evidence_refs": [
+                "demo-evidence"
+              ]
+            },
+            "RF-11": {
+              "status": "Clear",
+              "verified": true,
+              "evidence_refs": [
+                "demo-evidence"
+              ]
+            },
+            "RF-12": {
+              "status": "Hit",
+              "verified": true,
+              "evidence_refs": [
+                "demo-evidence"
+              ]
+            },
+            "RF-13": {
+              "status": "Clear",
+              "verified": true,
+              "evidence_refs": [
+                "demo-evidence"
+              ]
+            },
+            "RF-14": {
+              "status": "Clear",
+              "verified": true,
+              "evidence_refs": [
+                "demo-evidence"
+              ]
+            },
+            "RF-15": {
+              "facts": {
+                "intermediate_legal_entity_count": 0
+              },
+              "verified": true,
+              "evidence_refs": [
+                "demo-evidence"
+              ]
+            },
+            "RF-16": {
+              "status": "Clear",
+              "verified": true,
+              "evidence_refs": [
+                "demo-evidence"
+              ]
+            },
+            "RF-17": {
+              "status": "Clear",
+              "verified": true,
+              "evidence_refs": [
+                "demo-evidence"
+              ]
+            },
+            "RF-18": {
+              "status": "Clear",
+              "verified": true,
+              "evidence_refs": [
+                "demo-evidence"
+              ]
+            },
+            "RF-19": {
+              "status": "Clear",
+              "verified": true,
+              "evidence_refs": [
+                "demo-evidence"
+              ]
+            },
+            "RF-20": {
+              "status": "Clear",
+              "verified": true,
+              "evidence_refs": [
+                "demo-evidence"
+              ]
+            },
+            "RF-21": {
+              "status": "Clear",
+              "verified": true,
+              "evidence_refs": [
+                "demo-evidence"
+              ]
+            }
+          },
+          "D1": {
+            "evidence_complete": true,
+            "evidence_refs": [
+              "demo-evidence"
+            ],
+            "facts": {
+              "legal_entity_verified": true,
+              "ownership_links_verified": true,
+              "ubo_verified": true,
+              "control_verified": true,
+              "intermediate_legal_entity_count": 0,
+              "complex_ownership": false,
+              "nominee_or_trust": false,
+              "cross_entity_or_border_complexity": false,
+              "control_rights_discrepancy": false,
+              "unusual_structure": false,
+              "material_unresolved_contradiction": false
+            }
+          },
+          "D2": {
+            "evidence_complete": true,
+            "evidence_refs": [
+              "demo-evidence"
+            ],
+            "facts": {
+              "activity_verified": true,
+              "taxonomy_approved": true,
+              "category": "Standard",
+              "regulated": false,
+              "material_discrepancy": false,
+              "material_high_risk_activity": false
+            }
+          },
+          "D3": {
+            "evidence_complete": true,
+            "evidence_refs": [
+              "demo-evidence"
+            ],
+            "facts": {
+              "mandatory_evidence_authenticated": true,
+              "source_event_identified": true,
+              "owner_identified": true,
+              "amount_dates_verified": true,
+              "funds_sufficient": true,
+              "records_reconciled": true,
+              "records_verified": true,
+              "unresolved_discrepancy": false,
+              "own_account": true,
+              "complex_funding": false,
+              "unusual_subscription": false,
+              "material_anomaly": false
+            }
+          },
+          "policy": {
+            "version": "synthetic-policy-v3",
+            "approval_matrix_approved": true,
+            "required_approver_roles": [
+              "Compliance Officer"
+            ]
+          },
+          "approvals": [
+            {
+              "decision": "Approved",
+              "authorized": true,
+              "role": "Compliance Officer",
+              "reviewer": "Synthetic Compliance Officer",
+              "authority": "synthetic-approved-matrix",
+              "timestamp": "2026-10-29T10:00:00Z",
+              "rationale": "Synthetic signed case review",
+              "assessment_id": "RA-SYNTHETIC-new012",
+              "policy_version": "synthetic-policy-v3",
+              "evidence_refs": [
+                "demo-evidence"
+              ],
+              "valid_until": "2026-11-29T10:00:00Z",
+              "organization_id": "DEMO-ORG",
+              "case_id": "DEMO-CASE",
+              "assessment_version": 1,
+              "input_snapshot_hash": "4fad2cbf7ad5ce32c7fb7b231dbfbc112730499238ebb5128ba8a1fe746883e6",
+              "rule_pack_hash": "f91d21cb95150f74acda34e6b14a797c346e4a6a987af13983271fe777891fd2"
+            }
+          ],
+          "signals": {},
+          "safeguard_selection": {
+            "reviewed": true,
+            "evidence_refs": [
+              "synthetic-control-selection"
+            ]
+          },
+          "safeguards": {
+            "SG-01": {
+              "applicable": false,
+              "policy_approved": true,
+              "evidence_refs": [
+                "synthetic-policy-selection:SG-01"
+              ]
+            },
+            "SG-02": {
+              "applicable": false,
+              "policy_approved": true,
+              "evidence_refs": [
+                "synthetic-policy-selection:SG-02"
+              ]
+            },
+            "SG-03": {
+              "applicable": false,
+              "policy_approved": true,
+              "evidence_refs": [
+                "synthetic-policy-selection:SG-03"
+              ]
+            },
+            "SG-04": {
+              "applicable": false,
+              "policy_approved": true,
+              "evidence_refs": [
+                "synthetic-policy-selection:SG-04"
+              ]
+            },
+            "SG-05": {
+              "applicable": false,
+              "policy_approved": true,
+              "evidence_refs": [
+                "synthetic-policy-selection:SG-05"
+              ]
+            },
+            "SG-06": {
+              "applicable": false,
+              "policy_approved": true,
+              "evidence_refs": [
+                "synthetic-policy-selection:SG-06"
+              ]
+            },
+            "SG-07": {
+              "applicable": false,
+              "policy_approved": true,
+              "evidence_refs": [
+                "synthetic-policy-selection:SG-07"
+              ]
+            },
+            "SG-08": {
+              "applicable": false,
+              "policy_approved": true,
+              "evidence_refs": [
+                "synthetic-policy-selection:SG-08"
+              ]
+            },
+            "SG-09": {
+              "applicable": true,
+              "policy_approved": true,
+              "evidence_refs": [
+                "synthetic-control-trigger:SG-09"
+              ],
+              "status": "Complete",
+              "owner": "Synthetic SG-09 owner",
+              "completion_verified": true,
+              "verifier": "Synthetic independent verifier",
+              "verified_at": "2026-10-13T09:00:00+08:00",
+              "completion_evidence_refs": [
+                "synthetic-control-completion:SG-09"
+              ],
+              "ongoing_setup": {
+                "cadence_approved": true,
+                "setup_verified": true,
+                "signed_off": true,
+                "cadence": "Monthly",
+                "first_due_date": "2026-11-13",
+                "executable_plan": "Synthetic scheduled task and runbook",
+                "verifier": "Synthetic schedule verifier",
+                "verified_at": "2026-10-13T09:00:00+08:00",
+                "evidence_refs": [
+                  "synthetic-schedule-configuration:SG-09"
+                ]
+              }
+            },
+            "SG-10": {
+              "applicable": false,
+              "policy_approved": true,
+              "evidence_refs": [
+                "synthetic-policy-selection:SG-10"
+              ]
+            },
+            "SG-11": {
+              "applicable": false,
+              "policy_approved": true,
+              "evidence_refs": [
+                "synthetic-policy-selection:SG-11"
+              ]
+            },
+            "SG-12": {
+              "applicable": false,
+              "policy_approved": true,
+              "evidence_refs": [
+                "synthetic-policy-selection:SG-12"
+              ]
+            },
+            "SG-13": {
+              "applicable": false,
+              "policy_approved": true,
+              "evidence_refs": [
+                "synthetic-policy-selection:SG-13"
+              ]
+            }
+          }
+        },
+        "CustomerAssessment": {
+          "context": {
+            "organization_id": "DEMO-ORG",
+            "case_id": "DEMO-CASE",
+            "assessment_version": 1,
+            "as_of": "2026-10-29T12:00:00Z"
+          },
+          "company_profile": {
+            "registration_number": "SYNTHETIC-001",
+            "legal_status": "Active",
+            "operating_locations": [
+              "HK"
+            ],
+            "business_activities": [
+              "Synthetic standard business"
+            ],
+            "relationship_purpose": "Customer onboarding demonstration",
+            "evidence_refs": [
+              "demo-evidence"
+            ]
+          },
+          "party_relationships": [
+            {
+              "relationship_id": "DEMO-REL-1",
+              "from_party_id": "DEMO-OWNER",
+              "to_party_id": "new012-investor",
+              "relationship_type": "ownership",
+              "shareholding_percentage": 100,
+              "evidence_refs": [
+                "demo-evidence"
+              ]
+            }
+          ],
+          "screening_requirements": [
+            {
+              "party_id": "new012-investor",
+              "screening_type": "Sanctions",
+              "reason": "Synthetic policy scope"
+            },
+            {
+              "party_id": "DEMO-OWNER",
+              "screening_type": "Sanctions",
+              "reason": "Synthetic policy scope"
+            }
+          ],
+          "screening_runs": [
+            {
+              "screening_id": "DEMO-SCREEN-0",
+              "party_id": "new012-investor",
+              "screening_type": "Sanctions",
+              "execution_status": "Completed",
+              "source_system": "synthetic-fixture",
+              "attempted_at": "2026-10-29T09:00:00Z",
+              "screened_at": "2026-10-29T09:00:00Z",
+              "watchlist_id": "DEMO-LIST",
+              "list_version": "synthetic-v1",
+              "evidence_refs": [
+                "demo-evidence"
+              ],
+              "candidates": []
+            },
+            {
+              "screening_id": "DEMO-SCREEN-1",
+              "party_id": "DEMO-OWNER",
+              "screening_type": "Sanctions",
+              "execution_status": "Completed",
+              "source_system": "synthetic-fixture",
+              "attempted_at": "2026-10-29T09:00:00Z",
+              "screened_at": "2026-10-29T09:00:00Z",
+              "watchlist_id": "DEMO-LIST",
+              "list_version": "synthetic-v1",
+              "evidence_refs": [
+                "demo-evidence"
+              ],
+              "candidates": []
+            }
+          ],
+          "evidence_records": [
+            {
+              "evidence_id": "demo-evidence",
+              "artifact_id": "DEMO-FILE",
+              "object_uri": "demo://synthetic-only",
+              "sha256": "de98858e30e441360c33c06443d00e766ff71bc61023965db78eb81aad0d62ae",
+              "version": "1",
+              "locator": "synthetic fixture",
+              "verification_status": "Verified",
+              "verified_by": "synthetic-reviewer",
+              "verified_at": "2026-10-29T08:00:00Z",
+              "valid_until": "2026-12-31"
+            }
+          ],
+          "funding_background": {
+            "assessment_basis": "CustomerBackground",
+            "source_events": [
+              {
+                "event_id": "DEMO-FUNDS",
+                "source_type": "Retained business earnings",
+                "owner_party_id": "new012-investor",
+                "amount": "1000000.00",
+                "currency": "HKD",
+                "event_date": "2026-10-01",
+                "evidence_refs": [
+                  "demo-evidence"
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "synthetic": true,
+      "source_type": "synthetic_extension",
+      "description": "RF-12 confirmed factor"
+    }
+  ]
+}

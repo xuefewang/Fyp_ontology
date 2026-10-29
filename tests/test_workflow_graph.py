@@ -34,6 +34,10 @@ class FullGraphTests(unittest.TestCase):
                 baseline = assess_workflow(case_from_json(item), self.cat)
                 self.assertTrue(result['audit'].pop('evaluated_at'))
                 baseline['audit'].pop('evaluated_at')
+                # Each execution has a distinct run envelope; all business data still compare.
+                for entry in (result, baseline):
+                    entry['report_payload']['run_manifest'].pop('run_id')
+                    entry['report_payload']['run_manifest'].pop('evaluated_at')
                 self.assertEqual(result, baseline)
                 final_rules.add(result['final_decision']['rule_id'])
         self.assertEqual(final_rules, set(self.cat.integration))

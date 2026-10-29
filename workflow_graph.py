@@ -44,7 +44,7 @@ def build_workflow_graph(rules_dir: Path = DEFAULT_RULES, *, checkpointer=None):
     cat = load_catalogue(Path(rules_dir))
 
     def prepare(state):
-        evidence, ownership = prepare_workflow_evidence(case_from_json(state['case']))
+        evidence, ownership = prepare_workflow_evidence(case_from_json(state['case']), cat.versions)
         return {'evidence': evidence, 'ownership_analysis': ownership}
 
     def risk(state):

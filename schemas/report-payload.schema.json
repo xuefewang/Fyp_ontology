@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Customer report output envelope v1",
+  "type": "object",
+  "required": ["schema_version", "scope", "run_manifest", "input_snapshot", "customer_summary", "organization_chart", "screening", "documents", "evidence_records", "funding_background", "funding_applicability", "rule_evaluations", "safeguards", "approvals", "customer_decision", "outstanding_items", "claims", "quality"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {"const": "customer-report/1.0"},
+    "scope": {"type": "object", "required": ["organization_id", "case_id", "assessment_version", "purpose"], "properties": {"purpose": {"const": "CustomerAML"}, "organization_id": {"type": ["string", "null"]}, "assessment_version": {"type": ["integer", "null"]}}},
+    "run_manifest": {"type": "object", "required": ["run_id", "input_snapshot_hash", "rule_pack_hash", "engine_sha256"], "properties": {"run_id": {"type": "string", "format": "uuid"}, "input_snapshot_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}},
+    "input_snapshot": {"type": "object"},
+    "customer_summary": {"type": "object", "required": ["party1", "party2", "party1_entity_type"], "properties": {"party1_entity_type": {"const": "LegalEntity"}, "party1": {"type": "object"}, "party2": {"type": "array"}}},
+    "organization_chart": {"type": "object", "required": ["nodes", "edges", "status", "gaps", "indirect_interests", "calculation_paths"], "properties": {"nodes": {"type": "array"}, "edges": {"type": "array"}, "status": {"enum": ["Pending", "DisclosedGraphComplete"]}}},
+    "screening": {"type": "object", "required": ["status", "subjects", "runs"], "properties": {"status": {"enum": ["NotAssessed", "Complete", "Incomplete"]}, "subjects": {"type": "array"}, "runs": {"type": "array"}}},
+    "documents": {"type": "array"},
+    "evidence_records": {"type": "array"},
+    "funding_background": {"type": "object"},
+    "funding_applicability": {"type": "object"},
+    "rule_evaluations": {"type": "array", "minItems": 26, "items": {"type": "object", "required": ["evaluation_id", "stage"]}},
+    "safeguards": {"type": "object"},
+    "approvals": {"type": "array"},
+    "customer_decision": {"type": "object", "required": ["rule_id", "result", "scope"], "properties": {"scope": {"const": "CustomerAMLOnly"}}},
+    "outstanding_items": {"type": "array", "items": {"type": "object", "required": ["item_id", "type", "reason", "status", "owner", "due_at"]}},
+    "claims": {"type": "array"},
+    "quality": {"type": "object", "required": ["mode", "status", "issues", "verification_trust", "audience"], "properties": {"mode": {"enum": ["Legacy", "Customer"]}, "status": {"enum": ["ReadyForReview", "NeedsReview"]}}}
+  }
+}

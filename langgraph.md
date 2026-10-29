@@ -119,3 +119,13 @@ langgraph.json 统一注册完整项目图 aml_workflow。选择 aml_workflow，
 174 个静态案例逐项核对独立预期；完整图输出与原批处理逐字段比较，仅排除每次运行不同的 evaluated_at。检查全部11条最终 PI 规则覆盖、节点顺序、跨案例隔离、输入未被修改、命令行导出，以及错误预期返回非零。
 
 当前读取 WorkflowEvidence 内已有的 approvals 并验证授权，不会生成新签署。尚未实现补件等待、人工 interrupt、数据库 checkpoint 或线上 API；这些属于第三步及后续部署工作。
+
+## 客户评估输出与数据库交接
+
+结果新增 `report_payload`，用于SQL保存后按评估版本供Report读取。保留party1（legal person）／party2和原Safeguards逻辑；不评估产品。新增data.CustomerAssessment输入启用版本、证据、关系图、筛查及批准绑定校验；旧输入保留规则行为并标为Legacy / NeedsReview。
+
+```bash
+python customer_export.py --json examples/customer-input.json --output-dir work/customer-export
+```
+
+实体关系、字段语义和Database I/O见 [数据库交接](docs/database-handoff.md)，本轮每项R01–R32的完成边界见 [改动清单](docs/R01-R32-changes.md)。D3仍按原工作簿规则处理，客户背景评估方法未确认时继续Pending，不自动略过。

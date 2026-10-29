@@ -1,0 +1,2736 @@
+[
+  {
+    "assessment_run": [
+      {
+        "organization_id": "DEMO-ORG",
+        "case_id": "DEMO-CASE",
+        "assessment_version": 1,
+        "run_id": "cf9e3e93-cc44-49b0-8534-d0b2b99d74f3",
+        "schema_version": "customer-report/1.0",
+        "input_snapshot_hash": "4fad2cbf7ad5ce32c7fb7b231dbfbc112730499238ebb5128ba8a1fe746883e6",
+        "quality_status": "ReadyForReview",
+        "data": {
+          "schema_version": "customer-report/1.0",
+          "scope": {
+            "organization_id": "DEMO-ORG",
+            "case_id": "DEMO-CASE",
+            "assessment_id": "RA-SYNTHETIC-new012",
+            "assessment_version": 1,
+            "customer_party_id": "new012-investor",
+            "application_id": "SYNTHETIC-new012",
+            "as_of": "2026-10-29T12:00:00Z",
+            "purpose": "CustomerAML"
+          },
+          "run_manifest": {
+            "run_id": "cf9e3e93-cc44-49b0-8534-d0b2b99d74f3",
+            "input_snapshot_id": "4fad2cbf7ad5ce32c7fb7b231dbfbc112730499238ebb5128ba8a1fe746883e6",
+            "input_snapshot_hash": "4fad2cbf7ad5ce32c7fb7b231dbfbc112730499238ebb5128ba8a1fe746883e6",
+            "rule_pack_hash": "f91d21cb95150f74acda34e6b14a797c346e4a6a987af13983271fe777891fd2",
+            "workbook_sha256": {
+              "IS4920_Integrated_HardGate_RiskFactors_RiskBand.xlsx": "a24e5f8beb6fc1b714f09c0a2824be932f8cddc33f42846ef97d31ddce172670",
+              "IS4920_AML_Appetite_Safeguards.xlsx": "8340ea60dde72d4e36e3844323349f46ffbca92e8fd56e519204699eca4a4b47",
+              "IS4920_Policy_Integration_Final_Step.xlsx": "4f520c3b9d31fbb7e2acc4772779c26224a296c2e71b60ccb64f512855614694"
+            },
+            "engine_version": "customer-contract-1",
+            "runtime_versions": {
+              "python": "3.12.14",
+              "openpyxl": "3.1.5",
+              "jsonschema": "4.26.0",
+              "langgraph": "1.2.16"
+            },
+            "schema_sha256": {
+              "customer-assessment.schema.json": "24f5c40916557a58560ba152e5334d7df8e850612228e302d8c0964a8a5143c4",
+              "report-payload.schema.json": "97d9e76a7134539efdebaf41f61204c4705daebe310a463036bfab3187e2aac0",
+              "supported-rule-pack.json": "9eda19e7b89e1dd4d79b1af51872c3e0b7a9606b370107c949f03b08a91b5ff7"
+            },
+            "engine_sha256": {
+              "policy_engine.py": "f4d4395da227537f567c80205313a8ee9d8457b86e5ea61329d4c245c61d1d29",
+              "customer_ontology.py": "73423686c5c9890caf18d93c75b6a021ece2d3f3e2e245635fd67881ebbb4483",
+              "ownership.py": "e529d2c892e70de4a75570397dd56d115e16dda120907cafaae30a6eb08f4ad3",
+              "kyc_poc.py": "d710856e1240367131ef86660272f9cbc31ce5782d9002bf778d0be49f62b1b3",
+              "workflow_graph.py": "102c45a899b85e0170c9de1b457280470cc4eaf6bd9030a55f68a7b24d1cebad"
+            },
+            "evaluated_at": "2026-10-29T15:12:03.936024+00:00",
+            "supersedes_snapshot_id": null
+          },
+          "input_snapshot": {
+            "Application": {
+              "application_id": "SYNTHETIC-new012",
+              "submission_date": "2026-10-06",
+              "application_status": "UnderReview"
+            },
+            "party1": {
+              "party_id": "new012-investor",
+              "person_id": "case01-P1-PER",
+              "full_name": "SYNTHETIC RF-12 confirmed factor",
+              "is_ubo": false,
+              "is_nominee": false,
+              "is_trust": false,
+              "sanctions_flag": false,
+              "shareholding_percentage": 100.0,
+              "pep_status": "None",
+              "nationality": "GB",
+              "registration_jurisdiction": "GB"
+            },
+            "party2": [
+              {
+                "party_id": "DEMO-OWNER",
+                "person_id": "DEMO-PERSON",
+                "full_name": "Synthetic Owner",
+                "entity_type": "NaturalPerson",
+                "is_ubo": true,
+                "shareholding_percentage": 100
+              }
+            ],
+            "Industry": {
+              "industry_id": "case01-IND",
+              "industry_name": "Standard Risk Industries",
+              "industry_tier": "I1"
+            },
+            "WatchList": [],
+            "Document": [
+              {
+                "document_id": "case01-DOC-01",
+                "document_type": "Certificate of Incorporation",
+                "status": "Provided",
+                "fact_verified": "legal_existence",
+                "is_mandatory": true
+              },
+              {
+                "document_id": "case01-DOC-02",
+                "document_type": "Shareholder Register",
+                "status": "Provided",
+                "fact_verified": "shareholding_pct",
+                "is_mandatory": true
+              },
+              {
+                "document_id": "case01-DOC-03",
+                "document_type": "Director Declaration",
+                "status": "Provided",
+                "fact_verified": "director_identity",
+                "is_mandatory": true
+              },
+              {
+                "document_id": "case01-DOC-04",
+                "document_type": "Audited Financial Statements",
+                "status": "Provided",
+                "fact_verified": "financial_position",
+                "is_mandatory": false
+              }
+            ],
+            "regulated_activity": false,
+            "licence_status": "NotApplicable",
+            "ubo_verification": "Verified",
+            "control_verification": "Verified",
+            "illicit_activity_confirmed": false,
+            "fraud_confirmed": false,
+            "hardgate_pending": false,
+            "ownership_evidence_complete": true,
+            "industry_data_sufficient": true,
+            "cross_entity_structure": false,
+            "control_rights_discrepancy_unexplained": false,
+            "structural_explanation_adequate": true,
+            "multiple_high_risk_activities": false,
+            "incorporation_date": "2015-06-01",
+            "high_leverage": false,
+            "negative_cash_flow": false,
+            "net_assets_sufficient": true,
+            "officer_decision": "Approved",
+            "safeguards_completed": [],
+            "WorkflowEvidence": {
+              "assessment_id": "RA-SYNTHETIC-new012",
+              "risk_factors": {
+                "RF-01": {
+                  "status": "Clear",
+                  "verified": true,
+                  "evidence_refs": [
+                    "demo-evidence"
+                  ]
+                },
+                "RF-02": {
+                  "status": "Clear",
+                  "verified": true,
+                  "evidence_refs": [
+                    "demo-evidence"
+                  ]
+                },
+                "RF-03": {
+                  "status": "Clear",
+                  "verified": true,
+                  "evidence_refs": [
+                    "demo-evidence"
+                  ]
+                },
+                "RF-04": {
+                  "status": "Clear",
+                  "verified": true,
+                  "evidence_refs": [
+                    "demo-evidence"
+                  ]
+                },
+                "RF-05": {
+                  "status": "Clear",
+                  "verified": true,
+                  "evidence_refs": [
+                    "demo-evidence"
+                  ]
+                },
+                "RF-06": {
+                  "status": "Clear",
+                  "verified": true,
+                  "evidence_refs": [
+                    "demo-evidence"
+                  ]
+                },
+                "RF-07": {
+                  "status": "Clear",
+                  "verified": true,
+                  "evidence_refs": [
+                    "demo-evidence"
+                  ]
+                },
+                "RF-08": {
+                  "status": "Clear",
+                  "verified": true,
+                  "evidence_refs": [
+                    "demo-evidence"
+                  ]
+                },
+                "RF-09": {
+                  "status": "Clear",
+                  "verified": true,
+                  "evidence_refs": [
+                    "demo-evidence"
+                  ]
+                },
+                "RF-10": {
+                  "status": "Clear",
+                  "verified": true,
+                  "evidence_refs": [
+                    "demo-evidence"
+                  ]
+                },
+                "RF-11": {
+                  "status": "Clear",
+                  "verified": true,
+                  "evidence_refs": [
+                    "demo-evidence"
+                  ]
+                },
+                "RF-12": {
+                  "status": "Hit",
+                  "verified": true,
+                  "evidence_refs": [
+                    "demo-evidence"
+                  ]
+                },
+                "RF-13": {
+                  "status": "Clear",
+                  "verified": true,
+                  "evidence_refs": [
+                    "demo-evidence"
+                  ]
+                },
+                "RF-14": {
+                  "status": "Clear",
+                  "verified": true,
+                  "evidence_refs": [
+                    "demo-evidence"
+                  ]
+                },
+                "RF-15": {
+                  "facts": {
+                    "intermediate_legal_entity_count": 0
+                  },
+                  "verified": true,
+                  "evidence_refs": [
+                    "demo-evidence"
+                  ]
+                },
+                "RF-16": {
+                  "status": "Clear",
+                  "verified": true,
+                  "evidence_refs": [
+                    "demo-evidence"
+                  ]
+                },
+                "RF-17": {
+                  "status": "Clear",
+                  "verified": true,
+                  "evidence_refs": [
+                    "demo-evidence"
+                  ]
+                },
+                "RF-18": {
+                  "status": "Clear",
+                  "verified": true,
+                  "evidence_refs": [
+                    "demo-evidence"
+                  ]
+                },
+                "RF-19": {
+                  "status": "Clear",
+                  "verified": true,
+                  "evidence_refs": [
+                    "demo-evidence"
+                  ]
+                },
+                "RF-20": {
+                  "status": "Clear",
+                  "verified": true,
+                  "evidence_refs": [
+                    "demo-evidence"
+                  ]
+                },
+                "RF-21": {
+                  "status": "Clear",
+                  "verified": true,
+                  "evidence_refs": [
+                    "demo-evidence"
+                  ]
+                }
+              },
+              "D1": {
+                "evidence_complete": true,
+                "evidence_refs": [
+                  "demo-evidence"
+                ],
+                "facts": {
+                  "legal_entity_verified": true,
+                  "ownership_links_verified": true,
+                  "ubo_verified": true,
+                  "control_verified": true,
+                  "intermediate_legal_entity_count": 0,
+                  "complex_ownership": false,
+                  "nominee_or_trust": false,
+                  "cross_entity_or_border_complexity": false,
+                  "control_rights_discrepancy": false,
+                  "unusual_structure": false,
+                  "material_unresolved_contradiction": false
+                }
+              },
+              "D2": {
+                "evidence_complete": true,
+                "evidence_refs": [
+                  "demo-evidence"
+                ],
+                "facts": {
+                  "activity_verified": true,
+                  "taxonomy_approved": true,
+                  "category": "Standard",
+                  "regulated": false,
+                  "material_discrepancy": false,
+                  "material_high_risk_activity": false
+                }
+              },
+              "D3": {
+                "evidence_complete": true,
+                "evidence_refs": [
+                  "demo-evidence"
+                ],
+                "facts": {
+                  "mandatory_evidence_authenticated": true,
+                  "source_event_identified": true,
+                  "owner_identified": true,
+                  "amount_dates_verified": true,
+                  "funds_sufficient": true,
+                  "records_reconciled": true,
+                  "records_verified": true,
+                  "unresolved_discrepancy": false,
+                  "own_account": true,
+                  "complex_funding": false,
+                  "unusual_subscription": false,
+                  "material_anomaly": false
+                }
+              },
+              "policy": {
+                "version": "synthetic-policy-v3",
+                "approval_matrix_approved": true,
+                "required_approver_roles": [
+                  "Compliance Officer"
+                ]
+              },
+              "approvals": [
+                {
+                  "decision": "Approved",
+                  "authorized": true,
+                  "role": "Compliance Officer",
+                  "reviewer": "Synthetic Compliance Officer",
+                  "authority": "synthetic-approved-matrix",
+                  "timestamp": "2026-10-29T10:00:00Z",
+                  "rationale": "Synthetic signed case review",
+                  "assessment_id": "RA-SYNTHETIC-new012",
+                  "policy_version": "synthetic-policy-v3",
+                  "evidence_refs": [
+                    "demo-evidence"
+                  ],
+                  "valid_until": "2026-11-29T10:00:00Z",
+                  "organization_id": "DEMO-ORG",
+                  "case_id": "DEMO-CASE",
+                  "assessment_version": 1,
+                  "input_snapshot_hash": "4fad2cbf7ad5ce32c7fb7b231dbfbc112730499238ebb5128ba8a1fe746883e6",
+                  "rule_pack_hash": "f91d21cb95150f74acda34e6b14a797c346e4a6a987af13983271fe777891fd2"
+                }
+              ],
+              "signals": {},
+              "safeguard_selection": {
+                "reviewed": true,
+                "evidence_refs": [
+                  "synthetic-control-selection"
+                ]
+              },
+              "safeguards": {
+                "SG-01": {
+                  "applicable": false,
+                  "policy_approved": true,
+                  "evidence_refs": [
+                    "synthetic-policy-selection:SG-01"
+                  ]
+                },
+                "SG-02": {
+                  "applicable": false,
+                  "policy_approved": true,
+                  "evidence_refs": [
+                    "synthetic-policy-selection:SG-02"
+                  ]
+                },
+                "SG-03": {
+                  "applicable": false,
+                  "policy_approved": true,
+                  "evidence_refs": [
+                    "synthetic-policy-selection:SG-03"
+                  ]
+                },
+                "SG-04": {
+                  "applicable": false,
+                  "policy_approved": true,
+                  "evidence_refs": [
+                    "synthetic-policy-selection:SG-04"
+                  ]
+                },
+                "SG-05": {
+                  "applicable": false,
+                  "policy_approved": true,
+                  "evidence_refs": [
+                    "synthetic-policy-selection:SG-05"
+                  ]
+                },
+                "SG-06": {
+                  "applicable": false,
+                  "policy_approved": true,
+                  "evidence_refs": [
+                    "synthetic-policy-selection:SG-06"
+                  ]
+                },
+                "SG-07": {
+                  "applicable": false,
+                  "policy_approved": true,
+                  "evidence_refs": [
+                    "synthetic-policy-selection:SG-07"
+                  ]
+                },
+                "SG-08": {
+                  "applicable": false,
+                  "policy_approved": true,
+                  "evidence_refs": [
+                    "synthetic-policy-selection:SG-08"
+                  ]
+                },
+                "SG-09": {
+                  "applicable": true,
+                  "policy_approved": true,
+                  "evidence_refs": [
+                    "synthetic-control-trigger:SG-09"
+                  ],
+                  "status": "Complete",
+                  "owner": "Synthetic SG-09 owner",
+                  "completion_verified": true,
+                  "verifier": "Synthetic independent verifier",
+                  "verified_at": "2026-10-13T09:00:00+08:00",
+                  "completion_evidence_refs": [
+                    "synthetic-control-completion:SG-09"
+                  ],
+                  "ongoing_setup": {
+                    "cadence_approved": true,
+                    "setup_verified": true,
+                    "signed_off": true,
+                    "cadence": "Monthly",
+                    "first_due_date": "2026-11-13",
+                    "executable_plan": "Synthetic scheduled task and runbook",
+                    "verifier": "Synthetic schedule verifier",
+                    "verified_at": "2026-10-13T09:00:00+08:00",
+                    "evidence_refs": [
+                      "synthetic-schedule-configuration:SG-09"
+                    ]
+                  }
+                },
+                "SG-10": {
+                  "applicable": false,
+                  "policy_approved": true,
+                  "evidence_refs": [
+                    "synthetic-policy-selection:SG-10"
+                  ]
+                },
+                "SG-11": {
+                  "applicable": false,
+                  "policy_approved": true,
+                  "evidence_refs": [
+                    "synthetic-policy-selection:SG-11"
+                  ]
+                },
+                "SG-12": {
+                  "applicable": false,
+                  "policy_approved": true,
+                  "evidence_refs": [
+                    "synthetic-policy-selection:SG-12"
+                  ]
+                },
+                "SG-13": {
+                  "applicable": false,
+                  "policy_approved": true,
+                  "evidence_refs": [
+                    "synthetic-policy-selection:SG-13"
+                  ]
+                }
+              }
+            },
+            "CustomerAssessment": {
+              "context": {
+                "organization_id": "DEMO-ORG",
+                "case_id": "DEMO-CASE",
+                "assessment_version": 1,
+                "as_of": "2026-10-29T12:00:00Z"
+              },
+              "company_profile": {
+                "registration_number": "SYNTHETIC-001",
+                "legal_status": "Active",
+                "operating_locations": [
+                  "HK"
+                ],
+                "business_activities": [
+                  "Synthetic standard business"
+                ],
+                "relationship_purpose": "Customer onboarding demonstration",
+                "evidence_refs": [
+                  "demo-evidence"
+                ]
+              },
+              "party_relationships": [
+                {
+                  "relationship_id": "DEMO-REL-1",
+                  "from_party_id": "DEMO-OWNER",
+                  "to_party_id": "new012-investor",
+                  "relationship_type": "ownership",
+                  "shareholding_percentage": 100,
+                  "evidence_refs": [
+                    "demo-evidence"
+                  ]
+                }
+              ],
+              "screening_requirements": [
+                {
+                  "party_id": "new012-investor",
+                  "screening_type": "Sanctions",
+                  "reason": "Synthetic policy scope"
+                },
+                {
+                  "party_id": "DEMO-OWNER",
+                  "screening_type": "Sanctions",
+                  "reason": "Synthetic policy scope"
+                }
+              ],
+              "screening_runs": [
+                {
+                  "screening_id": "DEMO-SCREEN-0",
+                  "party_id": "new012-investor",
+                  "screening_type": "Sanctions",
+                  "execution_status": "Completed",
+                  "source_system": "synthetic-fixture",
+                  "attempted_at": "2026-10-29T09:00:00Z",
+                  "screened_at": "2026-10-29T09:00:00Z",
+                  "watchlist_id": "DEMO-LIST",
+                  "list_version": "synthetic-v1",
+                  "evidence_refs": [
+                    "demo-evidence"
+                  ],
+                  "candidates": []
+                },
+                {
+                  "screening_id": "DEMO-SCREEN-1",
+                  "party_id": "DEMO-OWNER",
+                  "screening_type": "Sanctions",
+                  "execution_status": "Completed",
+                  "source_system": "synthetic-fixture",
+                  "attempted_at": "2026-10-29T09:00:00Z",
+                  "screened_at": "2026-10-29T09:00:00Z",
+                  "watchlist_id": "DEMO-LIST",
+                  "list_version": "synthetic-v1",
+                  "evidence_refs": [
+                    "demo-evidence"
+                  ],
+                  "candidates": []
+                }
+              ],
+              "evidence_records": [
+                {
+                  "evidence_id": "demo-evidence",
+                  "artifact_id": "DEMO-FILE",
+                  "object_uri": "demo://synthetic-only",
+                  "sha256": "de98858e30e441360c33c06443d00e766ff71bc61023965db78eb81aad0d62ae",
+                  "version": "1",
+                  "locator": "synthetic fixture",
+                  "verification_status": "Verified",
+                  "verified_by": "synthetic-reviewer",
+                  "verified_at": "2026-10-29T08:00:00Z",
+                  "valid_until": "2026-12-31"
+                }
+              ],
+              "funding_background": {
+                "assessment_basis": "CustomerBackground",
+                "source_events": [
+                  {
+                    "event_id": "DEMO-FUNDS",
+                    "source_type": "Retained business earnings",
+                    "owner_party_id": "new012-investor",
+                    "amount": "1000000.00",
+                    "currency": "HKD",
+                    "event_date": "2026-10-01",
+                    "evidence_refs": [
+                      "demo-evidence"
+                    ]
+                  }
+                ]
+              }
+            }
+          },
+          "customer_summary": {
+            "party1": {
+              "party_id": "new012-investor",
+              "person_id": "case01-P1-PER",
+              "full_name": "SYNTHETIC RF-12 confirmed factor",
+              "is_ubo": false,
+              "is_nominee": false,
+              "is_trust": false,
+              "sanctions_flag": false,
+              "shareholding_percentage": 100.0,
+              "pep_status": "None",
+              "nationality": "GB",
+              "registration_jurisdiction": "GB"
+            },
+            "party2": [
+              {
+                "party_id": "DEMO-OWNER",
+                "person_id": "DEMO-PERSON",
+                "full_name": "Synthetic Owner",
+                "entity_type": "NaturalPerson",
+                "is_ubo": true,
+                "shareholding_percentage": 100
+              }
+            ],
+            "party1_entity_type": "LegalEntity",
+            "industry": {
+              "industry_id": "case01-IND",
+              "industry_name": "Standard Risk Industries",
+              "industry_tier": "I1"
+            },
+            "company_profile": {
+              "registration_number": "SYNTHETIC-001",
+              "legal_status": "Active",
+              "operating_locations": [
+                "HK"
+              ],
+              "business_activities": [
+                "Synthetic standard business"
+              ],
+              "relationship_purpose": "Customer onboarding demonstration",
+              "evidence_refs": [
+                "demo-evidence"
+              ]
+            }
+          },
+          "organization_chart": {
+            "nodes": [
+              {
+                "party_id": "new012-investor",
+                "person_id": "case01-P1-PER",
+                "full_name": "SYNTHETIC RF-12 confirmed factor",
+                "is_ubo": false,
+                "is_nominee": false,
+                "is_trust": false,
+                "sanctions_flag": false,
+                "shareholding_percentage": 100.0,
+                "pep_status": "None",
+                "nationality": "GB",
+                "registration_jurisdiction": "GB",
+                "role": "party1",
+                "entity_type": "LegalEntity"
+              },
+              {
+                "party_id": "DEMO-OWNER",
+                "person_id": "DEMO-PERSON",
+                "full_name": "Synthetic Owner",
+                "entity_type": "NaturalPerson",
+                "is_ubo": true,
+                "shareholding_percentage": 100,
+                "role": "party2"
+              }
+            ],
+            "edges": [
+              {
+                "relationship_id": "DEMO-REL-1",
+                "from_party_id": "DEMO-OWNER",
+                "to_party_id": "new012-investor",
+                "relationship_type": "ownership",
+                "shareholding_percentage": 100,
+                "evidence_refs": [
+                  "demo-evidence"
+                ]
+              }
+            ],
+            "root_party_id": "new012-investor",
+            "status": "DisclosedGraphComplete",
+            "gaps": [],
+            "indirect_interests": [
+              {
+                "party_id": "DEMO-OWNER",
+                "percentage": "100"
+              }
+            ],
+            "calculation_paths": [
+              {
+                "party_id": "DEMO-OWNER",
+                "path": [
+                  "new012-investor",
+                  "DEMO-OWNER"
+                ],
+                "percentage": "100"
+              }
+            ],
+            "ubo_identification": "NotCalculated — policy thresholds and control review required"
+          },
+          "screening": {
+            "status": "Complete",
+            "subjects": [
+              {
+                "party_id": "new012-investor",
+                "screening_type": "Sanctions",
+                "reason": "Synthetic policy scope",
+                "status": "Clear",
+                "screening_id": "DEMO-SCREEN-0"
+              },
+              {
+                "party_id": "DEMO-OWNER",
+                "screening_type": "Sanctions",
+                "reason": "Synthetic policy scope",
+                "status": "Clear",
+                "screening_id": "DEMO-SCREEN-1"
+              }
+            ],
+            "runs": [
+              {
+                "screening_id": "DEMO-SCREEN-0",
+                "party_id": "new012-investor",
+                "screening_type": "Sanctions",
+                "execution_status": "Completed",
+                "source_system": "synthetic-fixture",
+                "attempted_at": "2026-10-29T09:00:00Z",
+                "screened_at": "2026-10-29T09:00:00Z",
+                "watchlist_id": "DEMO-LIST",
+                "list_version": "synthetic-v1",
+                "evidence_refs": [
+                  "demo-evidence"
+                ],
+                "candidates": []
+              },
+              {
+                "screening_id": "DEMO-SCREEN-1",
+                "party_id": "DEMO-OWNER",
+                "screening_type": "Sanctions",
+                "execution_status": "Completed",
+                "source_system": "synthetic-fixture",
+                "attempted_at": "2026-10-29T09:00:00Z",
+                "screened_at": "2026-10-29T09:00:00Z",
+                "watchlist_id": "DEMO-LIST",
+                "list_version": "synthetic-v1",
+                "evidence_refs": [
+                  "demo-evidence"
+                ],
+                "candidates": []
+              }
+            ]
+          },
+          "documents": [
+            {
+              "document_id": "case01-DOC-01",
+              "document_type": "Certificate of Incorporation",
+              "status": "Provided",
+              "fact_verified": "legal_existence",
+              "is_mandatory": true
+            },
+            {
+              "document_id": "case01-DOC-02",
+              "document_type": "Shareholder Register",
+              "status": "Provided",
+              "fact_verified": "shareholding_pct",
+              "is_mandatory": true
+            },
+            {
+              "document_id": "case01-DOC-03",
+              "document_type": "Director Declaration",
+              "status": "Provided",
+              "fact_verified": "director_identity",
+              "is_mandatory": true
+            },
+            {
+              "document_id": "case01-DOC-04",
+              "document_type": "Audited Financial Statements",
+              "status": "Provided",
+              "fact_verified": "financial_position",
+              "is_mandatory": false
+            }
+          ],
+          "evidence_records": [
+            {
+              "evidence_id": "demo-evidence",
+              "artifact_id": "DEMO-FILE",
+              "object_uri": "demo://synthetic-only",
+              "sha256": "de98858e30e441360c33c06443d00e766ff71bc61023965db78eb81aad0d62ae",
+              "version": "1",
+              "locator": "synthetic fixture",
+              "verification_status": "Verified",
+              "verified_by": "synthetic-reviewer",
+              "verified_at": "2026-10-29T08:00:00Z",
+              "valid_until": "2026-12-31"
+            }
+          ],
+          "funding_background": {
+            "assessment_basis": "CustomerBackground",
+            "source_events": [
+              {
+                "event_id": "DEMO-FUNDS",
+                "source_type": "Retained business earnings",
+                "owner_party_id": "new012-investor",
+                "amount": "1000000.00",
+                "currency": "HKD",
+                "event_date": "2026-10-01",
+                "evidence_refs": [
+                  "demo-evidence"
+                ]
+              }
+            ]
+          },
+          "funding_applicability": {
+            "customer_background": "InScope",
+            "product_suitability": "OutOfScope",
+            "subscription_settlement": "OutOfScope",
+            "d3_policy_note": "Existing D3/FA rules retained; missing customer-basis policy facts remain Pending, not auto-passed"
+          },
+          "rule_evaluations": [
+            {
+              "evaluation_id": "RF-09",
+              "stage": "RiskFactors",
+              "rule_id": "RF-09",
+              "status": "Clear",
+              "description": "强制文件缺失",
+              "policy_condition": "缺少董事声明、股东名册等强制文件。",
+              "evidence_refs": [
+                "demo-evidence"
+              ],
+              "facts": null,
+              "points_applied": 0
+            },
+            {
+              "evaluation_id": "RF-10",
+              "stage": "RiskFactors",
+              "rule_id": "RF-10",
+              "status": "Clear",
+              "description": "文件冲突",
+              "policy_condition": "章程与股东名册在持股比例上矛盾。",
+              "evidence_refs": [
+                "demo-evidence"
+              ],
+              "facts": null,
+              "points_applied": 0
+            },
+            {
+              "evaluation_id": "RF-11",
+              "stage": "RiskFactors",
+              "rule_id": "RF-11",
+              "status": "Clear",
+              "description": "UBO 无法识别/确认",
+              "policy_condition": "UBO核查尚未完成，所有权证据不足或可补件问题仍待解决；verification_status = Pending / AwaitingInformation，未达到批准的最终Failed标准。",
+              "evidence_refs": [
+                "demo-evidence"
+              ],
+              "facts": null,
+              "points_applied": 0
+            },
+            {
+              "evaluation_id": "RF-01",
+              "stage": "RiskFactors",
+              "rule_id": "RF-01",
+              "status": "Clear",
+              "description": "禁止司法管辖区 / FATF 黑名单",
+              "policy_condition": "注册地或 UBO 国籍为朝鲜、伊朗、缅甸，或命中政策明确禁止的司法管辖区；经官方核验确认。",
+              "evidence_refs": [
+                "demo-evidence"
+              ],
+              "facts": null,
+              "points_applied": 0
+            },
+            {
+              "evaluation_id": "RF-02",
+              "stage": "RiskFactors",
+              "rule_id": "RF-02",
+              "status": "Clear",
+              "description": "确认制裁名单命中",
+              "policy_condition": "UBO 确认匹配联合国安理会综合制裁名单；需经筛查及命中复核程序确认为真实命中，排除误报。",
+              "evidence_refs": [
+                "demo-evidence"
+              ],
+              "facts": null,
+              "points_applied": 0
+            },
+            {
+              "evaluation_id": "RF-03",
+              "stage": "RiskFactors",
+              "rule_id": "RF-03",
+              "status": "Clear",
+              "description": "无牌经营 / 必需牌照缺失或撤销",
+              "policy_condition": "投资者实际从事依法须持牌的受规管活动（SFC/HKMA/保险/MPF），官方核验确认牌照缺失、撤销或无效，且政策禁止准入。",
+              "evidence_refs": [
+                "demo-evidence"
+              ],
+              "facts": null,
+              "points_applied": 0
+            },
+            {
+              "evaluation_id": "RF-04",
+              "stage": "RiskFactors",
+              "rule_id": "RF-04",
+              "status": "Clear",
+              "description": "UBO 身份无法核实",
+              "policy_condition": "按政策要求识别最终受益自然人，经规定核查程序后仍无法识别或独立验证；核查状态 = Failed。",
+              "evidence_refs": [
+                "demo-evidence"
+              ],
+              "facts": null,
+              "points_applied": 0
+            },
+            {
+              "evaluation_id": "RF-05",
+              "stage": "RiskFactors",
+              "rule_id": "RF-05",
+              "status": "Clear",
+              "description": "最终控制关系无法确认",
+              "policy_condition": "无法确认并核实最终实际控制人，或无法确认表决权、协议及其他控制权链；控制核查状态 = Failed。",
+              "evidence_refs": [
+                "demo-evidence"
+              ],
+              "facts": null,
+              "points_applied": 0
+            },
+            {
+              "evaluation_id": "RF-06",
+              "stage": "RiskFactors",
+              "rule_id": "RF-06",
+              "status": "Clear",
+              "description": "已核实的禁止/非法经营活动",
+              "policy_condition": "可信且已核实的证据确认投资者从事非法活动，或从事已批准禁止经营目录明确列出的活动。",
+              "evidence_refs": [
+                "demo-evidence"
+              ],
+              "facts": null,
+              "points_applied": 0
+            },
+            {
+              "evaluation_id": "RF-07",
+              "stage": "RiskFactors",
+              "rule_id": "RF-07",
+              "status": "Clear",
+              "description": "已确认的非法认购资金来源",
+              "policy_condition": "可靠证据确认本次认购资金来自非法来源，且达到已批准的禁止性资金来源认定标准。",
+              "evidence_refs": [
+                "demo-evidence"
+              ],
+              "facts": null,
+              "points_applied": 0
+            },
+            {
+              "evaluation_id": "RF-08",
+              "stage": "RiskFactors",
+              "rule_id": "RF-08",
+              "status": "Clear",
+              "description": "已确认的欺诈/虚假企业身份",
+              "policy_condition": "可靠独立证据确认提交的企业身份或关键注册/股权文件属于欺诈或虚构，符合已批准禁止欺诈规则。",
+              "evidence_refs": [
+                "demo-evidence"
+              ],
+              "facts": null,
+              "points_applied": 0
+            },
+            {
+              "evaluation_id": "RF-12",
+              "stage": "RiskFactors",
+              "rule_id": "RF-12",
+              "status": "Hit",
+              "description": "FATF 灰名单",
+              "policy_condition": "注册地或 UBO 国籍在 FATF 加强监控名单（灰名单）上。",
+              "evidence_refs": [
+                "demo-evidence"
+              ],
+              "facts": null,
+              "points_applied": 3
+            },
+            {
+              "evaluation_id": "RF-13",
+              "stage": "RiskFactors",
+              "rule_id": "RF-13",
+              "status": "Clear",
+              "description": "UBO 确认是 PEP",
+              "policy_condition": "持有重要公共职能（国家元首、部长、高级官员等）。",
+              "evidence_refs": [
+                "demo-evidence"
+              ],
+              "facts": null,
+              "points_applied": 0
+            },
+            {
+              "evaluation_id": "RF-14",
+              "stage": "RiskFactors",
+              "rule_id": "RF-14",
+              "status": "Clear",
+              "description": "UBO 是 PEP 紧密关联人",
+              "policy_condition": "配偶、伴侣、子女、父母或紧密关联人。",
+              "evidence_refs": [
+                "demo-evidence"
+              ],
+              "facts": null,
+              "points_applied": 0
+            },
+            {
+              "evaluation_id": "RF-15",
+              "stage": "RiskFactors",
+              "rule_id": "RF-15",
+              "status": "Clear",
+              "description": "所有权链 ≥ 4 层",
+              "policy_condition": "投资者至自然人股东路径包含至少4个中间法人实体（不含投资者与自然人两端），即超过3个中间实体；多分支取最大值，循环结构转人工复核，不无限递归。",
+              "evidence_refs": [
+                "demo-evidence"
+              ],
+              "facts": {
+                "intermediate_legal_entity_count": 0
+              },
+              "points_applied": 0
+            },
+            {
+              "evaluation_id": "RF-16",
+              "stage": "RiskFactors",
+              "rule_id": "RF-16",
+              "status": "Clear",
+              "description": "名义股东/信托安排",
+              "policy_condition": "通过名义股东或信托间接持股。",
+              "evidence_refs": [
+                "demo-evidence"
+              ],
+              "facts": null,
+              "points_applied": 0
+            },
+            {
+              "evaluation_id": "RF-17",
+              "stage": "RiskFactors",
+              "rule_id": "RF-17",
+              "status": "Clear",
+              "description": "高风险/受限行业为主营业务",
+              "policy_condition": "加密/VASP、汇款/MSO、赌博、现金密集型、高价值贵金属、国防/两用。",
+              "evidence_refs": [
+                "demo-evidence"
+              ],
+              "facts": null,
+              "points_applied": 0
+            },
+            {
+              "evaluation_id": "RF-18",
+              "stage": "RiskFactors",
+              "rule_id": "RF-18",
+              "status": "Clear",
+              "description": "第三方/非自有资金",
+              "policy_condition": "认购资金来自第三方或非自有同名账户，或使用借贷/杠杆资金。",
+              "evidence_refs": [
+                "demo-evidence"
+              ],
+              "facts": null,
+              "points_applied": 0
+            },
+            {
+              "evaluation_id": "RF-19",
+              "stage": "RiskFactors",
+              "rule_id": "RF-19",
+              "status": "Clear",
+              "description": "新设主体/无经营记录",
+              "policy_condition": "成立不足 1 年，无实质经营历史或经审计报表。",
+              "evidence_refs": [
+                "demo-evidence"
+              ],
+              "facts": null,
+              "points_applied": 0
+            },
+            {
+              "evaluation_id": "RF-20",
+              "stage": "RiskFactors",
+              "rule_id": "RF-20",
+              "status": "Clear",
+              "description": "高杠杆/弱财务能力",
+              "policy_condition": "高杠杆、现金流为负，或净资产/货币资金不足以覆盖拟出资额。",
+              "evidence_refs": [
+                "demo-evidence"
+              ],
+              "facts": null,
+              "points_applied": 0
+            },
+            {
+              "evaluation_id": "RF-21",
+              "stage": "RiskFactors",
+              "rule_id": "RF-21",
+              "status": "Clear",
+              "description": "多司法管辖区",
+              "policy_condition": "涉及 3+ 司法管辖区，或复杂跨境/离岸安排（开曼/BVI LP、多层 SPV）。",
+              "evidence_refs": [
+                "demo-evidence"
+              ],
+              "facts": null,
+              "points_applied": 0
+            },
+            {
+              "evaluation_id": "D1",
+              "stage": "Appetite",
+              "rule_ids": [
+                "D1-01"
+              ],
+              "status": "Assessed",
+              "level": "Low",
+              "facts": {
+                "legal_entity_verified": true,
+                "ownership_links_verified": true,
+                "ubo_verified": true,
+                "control_verified": true,
+                "intermediate_legal_entity_count": 0,
+                "complex_ownership": false,
+                "nominee_or_trust": false,
+                "cross_entity_or_border_complexity": false,
+                "control_rights_discrepancy": false,
+                "unusual_structure": false,
+                "material_unresolved_contradiction": false
+              },
+              "evidence_refs": [
+                "demo-evidence"
+              ]
+            },
+            {
+              "evaluation_id": "D2",
+              "stage": "Appetite",
+              "rule_ids": [
+                "D2-01"
+              ],
+              "status": "Assessed",
+              "level": "Low",
+              "facts": {
+                "activity_verified": true,
+                "taxonomy_approved": true,
+                "category": "Standard",
+                "regulated": false,
+                "material_discrepancy": false,
+                "material_high_risk_activity": false
+              },
+              "evidence_refs": [
+                "demo-evidence"
+              ]
+            },
+            {
+              "evaluation_id": "D3",
+              "stage": "Appetite",
+              "rule_ids": [
+                "D3-01"
+              ],
+              "status": "Assessed",
+              "level": "Low",
+              "facts": {
+                "mandatory_evidence_authenticated": true,
+                "source_event_identified": true,
+                "owner_identified": true,
+                "amount_dates_verified": true,
+                "funds_sufficient": true,
+                "records_reconciled": true,
+                "records_verified": true,
+                "unresolved_discrepancy": false,
+                "own_account": true,
+                "complex_funding": false,
+                "unusual_subscription": false,
+                "material_anomaly": false
+              },
+              "evidence_refs": [
+                "demo-evidence"
+              ]
+            },
+            {
+              "evaluation_id": "FA",
+              "stage": "Appetite",
+              "rule_ids": [
+                "FA-01",
+                "FA-05"
+              ],
+              "status": "Assessed",
+              "level": "Within",
+              "evidence_refs": [
+                "demo-evidence"
+              ]
+            },
+            {
+              "evaluation_id": "PI",
+              "stage": "PolicyIntegration",
+              "rule_id": "PI-08",
+              "result": "APPROVE — Within Appetite",
+              "rationale": "All acceptance prerequisites met; Appetite = Within. / 接受前提全部满足，Within。",
+              "authorization_status": "Approved",
+              "required_approver_roles": [
+                "Compliance Officer"
+              ],
+              "input_errors": []
+            }
+          ],
+          "safeguards": {
+            "status": "Complete",
+            "selected": [
+              {
+                "safeguard_id": "SG-09",
+                "status": "Complete",
+                "owner": "Synthetic SG-09 owner",
+                "evidence_refs": [
+                  "synthetic-control-trigger:SG-09"
+                ],
+                "completion_evidence_refs": [
+                  "synthetic-control-completion:SG-09"
+                ],
+                "ongoing_setup": {
+                  "cadence_approved": true,
+                  "setup_verified": true,
+                  "signed_off": true,
+                  "cadence": "Monthly",
+                  "first_due_date": "2026-11-13",
+                  "executable_plan": "Synthetic scheduled task and runbook",
+                  "verifier": "Synthetic schedule verifier",
+                  "verified_at": "2026-10-13T09:00:00+08:00",
+                  "evidence_refs": [
+                    "synthetic-schedule-configuration:SG-09"
+                  ]
+                }
+              }
+            ],
+            "unresolved_applicability": [],
+            "supported_rule_ids": [
+              "SG-01",
+              "SG-02",
+              "SG-03",
+              "SG-04",
+              "SG-05",
+              "SG-06",
+              "SG-07",
+              "SG-08",
+              "SG-09",
+              "SG-10",
+              "SG-11",
+              "SG-12",
+              "SG-13"
+            ],
+            "input_errors": []
+          },
+          "approvals": [
+            {
+              "decision": "Approved",
+              "authorized": true,
+              "role": "Compliance Officer",
+              "reviewer": "Synthetic Compliance Officer",
+              "authority": "synthetic-approved-matrix",
+              "timestamp": "2026-10-29T10:00:00Z",
+              "rationale": "Synthetic signed case review",
+              "assessment_id": "RA-SYNTHETIC-new012",
+              "policy_version": "synthetic-policy-v3",
+              "evidence_refs": [
+                "demo-evidence"
+              ],
+              "valid_until": "2026-11-29T10:00:00Z",
+              "organization_id": "DEMO-ORG",
+              "case_id": "DEMO-CASE",
+              "assessment_version": 1,
+              "input_snapshot_hash": "4fad2cbf7ad5ce32c7fb7b231dbfbc112730499238ebb5128ba8a1fe746883e6",
+              "rule_pack_hash": "f91d21cb95150f74acda34e6b14a797c346e4a6a987af13983271fe777891fd2"
+            }
+          ],
+          "customer_decision": {
+            "rule_id": "PI-08",
+            "result": "APPROVE — Within Appetite",
+            "rationale": "All acceptance prerequisites met; Appetite = Within. / 接受前提全部满足，Within。",
+            "authorization_status": "Approved",
+            "required_approver_roles": [
+              "Compliance Officer"
+            ],
+            "input_errors": [],
+            "scope": "CustomerAMLOnly"
+          },
+          "outstanding_items": [],
+          "claims": [
+            {
+              "claim_id": "CLAIM-RF-09",
+              "kind": "RuleConclusion",
+              "rule_evaluation_id": "RF-09",
+              "evidence_refs": [
+                "demo-evidence"
+              ],
+              "status": "Clear",
+              "statement": "强制文件缺失"
+            },
+            {
+              "claim_id": "CLAIM-RF-10",
+              "kind": "RuleConclusion",
+              "rule_evaluation_id": "RF-10",
+              "evidence_refs": [
+                "demo-evidence"
+              ],
+              "status": "Clear",
+              "statement": "文件冲突"
+            },
+            {
+              "claim_id": "CLAIM-RF-11",
+              "kind": "RuleConclusion",
+              "rule_evaluation_id": "RF-11",
+              "evidence_refs": [
+                "demo-evidence"
+              ],
+              "status": "Clear",
+              "statement": "UBO 无法识别/确认"
+            },
+            {
+              "claim_id": "CLAIM-RF-01",
+              "kind": "RuleConclusion",
+              "rule_evaluation_id": "RF-01",
+              "evidence_refs": [
+                "demo-evidence"
+              ],
+              "status": "Clear",
+              "statement": "禁止司法管辖区 / FATF 黑名单"
+            },
+            {
+              "claim_id": "CLAIM-RF-02",
+              "kind": "RuleConclusion",
+              "rule_evaluation_id": "RF-02",
+              "evidence_refs": [
+                "demo-evidence"
+              ],
+              "status": "Clear",
+              "statement": "确认制裁名单命中"
+            },
+            {
+              "claim_id": "CLAIM-RF-03",
+              "kind": "RuleConclusion",
+              "rule_evaluation_id": "RF-03",
+              "evidence_refs": [
+                "demo-evidence"
+              ],
+              "status": "Clear",
+              "statement": "无牌经营 / 必需牌照缺失或撤销"
+            },
+            {
+              "claim_id": "CLAIM-RF-04",
+              "kind": "RuleConclusion",
+              "rule_evaluation_id": "RF-04",
+              "evidence_refs": [
+                "demo-evidence"
+              ],
+              "status": "Clear",
+              "statement": "UBO 身份无法核实"
+            },
+            {
+              "claim_id": "CLAIM-RF-05",
+              "kind": "RuleConclusion",
+              "rule_evaluation_id": "RF-05",
+              "evidence_refs": [
+                "demo-evidence"
+              ],
+              "status": "Clear",
+              "statement": "最终控制关系无法确认"
+            },
+            {
+              "claim_id": "CLAIM-RF-06",
+              "kind": "RuleConclusion",
+              "rule_evaluation_id": "RF-06",
+              "evidence_refs": [
+                "demo-evidence"
+              ],
+              "status": "Clear",
+              "statement": "已核实的禁止/非法经营活动"
+            },
+            {
+              "claim_id": "CLAIM-RF-07",
+              "kind": "RuleConclusion",
+              "rule_evaluation_id": "RF-07",
+              "evidence_refs": [
+                "demo-evidence"
+              ],
+              "status": "Clear",
+              "statement": "已确认的非法认购资金来源"
+            },
+            {
+              "claim_id": "CLAIM-RF-08",
+              "kind": "RuleConclusion",
+              "rule_evaluation_id": "RF-08",
+              "evidence_refs": [
+                "demo-evidence"
+              ],
+              "status": "Clear",
+              "statement": "已确认的欺诈/虚假企业身份"
+            },
+            {
+              "claim_id": "CLAIM-RF-12",
+              "kind": "RuleConclusion",
+              "rule_evaluation_id": "RF-12",
+              "evidence_refs": [
+                "demo-evidence"
+              ],
+              "status": "Hit",
+              "statement": "FATF 灰名单"
+            },
+            {
+              "claim_id": "CLAIM-RF-13",
+              "kind": "RuleConclusion",
+              "rule_evaluation_id": "RF-13",
+              "evidence_refs": [
+                "demo-evidence"
+              ],
+              "status": "Clear",
+              "statement": "UBO 确认是 PEP"
+            },
+            {
+              "claim_id": "CLAIM-RF-14",
+              "kind": "RuleConclusion",
+              "rule_evaluation_id": "RF-14",
+              "evidence_refs": [
+                "demo-evidence"
+              ],
+              "status": "Clear",
+              "statement": "UBO 是 PEP 紧密关联人"
+            },
+            {
+              "claim_id": "CLAIM-RF-15",
+              "kind": "RuleConclusion",
+              "rule_evaluation_id": "RF-15",
+              "evidence_refs": [
+                "demo-evidence"
+              ],
+              "status": "Clear",
+              "statement": "所有权链 ≥ 4 层"
+            },
+            {
+              "claim_id": "CLAIM-RF-16",
+              "kind": "RuleConclusion",
+              "rule_evaluation_id": "RF-16",
+              "evidence_refs": [
+                "demo-evidence"
+              ],
+              "status": "Clear",
+              "statement": "名义股东/信托安排"
+            },
+            {
+              "claim_id": "CLAIM-RF-17",
+              "kind": "RuleConclusion",
+              "rule_evaluation_id": "RF-17",
+              "evidence_refs": [
+                "demo-evidence"
+              ],
+              "status": "Clear",
+              "statement": "高风险/受限行业为主营业务"
+            },
+            {
+              "claim_id": "CLAIM-RF-18",
+              "kind": "RuleConclusion",
+              "rule_evaluation_id": "RF-18",
+              "evidence_refs": [
+                "demo-evidence"
+              ],
+              "status": "Clear",
+              "statement": "第三方/非自有资金"
+            },
+            {
+              "claim_id": "CLAIM-RF-19",
+              "kind": "RuleConclusion",
+              "rule_evaluation_id": "RF-19",
+              "evidence_refs": [
+                "demo-evidence"
+              ],
+              "status": "Clear",
+              "statement": "新设主体/无经营记录"
+            },
+            {
+              "claim_id": "CLAIM-RF-20",
+              "kind": "RuleConclusion",
+              "rule_evaluation_id": "RF-20",
+              "evidence_refs": [
+                "demo-evidence"
+              ],
+              "status": "Clear",
+              "statement": "高杠杆/弱财务能力"
+            },
+            {
+              "claim_id": "CLAIM-RF-21",
+              "kind": "RuleConclusion",
+              "rule_evaluation_id": "RF-21",
+              "evidence_refs": [
+                "demo-evidence"
+              ],
+              "status": "Clear",
+              "statement": "多司法管辖区"
+            },
+            {
+              "claim_id": "CLAIM-D1",
+              "kind": "RuleConclusion",
+              "rule_evaluation_id": "D1",
+              "evidence_refs": [
+                "demo-evidence"
+              ],
+              "status": "Assessed",
+              "statement": "D1: Low"
+            },
+            {
+              "claim_id": "CLAIM-D2",
+              "kind": "RuleConclusion",
+              "rule_evaluation_id": "D2",
+              "evidence_refs": [
+                "demo-evidence"
+              ],
+              "status": "Assessed",
+              "statement": "D2: Low"
+            },
+            {
+              "claim_id": "CLAIM-D3",
+              "kind": "RuleConclusion",
+              "rule_evaluation_id": "D3",
+              "evidence_refs": [
+                "demo-evidence"
+              ],
+              "status": "Assessed",
+              "statement": "D3: Low"
+            },
+            {
+              "claim_id": "CLAIM-FA",
+              "kind": "RuleConclusion",
+              "rule_evaluation_id": "FA",
+              "evidence_refs": [
+                "demo-evidence"
+              ],
+              "status": "Assessed",
+              "statement": "FA: Within"
+            },
+            {
+              "claim_id": "CLAIM-PI",
+              "kind": "RuleConclusion",
+              "rule_evaluation_id": "PI",
+              "evidence_refs": [],
+              "status": "Assessed",
+              "statement": "APPROVE — Within Appetite"
+            }
+          ],
+          "quality": {
+            "mode": "Customer",
+            "status": "ReadyForReview",
+            "issues": [],
+            "verification_trust": "CallerSuppliedAssertions — trusted service integration required",
+            "audience": "ComplianceInternal",
+            "external_permissions_enforced": false
+          }
+        }
+      }
+    ],
+    "party_snapshot": [
+      {
+        "organization_id": "DEMO-ORG",
+        "case_id": "DEMO-CASE",
+        "assessment_version": 1,
+        "run_id": "cf9e3e93-cc44-49b0-8534-d0b2b99d74f3",
+        "row_index": 0,
+        "data": {
+          "party_id": "new012-investor",
+          "person_id": "case01-P1-PER",
+          "full_name": "SYNTHETIC RF-12 confirmed factor",
+          "is_ubo": false,
+          "is_nominee": false,
+          "is_trust": false,
+          "sanctions_flag": false,
+          "shareholding_percentage": 100.0,
+          "pep_status": "None",
+          "nationality": "GB",
+          "registration_jurisdiction": "GB",
+          "role": "party1",
+          "entity_type": "LegalEntity"
+        }
+      },
+      {
+        "organization_id": "DEMO-ORG",
+        "case_id": "DEMO-CASE",
+        "assessment_version": 1,
+        "run_id": "cf9e3e93-cc44-49b0-8534-d0b2b99d74f3",
+        "row_index": 1,
+        "data": {
+          "party_id": "DEMO-OWNER",
+          "person_id": "DEMO-PERSON",
+          "full_name": "Synthetic Owner",
+          "entity_type": "NaturalPerson",
+          "is_ubo": true,
+          "shareholding_percentage": 100,
+          "role": "party2"
+        }
+      }
+    ],
+    "party_relationship": [
+      {
+        "organization_id": "DEMO-ORG",
+        "case_id": "DEMO-CASE",
+        "assessment_version": 1,
+        "run_id": "cf9e3e93-cc44-49b0-8534-d0b2b99d74f3",
+        "row_index": 0,
+        "data": {
+          "relationship_id": "DEMO-REL-1",
+          "from_party_id": "DEMO-OWNER",
+          "to_party_id": "new012-investor",
+          "relationship_type": "ownership",
+          "shareholding_percentage": 100,
+          "evidence_refs": [
+            "demo-evidence"
+          ]
+        }
+      }
+    ],
+    "screening_requirement": [
+      {
+        "organization_id": "DEMO-ORG",
+        "case_id": "DEMO-CASE",
+        "assessment_version": 1,
+        "run_id": "cf9e3e93-cc44-49b0-8534-d0b2b99d74f3",
+        "row_index": 0,
+        "data": {
+          "party_id": "new012-investor",
+          "screening_type": "Sanctions",
+          "reason": "Synthetic policy scope",
+          "status": "Clear",
+          "screening_id": "DEMO-SCREEN-0"
+        }
+      },
+      {
+        "organization_id": "DEMO-ORG",
+        "case_id": "DEMO-CASE",
+        "assessment_version": 1,
+        "run_id": "cf9e3e93-cc44-49b0-8534-d0b2b99d74f3",
+        "row_index": 1,
+        "data": {
+          "party_id": "DEMO-OWNER",
+          "screening_type": "Sanctions",
+          "reason": "Synthetic policy scope",
+          "status": "Clear",
+          "screening_id": "DEMO-SCREEN-1"
+        }
+      }
+    ],
+    "screening_run": [
+      {
+        "organization_id": "DEMO-ORG",
+        "case_id": "DEMO-CASE",
+        "assessment_version": 1,
+        "run_id": "cf9e3e93-cc44-49b0-8534-d0b2b99d74f3",
+        "row_index": 0,
+        "data": {
+          "screening_id": "DEMO-SCREEN-0",
+          "party_id": "new012-investor",
+          "screening_type": "Sanctions",
+          "execution_status": "Completed",
+          "source_system": "synthetic-fixture",
+          "attempted_at": "2026-10-29T09:00:00Z",
+          "screened_at": "2026-10-29T09:00:00Z",
+          "watchlist_id": "DEMO-LIST",
+          "list_version": "synthetic-v1",
+          "evidence_refs": [
+            "demo-evidence"
+          ],
+          "candidates": []
+        }
+      },
+      {
+        "organization_id": "DEMO-ORG",
+        "case_id": "DEMO-CASE",
+        "assessment_version": 1,
+        "run_id": "cf9e3e93-cc44-49b0-8534-d0b2b99d74f3",
+        "row_index": 1,
+        "data": {
+          "screening_id": "DEMO-SCREEN-1",
+          "party_id": "DEMO-OWNER",
+          "screening_type": "Sanctions",
+          "execution_status": "Completed",
+          "source_system": "synthetic-fixture",
+          "attempted_at": "2026-10-29T09:00:00Z",
+          "screened_at": "2026-10-29T09:00:00Z",
+          "watchlist_id": "DEMO-LIST",
+          "list_version": "synthetic-v1",
+          "evidence_refs": [
+            "demo-evidence"
+          ],
+          "candidates": []
+        }
+      }
+    ],
+    "evidence_record": [
+      {
+        "organization_id": "DEMO-ORG",
+        "case_id": "DEMO-CASE",
+        "assessment_version": 1,
+        "run_id": "cf9e3e93-cc44-49b0-8534-d0b2b99d74f3",
+        "row_index": 0,
+        "data": {
+          "evidence_id": "demo-evidence",
+          "artifact_id": "DEMO-FILE",
+          "object_uri": "demo://synthetic-only",
+          "sha256": "de98858e30e441360c33c06443d00e766ff71bc61023965db78eb81aad0d62ae",
+          "version": "1",
+          "locator": "synthetic fixture",
+          "verification_status": "Verified",
+          "verified_by": "synthetic-reviewer",
+          "verified_at": "2026-10-29T08:00:00Z",
+          "valid_until": "2026-12-31"
+        }
+      }
+    ],
+    "rule_evaluation": [
+      {
+        "organization_id": "DEMO-ORG",
+        "case_id": "DEMO-CASE",
+        "assessment_version": 1,
+        "run_id": "cf9e3e93-cc44-49b0-8534-d0b2b99d74f3",
+        "row_index": 0,
+        "data": {
+          "evaluation_id": "RF-09",
+          "stage": "RiskFactors",
+          "rule_id": "RF-09",
+          "status": "Clear",
+          "description": "强制文件缺失",
+          "policy_condition": "缺少董事声明、股东名册等强制文件。",
+          "evidence_refs": [
+            "demo-evidence"
+          ],
+          "facts": null,
+          "points_applied": 0
+        }
+      },
+      {
+        "organization_id": "DEMO-ORG",
+        "case_id": "DEMO-CASE",
+        "assessment_version": 1,
+        "run_id": "cf9e3e93-cc44-49b0-8534-d0b2b99d74f3",
+        "row_index": 1,
+        "data": {
+          "evaluation_id": "RF-10",
+          "stage": "RiskFactors",
+          "rule_id": "RF-10",
+          "status": "Clear",
+          "description": "文件冲突",
+          "policy_condition": "章程与股东名册在持股比例上矛盾。",
+          "evidence_refs": [
+            "demo-evidence"
+          ],
+          "facts": null,
+          "points_applied": 0
+        }
+      },
+      {
+        "organization_id": "DEMO-ORG",
+        "case_id": "DEMO-CASE",
+        "assessment_version": 1,
+        "run_id": "cf9e3e93-cc44-49b0-8534-d0b2b99d74f3",
+        "row_index": 2,
+        "data": {
+          "evaluation_id": "RF-11",
+          "stage": "RiskFactors",
+          "rule_id": "RF-11",
+          "status": "Clear",
+          "description": "UBO 无法识别/确认",
+          "policy_condition": "UBO核查尚未完成，所有权证据不足或可补件问题仍待解决；verification_status = Pending / AwaitingInformation，未达到批准的最终Failed标准。",
+          "evidence_refs": [
+            "demo-evidence"
+          ],
+          "facts": null,
+          "points_applied": 0
+        }
+      },
+      {
+        "organization_id": "DEMO-ORG",
+        "case_id": "DEMO-CASE",
+        "assessment_version": 1,
+        "run_id": "cf9e3e93-cc44-49b0-8534-d0b2b99d74f3",
+        "row_index": 3,
+        "data": {
+          "evaluation_id": "RF-01",
+          "stage": "RiskFactors",
+          "rule_id": "RF-01",
+          "status": "Clear",
+          "description": "禁止司法管辖区 / FATF 黑名单",
+          "policy_condition": "注册地或 UBO 国籍为朝鲜、伊朗、缅甸，或命中政策明确禁止的司法管辖区；经官方核验确认。",
+          "evidence_refs": [
+            "demo-evidence"
+          ],
+          "facts": null,
+          "points_applied": 0
+        }
+      },
+      {
+        "organization_id": "DEMO-ORG",
+        "case_id": "DEMO-CASE",
+        "assessment_version": 1,
+        "run_id": "cf9e3e93-cc44-49b0-8534-d0b2b99d74f3",
+        "row_index": 4,
+        "data": {
+          "evaluation_id": "RF-02",
+          "stage": "RiskFactors",
+          "rule_id": "RF-02",
+          "status": "Clear",
+          "description": "确认制裁名单命中",
+          "policy_condition": "UBO 确认匹配联合国安理会综合制裁名单；需经筛查及命中复核程序确认为真实命中，排除误报。",
+          "evidence_refs": [
+            "demo-evidence"
+          ],
+          "facts": null,
+          "points_applied": 0
+        }
+      },
+      {
+        "organization_id": "DEMO-ORG",
+        "case_id": "DEMO-CASE",
+        "assessment_version": 1,
+        "run_id": "cf9e3e93-cc44-49b0-8534-d0b2b99d74f3",
+        "row_index": 5,
+        "data": {
+          "evaluation_id": "RF-03",
+          "stage": "RiskFactors",
+          "rule_id": "RF-03",
+          "status": "Clear",
+          "description": "无牌经营 / 必需牌照缺失或撤销",
+          "policy_condition": "投资者实际从事依法须持牌的受规管活动（SFC/HKMA/保险/MPF），官方核验确认牌照缺失、撤销或无效，且政策禁止准入。",
+          "evidence_refs": [
+            "demo-evidence"
+          ],
+          "facts": null,
+          "points_applied": 0
+        }
+      },
+      {
+        "organization_id": "DEMO-ORG",
+        "case_id": "DEMO-CASE",
+        "assessment_version": 1,
+        "run_id": "cf9e3e93-cc44-49b0-8534-d0b2b99d74f3",
+        "row_index": 6,
+        "data": {
+          "evaluation_id": "RF-04",
+          "stage": "RiskFactors",
+          "rule_id": "RF-04",
+          "status": "Clear",
+          "description": "UBO 身份无法核实",
+          "policy_condition": "按政策要求识别最终受益自然人，经规定核查程序后仍无法识别或独立验证；核查状态 = Failed。",
+          "evidence_refs": [
+            "demo-evidence"
+          ],
+          "facts": null,
+          "points_applied": 0
+        }
+      },
+      {
+        "organization_id": "DEMO-ORG",
+        "case_id": "DEMO-CASE",
+        "assessment_version": 1,
+        "run_id": "cf9e3e93-cc44-49b0-8534-d0b2b99d74f3",
+        "row_index": 7,
+        "data": {
+          "evaluation_id": "RF-05",
+          "stage": "RiskFactors",
+          "rule_id": "RF-05",
+          "status": "Clear",
+          "description": "最终控制关系无法确认",
+          "policy_condition": "无法确认并核实最终实际控制人，或无法确认表决权、协议及其他控制权链；控制核查状态 = Failed。",
+          "evidence_refs": [
+            "demo-evidence"
+          ],
+          "facts": null,
+          "points_applied": 0
+        }
+      },
+      {
+        "organization_id": "DEMO-ORG",
+        "case_id": "DEMO-CASE",
+        "assessment_version": 1,
+        "run_id": "cf9e3e93-cc44-49b0-8534-d0b2b99d74f3",
+        "row_index": 8,
+        "data": {
+          "evaluation_id": "RF-06",
+          "stage": "RiskFactors",
+          "rule_id": "RF-06",
+          "status": "Clear",
+          "description": "已核实的禁止/非法经营活动",
+          "policy_condition": "可信且已核实的证据确认投资者从事非法活动，或从事已批准禁止经营目录明确列出的活动。",
+          "evidence_refs": [
+            "demo-evidence"
+          ],
+          "facts": null,
+          "points_applied": 0
+        }
+      },
+      {
+        "organization_id": "DEMO-ORG",
+        "case_id": "DEMO-CASE",
+        "assessment_version": 1,
+        "run_id": "cf9e3e93-cc44-49b0-8534-d0b2b99d74f3",
+        "row_index": 9,
+        "data": {
+          "evaluation_id": "RF-07",
+          "stage": "RiskFactors",
+          "rule_id": "RF-07",
+          "status": "Clear",
+          "description": "已确认的非法认购资金来源",
+          "policy_condition": "可靠证据确认本次认购资金来自非法来源，且达到已批准的禁止性资金来源认定标准。",
+          "evidence_refs": [
+            "demo-evidence"
+          ],
+          "facts": null,
+          "points_applied": 0
+        }
+      },
+      {
+        "organization_id": "DEMO-ORG",
+        "case_id": "DEMO-CASE",
+        "assessment_version": 1,
+        "run_id": "cf9e3e93-cc44-49b0-8534-d0b2b99d74f3",
+        "row_index": 10,
+        "data": {
+          "evaluation_id": "RF-08",
+          "stage": "RiskFactors",
+          "rule_id": "RF-08",
+          "status": "Clear",
+          "description": "已确认的欺诈/虚假企业身份",
+          "policy_condition": "可靠独立证据确认提交的企业身份或关键注册/股权文件属于欺诈或虚构，符合已批准禁止欺诈规则。",
+          "evidence_refs": [
+            "demo-evidence"
+          ],
+          "facts": null,
+          "points_applied": 0
+        }
+      },
+      {
+        "organization_id": "DEMO-ORG",
+        "case_id": "DEMO-CASE",
+        "assessment_version": 1,
+        "run_id": "cf9e3e93-cc44-49b0-8534-d0b2b99d74f3",
+        "row_index": 11,
+        "data": {
+          "evaluation_id": "RF-12",
+          "stage": "RiskFactors",
+          "rule_id": "RF-12",
+          "status": "Hit",
+          "description": "FATF 灰名单",
+          "policy_condition": "注册地或 UBO 国籍在 FATF 加强监控名单（灰名单）上。",
+          "evidence_refs": [
+            "demo-evidence"
+          ],
+          "facts": null,
+          "points_applied": 3
+        }
+      },
+      {
+        "organization_id": "DEMO-ORG",
+        "case_id": "DEMO-CASE",
+        "assessment_version": 1,
+        "run_id": "cf9e3e93-cc44-49b0-8534-d0b2b99d74f3",
+        "row_index": 12,
+        "data": {
+          "evaluation_id": "RF-13",
+          "stage": "RiskFactors",
+          "rule_id": "RF-13",
+          "status": "Clear",
+          "description": "UBO 确认是 PEP",
+          "policy_condition": "持有重要公共职能（国家元首、部长、高级官员等）。",
+          "evidence_refs": [
+            "demo-evidence"
+          ],
+          "facts": null,
+          "points_applied": 0
+        }
+      },
+      {
+        "organization_id": "DEMO-ORG",
+        "case_id": "DEMO-CASE",
+        "assessment_version": 1,
+        "run_id": "cf9e3e93-cc44-49b0-8534-d0b2b99d74f3",
+        "row_index": 13,
+        "data": {
+          "evaluation_id": "RF-14",
+          "stage": "RiskFactors",
+          "rule_id": "RF-14",
+          "status": "Clear",
+          "description": "UBO 是 PEP 紧密关联人",
+          "policy_condition": "配偶、伴侣、子女、父母或紧密关联人。",
+          "evidence_refs": [
+            "demo-evidence"
+          ],
+          "facts": null,
+          "points_applied": 0
+        }
+      },
+      {
+        "organization_id": "DEMO-ORG",
+        "case_id": "DEMO-CASE",
+        "assessment_version": 1,
+        "run_id": "cf9e3e93-cc44-49b0-8534-d0b2b99d74f3",
+        "row_index": 14,
+        "data": {
+          "evaluation_id": "RF-15",
+          "stage": "RiskFactors",
+          "rule_id": "RF-15",
+          "status": "Clear",
+          "description": "所有权链 ≥ 4 层",
+          "policy_condition": "投资者至自然人股东路径包含至少4个中间法人实体（不含投资者与自然人两端），即超过3个中间实体；多分支取最大值，循环结构转人工复核，不无限递归。",
+          "evidence_refs": [
+            "demo-evidence"
+          ],
+          "facts": {
+            "intermediate_legal_entity_count": 0
+          },
+          "points_applied": 0
+        }
+      },
+      {
+        "organization_id": "DEMO-ORG",
+        "case_id": "DEMO-CASE",
+        "assessment_version": 1,
+        "run_id": "cf9e3e93-cc44-49b0-8534-d0b2b99d74f3",
+        "row_index": 15,
+        "data": {
+          "evaluation_id": "RF-16",
+          "stage": "RiskFactors",
+          "rule_id": "RF-16",
+          "status": "Clear",
+          "description": "名义股东/信托安排",
+          "policy_condition": "通过名义股东或信托间接持股。",
+          "evidence_refs": [
+            "demo-evidence"
+          ],
+          "facts": null,
+          "points_applied": 0
+        }
+      },
+      {
+        "organization_id": "DEMO-ORG",
+        "case_id": "DEMO-CASE",
+        "assessment_version": 1,
+        "run_id": "cf9e3e93-cc44-49b0-8534-d0b2b99d74f3",
+        "row_index": 16,
+        "data": {
+          "evaluation_id": "RF-17",
+          "stage": "RiskFactors",
+          "rule_id": "RF-17",
+          "status": "Clear",
+          "description": "高风险/受限行业为主营业务",
+          "policy_condition": "加密/VASP、汇款/MSO、赌博、现金密集型、高价值贵金属、国防/两用。",
+          "evidence_refs": [
+            "demo-evidence"
+          ],
+          "facts": null,
+          "points_applied": 0
+        }
+      },
+      {
+        "organization_id": "DEMO-ORG",
+        "case_id": "DEMO-CASE",
+        "assessment_version": 1,
+        "run_id": "cf9e3e93-cc44-49b0-8534-d0b2b99d74f3",
+        "row_index": 17,
+        "data": {
+          "evaluation_id": "RF-18",
+          "stage": "RiskFactors",
+          "rule_id": "RF-18",
+          "status": "Clear",
+          "description": "第三方/非自有资金",
+          "policy_condition": "认购资金来自第三方或非自有同名账户，或使用借贷/杠杆资金。",
+          "evidence_refs": [
+            "demo-evidence"
+          ],
+          "facts": null,
+          "points_applied": 0
+        }
+      },
+      {
+        "organization_id": "DEMO-ORG",
+        "case_id": "DEMO-CASE",
+        "assessment_version": 1,
+        "run_id": "cf9e3e93-cc44-49b0-8534-d0b2b99d74f3",
+        "row_index": 18,
+        "data": {
+          "evaluation_id": "RF-19",
+          "stage": "RiskFactors",
+          "rule_id": "RF-19",
+          "status": "Clear",
+          "description": "新设主体/无经营记录",
+          "policy_condition": "成立不足 1 年，无实质经营历史或经审计报表。",
+          "evidence_refs": [
+            "demo-evidence"
+          ],
+          "facts": null,
+          "points_applied": 0
+        }
+      },
+      {
+        "organization_id": "DEMO-ORG",
+        "case_id": "DEMO-CASE",
+        "assessment_version": 1,
+        "run_id": "cf9e3e93-cc44-49b0-8534-d0b2b99d74f3",
+        "row_index": 19,
+        "data": {
+          "evaluation_id": "RF-20",
+          "stage": "RiskFactors",
+          "rule_id": "RF-20",
+          "status": "Clear",
+          "description": "高杠杆/弱财务能力",
+          "policy_condition": "高杠杆、现金流为负，或净资产/货币资金不足以覆盖拟出资额。",
+          "evidence_refs": [
+            "demo-evidence"
+          ],
+          "facts": null,
+          "points_applied": 0
+        }
+      },
+      {
+        "organization_id": "DEMO-ORG",
+        "case_id": "DEMO-CASE",
+        "assessment_version": 1,
+        "run_id": "cf9e3e93-cc44-49b0-8534-d0b2b99d74f3",
+        "row_index": 20,
+        "data": {
+          "evaluation_id": "RF-21",
+          "stage": "RiskFactors",
+          "rule_id": "RF-21",
+          "status": "Clear",
+          "description": "多司法管辖区",
+          "policy_condition": "涉及 3+ 司法管辖区，或复杂跨境/离岸安排（开曼/BVI LP、多层 SPV）。",
+          "evidence_refs": [
+            "demo-evidence"
+          ],
+          "facts": null,
+          "points_applied": 0
+        }
+      },
+      {
+        "organization_id": "DEMO-ORG",
+        "case_id": "DEMO-CASE",
+        "assessment_version": 1,
+        "run_id": "cf9e3e93-cc44-49b0-8534-d0b2b99d74f3",
+        "row_index": 21,
+        "data": {
+          "evaluation_id": "D1",
+          "stage": "Appetite",
+          "rule_ids": [
+            "D1-01"
+          ],
+          "status": "Assessed",
+          "level": "Low",
+          "facts": {
+            "legal_entity_verified": true,
+            "ownership_links_verified": true,
+            "ubo_verified": true,
+            "control_verified": true,
+            "intermediate_legal_entity_count": 0,
+            "complex_ownership": false,
+            "nominee_or_trust": false,
+            "cross_entity_or_border_complexity": false,
+            "control_rights_discrepancy": false,
+            "unusual_structure": false,
+            "material_unresolved_contradiction": false
+          },
+          "evidence_refs": [
+            "demo-evidence"
+          ]
+        }
+      },
+      {
+        "organization_id": "DEMO-ORG",
+        "case_id": "DEMO-CASE",
+        "assessment_version": 1,
+        "run_id": "cf9e3e93-cc44-49b0-8534-d0b2b99d74f3",
+        "row_index": 22,
+        "data": {
+          "evaluation_id": "D2",
+          "stage": "Appetite",
+          "rule_ids": [
+            "D2-01"
+          ],
+          "status": "Assessed",
+          "level": "Low",
+          "facts": {
+            "activity_verified": true,
+            "taxonomy_approved": true,
+            "category": "Standard",
+            "regulated": false,
+            "material_discrepancy": false,
+            "material_high_risk_activity": false
+          },
+          "evidence_refs": [
+            "demo-evidence"
+          ]
+        }
+      },
+      {
+        "organization_id": "DEMO-ORG",
+        "case_id": "DEMO-CASE",
+        "assessment_version": 1,
+        "run_id": "cf9e3e93-cc44-49b0-8534-d0b2b99d74f3",
+        "row_index": 23,
+        "data": {
+          "evaluation_id": "D3",
+          "stage": "Appetite",
+          "rule_ids": [
+            "D3-01"
+          ],
+          "status": "Assessed",
+          "level": "Low",
+          "facts": {
+            "mandatory_evidence_authenticated": true,
+            "source_event_identified": true,
+            "owner_identified": true,
+            "amount_dates_verified": true,
+            "funds_sufficient": true,
+            "records_reconciled": true,
+            "records_verified": true,
+            "unresolved_discrepancy": false,
+            "own_account": true,
+            "complex_funding": false,
+            "unusual_subscription": false,
+            "material_anomaly": false
+          },
+          "evidence_refs": [
+            "demo-evidence"
+          ]
+        }
+      },
+      {
+        "organization_id": "DEMO-ORG",
+        "case_id": "DEMO-CASE",
+        "assessment_version": 1,
+        "run_id": "cf9e3e93-cc44-49b0-8534-d0b2b99d74f3",
+        "row_index": 24,
+        "data": {
+          "evaluation_id": "FA",
+          "stage": "Appetite",
+          "rule_ids": [
+            "FA-01",
+            "FA-05"
+          ],
+          "status": "Assessed",
+          "level": "Within",
+          "evidence_refs": [
+            "demo-evidence"
+          ]
+        }
+      },
+      {
+        "organization_id": "DEMO-ORG",
+        "case_id": "DEMO-CASE",
+        "assessment_version": 1,
+        "run_id": "cf9e3e93-cc44-49b0-8534-d0b2b99d74f3",
+        "row_index": 25,
+        "data": {
+          "evaluation_id": "PI",
+          "stage": "PolicyIntegration",
+          "rule_id": "PI-08",
+          "result": "APPROVE — Within Appetite",
+          "rationale": "All acceptance prerequisites met; Appetite = Within. / 接受前提全部满足，Within。",
+          "authorization_status": "Approved",
+          "required_approver_roles": [
+            "Compliance Officer"
+          ],
+          "input_errors": []
+        }
+      }
+    ],
+    "approval": [
+      {
+        "organization_id": "DEMO-ORG",
+        "case_id": "DEMO-CASE",
+        "assessment_version": 1,
+        "run_id": "cf9e3e93-cc44-49b0-8534-d0b2b99d74f3",
+        "row_index": 0,
+        "data": {
+          "decision": "Approved",
+          "authorized": true,
+          "role": "Compliance Officer",
+          "reviewer": "Synthetic Compliance Officer",
+          "authority": "synthetic-approved-matrix",
+          "timestamp": "2026-10-29T10:00:00Z",
+          "rationale": "Synthetic signed case review",
+          "assessment_id": "RA-SYNTHETIC-new012",
+          "policy_version": "synthetic-policy-v3",
+          "evidence_refs": [
+            "demo-evidence"
+          ],
+          "valid_until": "2026-11-29T10:00:00Z",
+          "organization_id": "DEMO-ORG",
+          "case_id": "DEMO-CASE",
+          "assessment_version": 1,
+          "input_snapshot_hash": "4fad2cbf7ad5ce32c7fb7b231dbfbc112730499238ebb5128ba8a1fe746883e6",
+          "rule_pack_hash": "f91d21cb95150f74acda34e6b14a797c346e4a6a987af13983271fe777891fd2"
+        }
+      }
+    ],
+    "outstanding_item": [],
+    "report_claim": [
+      {
+        "organization_id": "DEMO-ORG",
+        "case_id": "DEMO-CASE",
+        "assessment_version": 1,
+        "run_id": "cf9e3e93-cc44-49b0-8534-d0b2b99d74f3",
+        "row_index": 0,
+        "data": {
+          "claim_id": "CLAIM-RF-09",
+          "kind": "RuleConclusion",
+          "rule_evaluation_id": "RF-09",
+          "evidence_refs": [
+            "demo-evidence"
+          ],
+          "status": "Clear",
+          "statement": "强制文件缺失"
+        }
+      },
+      {
+        "organization_id": "DEMO-ORG",
+        "case_id": "DEMO-CASE",
+        "assessment_version": 1,
+        "run_id": "cf9e3e93-cc44-49b0-8534-d0b2b99d74f3",
+        "row_index": 1,
+        "data": {
+          "claim_id": "CLAIM-RF-10",
+          "kind": "RuleConclusion",
+          "rule_evaluation_id": "RF-10",
+          "evidence_refs": [
+            "demo-evidence"
+          ],
+          "status": "Clear",
+          "statement": "文件冲突"
+        }
+      },
+      {
+        "organization_id": "DEMO-ORG",
+        "case_id": "DEMO-CASE",
+        "assessment_version": 1,
+        "run_id": "cf9e3e93-cc44-49b0-8534-d0b2b99d74f3",
+        "row_index": 2,
+        "data": {
+          "claim_id": "CLAIM-RF-11",
+          "kind": "RuleConclusion",
+          "rule_evaluation_id": "RF-11",
+          "evidence_refs": [
+            "demo-evidence"
+          ],
+          "status": "Clear",
+          "statement": "UBO 无法识别/确认"
+        }
+      },
+      {
+        "organization_id": "DEMO-ORG",
+        "case_id": "DEMO-CASE",
+        "assessment_version": 1,
+        "run_id": "cf9e3e93-cc44-49b0-8534-d0b2b99d74f3",
+        "row_index": 3,
+        "data": {
+          "claim_id": "CLAIM-RF-01",
+          "kind": "RuleConclusion",
+          "rule_evaluation_id": "RF-01",
+          "evidence_refs": [
+            "demo-evidence"
+          ],
+          "status": "Clear",
+          "statement": "禁止司法管辖区 / FATF 黑名单"
+        }
+      },
+      {
+        "organization_id": "DEMO-ORG",
+        "case_id": "DEMO-CASE",
+        "assessment_version": 1,
+        "run_id": "cf9e3e93-cc44-49b0-8534-d0b2b99d74f3",
+        "row_index": 4,
+        "data": {
+          "claim_id": "CLAIM-RF-02",
+          "kind": "RuleConclusion",
+          "rule_evaluation_id": "RF-02",
+          "evidence_refs": [
+            "demo-evidence"
+          ],
+          "status": "Clear",
+          "statement": "确认制裁名单命中"
+        }
+      },
+      {
+        "organization_id": "DEMO-ORG",
+        "case_id": "DEMO-CASE",
+        "assessment_version": 1,
+        "run_id": "cf9e3e93-cc44-49b0-8534-d0b2b99d74f3",
+        "row_index": 5,
+        "data": {
+          "claim_id": "CLAIM-RF-03",
+          "kind": "RuleConclusion",
+          "rule_evaluation_id": "RF-03",
+          "evidence_refs": [
+            "demo-evidence"
+          ],
+          "status": "Clear",
+          "statement": "无牌经营 / 必需牌照缺失或撤销"
+        }
+      },
+      {
+        "organization_id": "DEMO-ORG",
+        "case_id": "DEMO-CASE",
+        "assessment_version": 1,
+        "run_id": "cf9e3e93-cc44-49b0-8534-d0b2b99d74f3",
+        "row_index": 6,
+        "data": {
+          "claim_id": "CLAIM-RF-04",
+          "kind": "RuleConclusion",
+          "rule_evaluation_id": "RF-04",
+          "evidence_refs": [
+            "demo-evidence"
+          ],
+          "status": "Clear",
+          "statement": "UBO 身份无法核实"
+        }
+      },
+      {
+        "organization_id": "DEMO-ORG",
+        "case_id": "DEMO-CASE",
+        "assessment_version": 1,
+        "run_id": "cf9e3e93-cc44-49b0-8534-d0b2b99d74f3",
+        "row_index": 7,
+        "data": {
+          "claim_id": "CLAIM-RF-05",
+          "kind": "RuleConclusion",
+          "rule_evaluation_id": "RF-05",
+          "evidence_refs": [
+            "demo-evidence"
+          ],
+          "status": "Clear",
+          "statement": "最终控制关系无法确认"
+        }
+      },
+      {
+        "organization_id": "DEMO-ORG",
+        "case_id": "DEMO-CASE",
+        "assessment_version": 1,
+        "run_id": "cf9e3e93-cc44-49b0-8534-d0b2b99d74f3",
+        "row_index": 8,
+        "data": {
+          "claim_id": "CLAIM-RF-06",
+          "kind": "RuleConclusion",
+          "rule_evaluation_id": "RF-06",
+          "evidence_refs": [
+            "demo-evidence"
+          ],
+          "status": "Clear",
+          "statement": "已核实的禁止/非法经营活动"
+        }
+      },
+      {
+        "organization_id": "DEMO-ORG",
+        "case_id": "DEMO-CASE",
+        "assessment_version": 1,
+        "run_id": "cf9e3e93-cc44-49b0-8534-d0b2b99d74f3",
+        "row_index": 9,
+        "data": {
+          "claim_id": "CLAIM-RF-07",
+          "kind": "RuleConclusion",
+          "rule_evaluation_id": "RF-07",
+          "evidence_refs": [
+            "demo-evidence"
+          ],
+          "status": "Clear",
+          "statement": "已确认的非法认购资金来源"
+        }
+      },
+      {
+        "organization_id": "DEMO-ORG",
+        "case_id": "DEMO-CASE",
+        "assessment_version": 1,
+        "run_id": "cf9e3e93-cc44-49b0-8534-d0b2b99d74f3",
+        "row_index": 10,
+        "data": {
+          "claim_id": "CLAIM-RF-08",
+          "kind": "RuleConclusion",
+          "rule_evaluation_id": "RF-08",
+          "evidence_refs": [
+            "demo-evidence"
+          ],
+          "status": "Clear",
+          "statement": "已确认的欺诈/虚假企业身份"
+        }
+      },
+      {
+        "organization_id": "DEMO-ORG",
+        "case_id": "DEMO-CASE",
+        "assessment_version": 1,
+        "run_id": "cf9e3e93-cc44-49b0-8534-d0b2b99d74f3",
+        "row_index": 11,
+        "data": {
+          "claim_id": "CLAIM-RF-12",
+          "kind": "RuleConclusion",
+          "rule_evaluation_id": "RF-12",
+          "evidence_refs": [
+            "demo-evidence"
+          ],
+          "status": "Hit",
+          "statement": "FATF 灰名单"
+        }
+      },
+      {
+        "organization_id": "DEMO-ORG",
+        "case_id": "DEMO-CASE",
+        "assessment_version": 1,
+        "run_id": "cf9e3e93-cc44-49b0-8534-d0b2b99d74f3",
+        "row_index": 12,
+        "data": {
+          "claim_id": "CLAIM-RF-13",
+          "kind": "RuleConclusion",
+          "rule_evaluation_id": "RF-13",
+          "evidence_refs": [
+            "demo-evidence"
+          ],
+          "status": "Clear",
+          "statement": "UBO 确认是 PEP"
+        }
+      },
+      {
+        "organization_id": "DEMO-ORG",
+        "case_id": "DEMO-CASE",
+        "assessment_version": 1,
+        "run_id": "cf9e3e93-cc44-49b0-8534-d0b2b99d74f3",
+        "row_index": 13,
+        "data": {
+          "claim_id": "CLAIM-RF-14",
+          "kind": "RuleConclusion",
+          "rule_evaluation_id": "RF-14",
+          "evidence_refs": [
+            "demo-evidence"
+          ],
+          "status": "Clear",
+          "statement": "UBO 是 PEP 紧密关联人"
+        }
+      },
+      {
+        "organization_id": "DEMO-ORG",
+        "case_id": "DEMO-CASE",
+        "assessment_version": 1,
+        "run_id": "cf9e3e93-cc44-49b0-8534-d0b2b99d74f3",
+        "row_index": 14,
+        "data": {
+          "claim_id": "CLAIM-RF-15",
+          "kind": "RuleConclusion",
+          "rule_evaluation_id": "RF-15",
+          "evidence_refs": [
+            "demo-evidence"
+          ],
+          "status": "Clear",
+          "statement": "所有权链 ≥ 4 层"
+        }
+      },
+      {
+        "organization_id": "DEMO-ORG",
+        "case_id": "DEMO-CASE",
+        "assessment_version": 1,
+        "run_id": "cf9e3e93-cc44-49b0-8534-d0b2b99d74f3",
+        "row_index": 15,
+        "data": {
+          "claim_id": "CLAIM-RF-16",
+          "kind": "RuleConclusion",
+          "rule_evaluation_id": "RF-16",
+          "evidence_refs": [
+            "demo-evidence"
+          ],
+          "status": "Clear",
+          "statement": "名义股东/信托安排"
+        }
+      },
+      {
+        "organization_id": "DEMO-ORG",
+        "case_id": "DEMO-CASE",
+        "assessment_version": 1,
+        "run_id": "cf9e3e93-cc44-49b0-8534-d0b2b99d74f3",
+        "row_index": 16,
+        "data": {
+          "claim_id": "CLAIM-RF-17",
+          "kind": "RuleConclusion",
+          "rule_evaluation_id": "RF-17",
+          "evidence_refs": [
+            "demo-evidence"
+          ],
+          "status": "Clear",
+          "statement": "高风险/受限行业为主营业务"
+        }
+      },
+      {
+        "organization_id": "DEMO-ORG",
+        "case_id": "DEMO-CASE",
+        "assessment_version": 1,
+        "run_id": "cf9e3e93-cc44-49b0-8534-d0b2b99d74f3",
+        "row_index": 17,
+        "data": {
+          "claim_id": "CLAIM-RF-18",
+          "kind": "RuleConclusion",
+          "rule_evaluation_id": "RF-18",
+          "evidence_refs": [
+            "demo-evidence"
+          ],
+          "status": "Clear",
+          "statement": "第三方/非自有资金"
+        }
+      },
+      {
+        "organization_id": "DEMO-ORG",
+        "case_id": "DEMO-CASE",
+        "assessment_version": 1,
+        "run_id": "cf9e3e93-cc44-49b0-8534-d0b2b99d74f3",
+        "row_index": 18,
+        "data": {
+          "claim_id": "CLAIM-RF-19",
+          "kind": "RuleConclusion",
+          "rule_evaluation_id": "RF-19",
+          "evidence_refs": [
+            "demo-evidence"
+          ],
+          "status": "Clear",
+          "statement": "新设主体/无经营记录"
+        }
+      },
+      {
+        "organization_id": "DEMO-ORG",
+        "case_id": "DEMO-CASE",
+        "assessment_version": 1,
+        "run_id": "cf9e3e93-cc44-49b0-8534-d0b2b99d74f3",
+        "row_index": 19,
+        "data": {
+          "claim_id": "CLAIM-RF-20",
+          "kind": "RuleConclusion",
+          "rule_evaluation_id": "RF-20",
+          "evidence_refs": [
+            "demo-evidence"
+          ],
+          "status": "Clear",
+          "statement": "高杠杆/弱财务能力"
+        }
+      },
+      {
+        "organization_id": "DEMO-ORG",
+        "case_id": "DEMO-CASE",
+        "assessment_version": 1,
+        "run_id": "cf9e3e93-cc44-49b0-8534-d0b2b99d74f3",
+        "row_index": 20,
+        "data": {
+          "claim_id": "CLAIM-RF-21",
+          "kind": "RuleConclusion",
+          "rule_evaluation_id": "RF-21",
+          "evidence_refs": [
+            "demo-evidence"
+          ],
+          "status": "Clear",
+          "statement": "多司法管辖区"
+        }
+      },
+      {
+        "organization_id": "DEMO-ORG",
+        "case_id": "DEMO-CASE",
+        "assessment_version": 1,
+        "run_id": "cf9e3e93-cc44-49b0-8534-d0b2b99d74f3",
+        "row_index": 21,
+        "data": {
+          "claim_id": "CLAIM-D1",
+          "kind": "RuleConclusion",
+          "rule_evaluation_id": "D1",
+          "evidence_refs": [
+            "demo-evidence"
+          ],
+          "status": "Assessed",
+          "statement": "D1: Low"
+        }
+      },
+      {
+        "organization_id": "DEMO-ORG",
+        "case_id": "DEMO-CASE",
+        "assessment_version": 1,
+        "run_id": "cf9e3e93-cc44-49b0-8534-d0b2b99d74f3",
+        "row_index": 22,
+        "data": {
+          "claim_id": "CLAIM-D2",
+          "kind": "RuleConclusion",
+          "rule_evaluation_id": "D2",
+          "evidence_refs": [
+            "demo-evidence"
+          ],
+          "status": "Assessed",
+          "statement": "D2: Low"
+        }
+      },
+      {
+        "organization_id": "DEMO-ORG",
+        "case_id": "DEMO-CASE",
+        "assessment_version": 1,
+        "run_id": "cf9e3e93-cc44-49b0-8534-d0b2b99d74f3",
+        "row_index": 23,
+        "data": {
+          "claim_id": "CLAIM-D3",
+          "kind": "RuleConclusion",
+          "rule_evaluation_id": "D3",
+          "evidence_refs": [
+            "demo-evidence"
+          ],
+          "status": "Assessed",
+          "statement": "D3: Low"
+        }
+      },
+      {
+        "organization_id": "DEMO-ORG",
+        "case_id": "DEMO-CASE",
+        "assessment_version": 1,
+        "run_id": "cf9e3e93-cc44-49b0-8534-d0b2b99d74f3",
+        "row_index": 24,
+        "data": {
+          "claim_id": "CLAIM-FA",
+          "kind": "RuleConclusion",
+          "rule_evaluation_id": "FA",
+          "evidence_refs": [
+            "demo-evidence"
+          ],
+          "status": "Assessed",
+          "statement": "FA: Within"
+        }
+      },
+      {
+        "organization_id": "DEMO-ORG",
+        "case_id": "DEMO-CASE",
+        "assessment_version": 1,
+        "run_id": "cf9e3e93-cc44-49b0-8534-d0b2b99d74f3",
+        "row_index": 25,
+        "data": {
+          "claim_id": "CLAIM-PI",
+          "kind": "RuleConclusion",
+          "rule_evaluation_id": "PI",
+          "evidence_refs": [],
+          "status": "Assessed",
+          "statement": "APPROVE — Within Appetite"
+        }
+      }
+    ]
+  }
+]
